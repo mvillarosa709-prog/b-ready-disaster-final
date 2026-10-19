@@ -3,6 +3,18 @@
     <x-slot name="header">My Registered Workshops</x-slot>
 
     <div class="space-y-6" x-data="{ activeTab: 'active' }">
+        <!-- Back Button -->
+        <div>
+            <a href="{{ url()->previous() }}"
+               class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back
+            </a>
+        </div>
+
         <!-- Tab Navigation Bar -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-2 shadow-xs flex items-center justify-between">
             <div class="flex items-center gap-2">

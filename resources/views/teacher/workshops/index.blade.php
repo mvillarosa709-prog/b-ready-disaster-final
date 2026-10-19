@@ -18,8 +18,12 @@
 
     <!-- Top Search & Filter Bar -->
     <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-            <!-- Search Form -->
-            <form method="GET" action="{{ route('teacher.workshops.index') }}" class="w-full sm:w-80 flex items-center gap-2">
+        <div class="w-full sm:w-auto">
+            <h2 class="text-lg font-bold text-slate-900">Available Workshops</h2>
+            <p class="text-xs text-slate-500">Find training workshops designed by Disaster Risk Reduction experts.</p>
+        </div>
+        <!-- Search Form -->
+        <form method="GET" action="{{ route('teacher.workshops.index') }}" class="w-full sm:w-80 flex items-center gap-2">
                 <div class="relative w-full">
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                         <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

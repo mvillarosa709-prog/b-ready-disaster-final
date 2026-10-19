@@ -23,16 +23,16 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                         </svg>
                     </a>
+                    <a href="{{ route('teacher.workshops.index') }}" 
+                       class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 px-4 py-2.5 text-xs sm:text-sm font-semibold text-gray-700 transition-colors">
+                        Browse Workshops
+                    </a>
                     <a href="{{ route('teacher.reports.index') }}" 
                        class="inline-flex items-center gap-2 rounded-xl bg-white hover:bg-gray-50 px-4 py-2.5 text-xs sm:text-sm font-bold text-gray-700 border border-gray-300 shadow-sm transition-colors">
                         <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                         </svg>
                         Personal Reports Dashboard
-                    </a>
-                    <a href="{{ route('teacher.workshops.index') }}" 
-                       class="inline-flex items-center gap-2 rounded-xl bg-gray-100 hover:bg-gray-200 px-4 py-2.5 text-xs sm:text-sm font-semibold text-gray-700 transition-colors">
-                        Browse Workshops
                     </a>
                 </div>
             </div>

@@ -4,22 +4,15 @@
 
     <div class="space-y-8" x-data="{ activeTab: 'all' }">
         
-        <!-- Top Navigation Bar with Back & Close Options -->
-        <div class="flex items-center justify-between bg-white border border-gray-200 px-5 py-3 rounded-2xl shadow-xs">
-            <a href="{{ route('teacher.dashboard') }}" 
-               class="inline-flex items-center gap-2 text-xs font-bold text-gray-700 hover:text-indigo-600 transition-colors">
+        <!-- Back Button -->
+        <div>
+            <a href="{{ url()->previous() }}"
+               class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 19l-7-7 7-7"/>
                 </svg>
-                &larr; Back to Dashboard
-            </a>
-
-            <a href="{{ route('teacher.dashboard') }}" 
-               class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-gray-100 hover:bg-rose-50 hover:text-rose-600 text-xs font-bold text-gray-600 transition-colors" title="Close and return">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-                <span>Close (X)</span>
+                Back
             </a>
         </div>
 
