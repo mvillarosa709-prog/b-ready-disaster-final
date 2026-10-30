@@ -15,6 +15,18 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if(auth()->check() && auth()->user()->role === 'trainer')
+                        <x-nav-link :href="route('trainer.courses.index')" :active="request()->routeIs('trainer.courses.*')">
+                            {{ __('My Courses') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('trainer.assessments.index')" :active="request()->routeIs('trainer.assessments.*')">
+                            {{ __('Assessment Questions') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('trainer.reports')" :active="request()->routeIs('trainer.reports')">
+                            {{ __('Assessment Reports') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

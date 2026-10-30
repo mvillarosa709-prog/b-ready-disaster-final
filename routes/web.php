@@ -1,6 +1,14 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TrainerController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\MaterialController;
+use App\Models\Question;
+use App\Models\Choice;
+use App\Models\TeacherAssessmentResult;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -9,7 +17,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     if (auth()->user()->role === 'trainer'){
-        return view('trainer.dashboard');
+        return redirect()->route('trainer.courses.index');
     }
 
     return redirect()->route('teacher.dashboard');
@@ -19,6 +27,124 @@ Route::middleware(['auth', 'verified', 'role:trainer'])->group(function () {
     Route::get('/trainer/test', function () {
         return 'Trainer access confirmed!';
     });
+
+    // Trainer Courses Management
+    Route::get('/trainer/courses', [CourseController::class, 'index'])->name('trainer.courses.index');
+    Route::get('/trainer/courses/create', [CourseController::class, 'create'])->name('trainer.courses.create');
+    Route::post('/trainer/courses', [CourseController::class, 'store'])->name('trainer.courses.store');
+    Route::get('/trainer/courses/{id}', [CourseController::class, 'show'])->name('trainer.courses.show');
+    Route::get('/trainer/courses/{id}/edit', [CourseController::class, 'edit'])->name('trainer.courses.edit');
+    Route::put('/trainer/courses/{id}', [CourseController::class, 'update'])->name('trainer.courses.update');
+    Route::delete('/trainer/courses/{id}', [CourseController::class, 'destroy'])->name('trainer.courses.destroy');
+
+    // Trainer Modules Management
+    Route::get('/trainer/courses/{courseId}/modules/create', [ModuleController::class, 'create'])->name('trainer.modules.create');
+    Route::post('/trainer/courses/{courseId}/modules', [ModuleController::class, 'store'])->name('trainer.modules.store');
+    Route::get('/trainer/courses/{courseId}/modules/{moduleId}/edit', [ModuleController::class, 'edit'])->name('trainer.modules.edit');
+    Route::put('/trainer/courses/{courseId}/modules/{moduleId}', [ModuleController::class, 'update'])->name('trainer.modules.update');
+    Route::delete('/trainer/courses/{courseId}/modules/{moduleId}', [ModuleController::class, 'destroy'])->name('trainer.modules.destroy');
+
+    // Trainer Materials Management
+    Route::get('/trainer/courses/{courseId}/modules/{moduleId}/materials/create', [MaterialController::class, 'create'])->name('trainer.materials.create');
+    Route::post('/trainer/courses/{courseId}/modules/{moduleId}/materials', [MaterialController::class, 'store'])->name('trainer.materials.store');
+    Route::get('/trainer/courses/{courseId}/modules/{moduleId}/materials/{materialId}/edit', [MaterialController::class, 'edit'])->name('trainer.materials.edit');
+    Route::put('/trainer/courses/{courseId}/modules/{moduleId}/materials/{materialId}', [MaterialController::class, 'update'])->name('trainer.materials.update');
+    Route::delete('/trainer/courses/{courseId}/modules/{moduleId}/materials/{materialId}', [MaterialController::class, 'destroy'])->name('trainer.materials.destroy');
+
+    // Trainer Assessment Features (Uploader, Take Assessment, Results, and Reports)
+    Route::get('/trainer/assessments/create', function () {
+        return view('trainer.create');
+    })->name('trainer.assessments.create');
+
+    Route::post('/trainer/assessments/store', function (Request $request) {
+        if ($request->hasFile('assessment_file')) {
+            $file = $request->file('assessment_file');
+            $path = $file->getRealPath();
+            $data = array_map('str_getcsv', file($path));
+            $sequenceNumber = 1;
+
+            foreach ($data as $index => $row) {
+                if ($index === 0 || empty($row[0])) continue;
+
+                $question = new Question();
+                $question->assessment_id = 1;
+                $question->question_text = trim($row[0]);
+                $question->sequence = $sequenceNumber++;
+                $question->save();
+
+                for ($i = 1; $i <= 4; $i++) {
+                    if (isset($row[$i]) && trim($row[$i]) !== '') {
+                        $isCorrect = (isset($row[5]) && trim($row[5]) == trim($row[$i])) ? 1 : 0;
+
+                        $choice = new Choice();
+                        $choice->question_id = $question->id;
+                        $choice->choice_text = trim($row[$i]);
+                        $choice->is_correct = $isCorrect;
+                        $choice->sequence = $i;
+                        $choice->save();
+                    }
+                }
+            }
+
+            return redirect('/trainer/assessments')->with('success', 'Questions uploaded successfully.');
+        }
+
+        return back()->with('error', 'Please upload a valid CSV file.');
+    })->name('trainer.assessments.store');
+
+    Route::get('/trainer/assessments', function () {
+        $questions = Question::with('choices')->get();
+        return view('trainer.index', compact('questions'));
+    })->name('trainer.assessments.index');
+
+    Route::get('/trainer/take-assessment', function () {
+        $questions = Question::with('choices')->get();
+        return view('trainer.take-assessment', compact('questions'));
+    })->name('trainer.assessments.take');
+
+    Route::post('/trainer/grade-assessment', function (Request $request) {
+        $answers = $request->input('answers', []);
+        $score = 0;
+        $totalQuestions = count($answers);
+        $detailedResults = [];
+
+        foreach ($answers as $questionId => $choiceId) {
+            $choice = Choice::find($choiceId);
+            $question = Question::find($questionId);
+
+            $isCorrect = $choice && $choice->is_correct;
+            if ($isCorrect) {
+                $score++;
+            }
+
+            $detailedResults[] = [
+                'question' => $question->question_text ?? '',
+                'selected_choice' => $choice->choice_text ?? '',
+                'is_correct' => $isCorrect
+            ];
+        }
+
+        $percentage = $totalQuestions > 0 ? ($score / $totalQuestions) * 100 : 0;
+        $isPassed = $percentage >= 75;
+
+        TeacherAssessmentResult::create([
+            'teacher_name' => auth()->user()->name ?? 'Trainer / Teacher',
+            'score' => $score,
+            'total_questions' => $totalQuestions,
+            'is_passed' => $isPassed,
+        ]);
+
+        return view('trainer.score-result', compact('score', 'totalQuestions', 'detailedResults', 'isPassed'));
+    })->name('trainer.assessments.grade');
+
+    Route::get('/trainer/reports', function () {
+        $results = TeacherAssessmentResult::all();
+        $totalTakers = $results->count();
+        $passedCount = $results->where('is_passed', true)->count();
+        $passingRate = $totalTakers > 0 ? round(($passedCount / $totalTakers) * 100, 1) : 0;
+
+        return view('trainer.reports', compact('results', 'totalTakers', 'passedCount', 'passingRate'));
+    })->name('trainer.reports');
 });
 
 Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
