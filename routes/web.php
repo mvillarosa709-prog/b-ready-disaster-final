@@ -17,16 +17,14 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     if (auth()->user()->role === 'trainer'){
-        return redirect()->route('trainer.courses.index');
+        return redirect()->route('trainer.dashboard');
     }
 
     return redirect()->route('teacher.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified', 'role:trainer'])->group(function () {
-    Route::get('/trainer/test', function () {
-        return 'Trainer access confirmed!';
-    });
+    Route::get('/trainer/dashboard', [TrainerController::class, 'dashboard'])->name('trainer.dashboard');
 
     // Trainer Courses Management
     Route::get('/trainer/courses', [CourseController::class, 'index'])->name('trainer.courses.index');

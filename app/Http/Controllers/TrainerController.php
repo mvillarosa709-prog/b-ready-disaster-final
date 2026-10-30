@@ -37,7 +37,7 @@ class TrainerController extends Controller
             ->where('status', 'draft')
             ->count();
 
-        return view('dashboard', compact(
+        return view('trainer.dashboard', compact(
             'courses',
             'courseCount',
             'moduleCount',

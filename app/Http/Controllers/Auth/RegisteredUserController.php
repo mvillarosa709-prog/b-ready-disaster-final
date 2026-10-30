@@ -35,13 +35,29 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:teacher,trainer'],
+            'id_number' => ['nullable', 'string', 'max:100'],
+            'trainer_id_number' => ['nullable', 'string', 'max:100'],
+            'id_document' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'trainer_id_document' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ]);
+
+        $idNumber = $request->role === 'trainer' ? $request->trainer_id_number : $request->id_number;
+        $idFilePath = null;
+
+        if ($request->role === 'trainer' && $request->hasFile('trainer_id_document')) {
+            $idFilePath = $request->file('trainer_id_document')->store('verification_ids', 'public');
+        } elseif ($request->hasFile('id_document')) {
+            $idFilePath = $request->file('id_document')->store('verification_ids', 'public');
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'id_number' => $idNumber,
+            'id_file_path' => $idFilePath,
+            'verification_status' => 'approved',
         ]);
 
         event(new Registered($user));

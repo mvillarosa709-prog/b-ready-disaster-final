@@ -1,59 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Assessment Question - B-Ready</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl font-bold mb-6 text-gray-800">Add New Assessment Question (Trainer)</h1>
-        
-        <form action="/trainer/assessments/store" method="POST" enctype="multipart/form-data">
-            @csrf
-            
-            <!-- Tab ng Upload File para sa maramihang tanong -->
-            <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <label class="block text-blue-800 font-bold mb-2">Upload a CSV file for multiple questions:</label>
-                <input type="file" name="assessment_file" class="w-full border border-blue-300 p-2 rounded-lg bg-white">
-                <p class="text-xs text-gray-500 mt-1">You can upload a CSV file to directly save all questions.</p>
-            </div>
+<x-layouts.trainer>
+    <x-slot name="title">Upload Assessment Questions CSV — B-READY</x-slot>
 
-            <div class="border-t pt-4">
-                <h2 class="text-lg font-semibold mb-4 text-gray-700">Or add questions individually:</h2>
-                
-                <!-- Tanong -->
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Question Text:</label>
-                    <textarea name="question_text" rows="3" class="w-full border border-gray-300 p-2 rounded-lg" placeholder="Enter the question for disaster preparedness here..."></textarea>
-                </div>
-
-                <!-- Mga Choices -->
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Choices & Correct Answer:</label>
-                    
-                    <div class="flex items-center mb-2">
-                        <input type="radio" name="correct_answer" value="0" class="mr-2">
-                        <input type="text" name="choices[]" class="w-full border border-gray-300 p-2 rounded-lg" placeholder="Choice A">
-                    </div>
-                    <div class="flex items-center mb-2">
-                        <input type="radio" name="correct_answer" value="1" class="mr-2">
-                        <input type="text" name="choices[]" class="w-full border border-gray-300 p-2 rounded-lg" placeholder="Choice B">
-                    </div>
-                    <div class="flex items-center mb-2">
-                        <input type="radio" name="correct_answer" value="2" class="mr-2">
-                        <input type="text" name="choices[]" class="w-full border border-gray-300 p-2 rounded-lg" placeholder="Choice C">
-                    </div>
-                    <div class="flex items-center mb-4">
-                        <input type="radio" name="correct_answer" value="3" class="mr-2">
-                        <input type="text" name="choices[]" class="w-full border border-gray-300 p-2 rounded-lg" placeholder="Choice D">
-                    </div>
-                </div>
-            </div>
-
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Save Questions</button>
-        </form>
+    <!-- Header Banner -->
+    <div class="bg-white border-b border-slate-200/80 px-4 py-8 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <a href="{{ route('trainer.assessments.index') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-700 mb-3">
+                &larr; Back to Question Bank
+            </a>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Upload Assessment Questions via CSV
+            </h1>
+            <p class="text-slate-500 text-sm mt-1">
+                Import questions and choices in bulk using a structured CSV file.
+            </p>
+        </div>
     </div>
-</body>
-</html>
+
+    <!-- Upload Form -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-8 shadow-xs">
+            <form action="{{ route('trainer.assessments.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @csrf
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-800 mb-2">
+                        Select CSV File
+                    </label>
+                    <div class="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:border-emerald-500 transition bg-slate-50/50">
+                        <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="mt-4 flex text-sm leading-6 text-slate-600 justify-center">
+                            <label for="assessment_file" class="relative cursor-pointer rounded-md bg-white font-semibold text-emerald-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-emerald-600 hover:text-emerald-500 px-3 py-1 border border-slate-200">
+                                <span>Browse file</span>
+                                <input id="assessment_file" name="assessment_file" type="file" accept=".csv" required class="sr-only">
+                            </label>
+                            <p class="pl-2 pt-1 text-xs text-slate-500">or drag and drop CSV</p>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">Only .csv files are supported (Max 5MB)</p>
+                    </div>
+                </div>
+
+                <!-- CSV Template Guide -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-2">
+                    <p class="font-bold text-slate-800">CSV Column Format Requirement:</p>
+                    <div class="font-mono bg-white p-2.5 rounded border border-slate-200 text-[11px] overflow-x-auto text-slate-700">
+                        Question, Choice A, Choice B, Choice C, Choice D, Correct Answer Text
+                    </div>
+                    <p class="text-slate-500">The 6th column must match exactly the text of the correct choice.</p>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                    <a href="{{ route('trainer.assessments.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-50">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm transition">
+                        Upload & Import Questions
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</x-layouts.trainer>
