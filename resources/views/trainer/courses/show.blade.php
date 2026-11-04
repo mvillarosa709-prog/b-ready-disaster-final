@@ -44,6 +44,12 @@
 
             @endif
 
+            @if ($errors->has('publication'))
+                <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+                    {{ $errors->first('publication') }}
+                </div>
+            @endif
+
 
             {{-- Course Information --}}
             <div class="bg-white shadow-sm sm:rounded-lg mb-8">
@@ -65,8 +71,8 @@
                         </div>
 
 
-                        {{-- Status --}}
-                        <div>
+                        {{-- Status and publication action --}}
+                        <div class="flex flex-col items-end gap-3">
 
                             @if ($course->status === 'published')
 
@@ -98,6 +104,30 @@
                                     Draft
                                 </span>
 
+                            @endif
+
+                            @if ($course->status === 'published')
+                                <form method="POST" action="{{ route('trainer.courses.unpublish', $course->id) }}"
+                                    onsubmit="return confirm('Unpublish this course? Teachers will no longer be able to access it.');">
+                                    @csrf
+                                    <button type="submit" class="rounded-md border border-amber-300 px-3 py-2 text-xs font-semibold text-amber-800 hover:bg-amber-50">
+                                        Unpublish Course
+                                    </button>
+                                </form>
+                            @else
+                                <form method="POST" action="{{ route('trainer.courses.publish', $course->id) }}">
+                                    @csrf
+                                    <button type="submit"
+                                        @disabled(! $course->hasReadyModuleQuizzes())
+                                        class="rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50">
+                                        Publish Course
+                                    </button>
+                                </form>
+                                @unless ($course->hasReadyModuleQuizzes())
+                                    <p class="max-w-56 text-right text-xs text-gray-500">
+                                        Add a module and publish a complete quiz for every module to enable publishing.
+                                    </p>
+                                @endunless
                             @endif
 
                         </div>
@@ -388,6 +418,24 @@
                                             {{ $module->learning_objectives }}
                                         </p>
 
+                                    </div>
+
+
+
+                                    {{-- Required Module Quiz --}}
+                                    <div class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-indigo-100 bg-indigo-50 p-4">
+                                        <div>
+                                            <h4 class="font-semibold text-indigo-950">Module Quiz</h4>
+                                            @if ($module->quiz?->is_published && $module->quiz->questions->isNotEmpty())
+                                                <p class="mt-1 text-xs text-emerald-700">Published &bull; {{ $module->quiz->questions->count() }} questions</p>
+                                            @else
+                                                <p class="mt-1 text-xs text-amber-800">Draft or incomplete &bull; required before the course can be published</p>
+                                            @endif
+                                        </div>
+                                        <a href="{{ route('trainer.modules.quiz.edit', [$course->id, $module->id]) }}"
+                                            class="rounded-md bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700">
+                                            Manage Quiz
+                                        </a>
                                     </div>
 
 

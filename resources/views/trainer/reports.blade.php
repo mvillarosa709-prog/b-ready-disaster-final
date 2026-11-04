@@ -19,14 +19,44 @@
                 </p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('trainer.assessments.take') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-50 shadow-xs transition">
-                    Preview Assessment Exam
+                <a href="{{ route('trainer.courses.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-50 shadow-xs transition">
+                    Manage Courses &amp; Module Quizzes
                 </a>
             </div>
         </div>
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+        <section class="overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-xs">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-amber-100 bg-amber-50/70 px-6 py-4">
+                <div>
+                    <h2 class="font-bold text-slate-900">Certificates awaiting approval</h2>
+                    <p class="mt-0.5 text-xs text-slate-600">Review and sign certificates earned by teachers.</p>
+                </div>
+                <a href="{{ route('trainer.certificates.pending') }}" class="rounded-lg bg-amber-600 px-3 py-2 text-xs font-bold text-white hover:bg-amber-700">
+                    Review all ({{ $pendingCertificates->count() }})
+                </a>
+            </div>
+            @if ($pendingCertificates->isEmpty())
+                <p class="px-6 py-5 text-sm text-slate-500">There are no pending certificates.</p>
+            @else
+                <div class="divide-y divide-slate-100">
+                    @foreach ($pendingCertificates->take(5) as $certificate)
+                        <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-3 text-sm">
+                            <div>
+                                <span class="font-semibold text-slate-900">{{ $certificate->teacher->name }}</span>
+                                <span class="text-slate-500"> — {{ $certificate->workshop->title }}</span>
+                            </div>
+                            <form method="POST" action="{{ route('trainer.certificates.approve', $certificate) }}">
+                                @csrf
+                                <button type="submit" class="text-xs font-bold text-emerald-700 hover:text-emerald-900">Approve &amp; Sign</button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </section>
+
         <!-- 4 Key Metrics Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <!-- Total Enrolled / Takers -->
@@ -74,6 +104,63 @@
             </div>
         </div>
 
+        <section id="module-quiz-results" class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs">
+            <div class="border-b border-slate-100 px-6 py-5">
+                <h2 class="text-lg font-bold text-slate-900">Module Quiz Submissions</h2>
+                <p class="mt-0.5 text-xs text-slate-500">Submitted answers and answer keys are visible to trainers only.</p>
+            </div>
+            @if ($moduleQuizAttempts->isEmpty())
+                <p class="px-6 py-8 text-sm text-slate-500">No module quiz submissions have been recorded for your courses.</p>
+            @else
+                <div class="divide-y divide-slate-100">
+                    @foreach ($moduleQuizAttempts as $attempt)
+                        <article class="px-6 py-5">
+                            <div class="flex flex-wrap items-start justify-between gap-3">
+                                <div>
+                                    <h3 class="font-semibold text-slate-900">{{ $attempt->assessment->module->title }}</h3>
+                                    <p class="mt-1 text-xs text-slate-500">
+                                        {{ $attempt->teacher->name ?? 'Teacher' }} ·
+                                        {{ $attempt->assessment->module->course->title }} ·
+                                        Attempt #{{ $attempt->attempt_number }}
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-slate-900">{{ $attempt->score }} points ({{ number_format($attempt->percentage, 1) }}%)</p>
+                                    <span class="text-xs font-semibold {{ $attempt->result === 'passed' ? 'text-emerald-700' : 'text-rose-700' }}">
+                                        {{ ucfirst($attempt->result) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <details class="mt-4">
+                                <summary class="cursor-pointer text-sm font-semibold text-indigo-700 hover:text-indigo-900">Review submitted answers</summary>
+                                <div class="mt-3 space-y-3">
+                                    @foreach ($attempt->answers as $answer)
+                                        @php
+                                            $correctAnswer = $answer->question->choices->firstWhere('is_correct', true)?->choice_text;
+                                        @endphp
+                                        <div class="rounded-xl border p-4 {{ $answer->is_correct ? 'border-emerald-200 bg-emerald-50/50' : 'border-rose-200 bg-rose-50/50' }}">
+                                            <p class="text-sm font-semibold text-slate-900">{{ $answer->question->question_text }}</p>
+                                            <p class="mt-2 text-xs text-slate-700">
+                                                <span class="font-semibold">Submitted:</span>
+                                                {{ $answer->answer_text ?? $answer->choice?->choice_text ?? 'No answer provided' }}
+                                            </p>
+                                            <p class="mt-1 text-xs text-slate-700">
+                                                <span class="font-semibold">Correct answer:</span>
+                                                {{ $correctAnswer ?? 'Not specified' }}
+                                            </p>
+                                            <p class="mt-1 text-xs font-semibold {{ $answer->is_correct ? 'text-emerald-700' : 'text-rose-700' }}">
+                                                {{ $answer->is_correct ? 'Correct' : 'Incorrect' }} · {{ $answer->points_earned }} / {{ $answer->question->points }} points
+                                            </p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </details>
+                        </article>
+                    @endforeach
+                </div>
+            @endif
+        </section>
+
         <!-- Section 1: Teacher Assessment Results -->
         <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex items-center justify-between">
@@ -81,8 +168,8 @@
                     <h2 class="text-lg font-bold text-slate-900">Teacher Assessment & Verification Log</h2>
                     <p class="text-xs text-slate-500 mt-0.5">Recorded final exam attempts and qualification status.</p>
                 </div>
-                <a href="{{ route('trainer.assessments.index') }}" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700">
-                    View Questions Bank &rarr;
+                <a href="{{ route('trainer.courses.index') }}" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700">
+                    Manage Modules &rarr;
                 </a>
             </div>
 

@@ -5,16 +5,16 @@ use App\Models\AssessmentAttempt;
 use App\Models\Certification;
 use App\Models\Choice;
 use App\Models\ClassroomImplementation;
-use App\Models\ClassroomPackage;
-use App\Models\Course;
 use App\Models\Module;
 use App\Models\ModuleProgress;
 use App\Models\Question;
 use App\Models\User;
 use App\Models\Workshop;
 use App\Models\WorkshopTeacher;
+use App\Notifications\CertificatePendingApproval;
 use App\Services\AssessmentEvaluationService;
 use App\Services\ClassroomImplementationService;
+use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
     $this->seed();
@@ -28,16 +28,22 @@ test('teacher can access dashboard', function () {
     $response->assertOk();
     $response->assertSee('Welcome back');
     $response->assertSee('NCR Regional Teachers Earthquake Preparedness');
+    $response->assertSee('Find Workshops');
+    $response->assertSee('b-ready-logo.png');
+    $response->assertDontSee('Signed in as');
 });
 
 test('teacher can browse available workshops', function () {
     $teacher = User::where('email', 'teacher@example.com')->first();
+    $closedWorkshop = Workshop::where('title', 'like', 'Fire Prevention & Lab Safety Masterclass%')->firstOrFail();
+    $closedWorkshop->update(['registration_deadline' => now()->subDay()]);
 
     $response = $this->actingAs($teacher)->get(route('teacher.workshops.index'));
 
     $response->assertOk();
     $response->assertSee('Available Workshops');
     $response->assertSee('Fire Prevention & Lab Safety Masterclass');
+    $response->assertSee('Registration Closed');
 });
 
 test('teacher can view my workshops', function () {
@@ -46,7 +52,7 @@ test('teacher can view my workshops', function () {
     $response = $this->actingAs($teacher)->get(route('teacher.workshops.my'));
 
     $response->assertOk();
-    $response->assertSee('My Registered Workshops');
+    $response->assertSee('My Workshops');
     $response->assertSee('Comprehensive Typhoon & Flood Safety');
 });
 
@@ -136,7 +142,12 @@ test('teacher completing module 1 unlocks module 2', function () {
     $response->assertSee('Evacuation Drills');
 });
 
-test('assessment service evaluates score and issues certificate on passing', function () {
+test('assessment service evaluates score and creates a pending certificate on passing', function () {
+    Notification::fake();
+    User::factory()->create([
+        'role' => 'admin',
+        'email_verified_at' => now(),
+    ]);
     $teacher = User::factory()->create([
         'role' => 'teacher',
         'email_verified_at' => now(),
@@ -144,6 +155,26 @@ test('assessment service evaluates score and issues certificate on passing', fun
 
     $workshop = Workshop::where('title', 'like', '%Earthquake%')->first();
     $assessment = $workshop->assessment;
+
+    foreach ($workshop->ordered_modules->where('is_required', true) as $module) {
+        if ((int) $module->id === (int) $assessment->module_id) {
+            continue;
+        }
+
+        ModuleProgress::updateOrCreate(
+            [
+                'workshop_id' => $workshop->id,
+                'module_id' => $module->id,
+                'teacher_id' => $teacher->id,
+            ],
+            [
+                'user_id' => $teacher->id,
+                'progress' => 100,
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]
+        );
+    }
 
     WorkshopTeacher::create([
         'workshop_id' => $workshop->id,
@@ -166,11 +197,17 @@ test('assessment service evaluates score and issues certificate on passing', fun
     expect($result['percentage'])->toBeGreaterThanOrEqual(80.00);
     expect($result['certification'])->not->toBeNull();
     expect($result['certification']->certificate_number)->toStartWith('BRD-');
+    expect($result['certification']->status)->toBe('pending');
 
     $this->assertDatabaseHas('certifications', [
         'teacher_id' => $teacher->id,
         'workshop_id' => $workshop->id,
+        'status' => 'pending',
     ]);
+    Notification::assertSentTo(
+        User::whereIn('role', ['trainer', 'admin'])->get(),
+        CertificatePendingApproval::class
+    );
 });
 
 test('classroom package is locked for uncertified teacher and accessible for certified teacher', function () {
@@ -221,7 +258,7 @@ test('classroom implementation service dynamically calculates student aggregates
     expect($implementation->students_completed)->toBe(3);
     expect($implementation->students_passed)->toBe(2);
     expect($implementation->students_failed)->toBe(1);
-    expect((float)$implementation->class_average_percentage)->toBe(80.00);
+    expect((float) $implementation->class_average_percentage)->toBe(80.00);
 
     $this->assertDatabaseHas('classroom_implementations', [
         'id' => $implementation->id,
@@ -287,7 +324,7 @@ test('personal reports dashboard renders with all four pillars and computed metr
     $response->assertSee('Students Reached');
 });
 
-test('teacher interacting with material sets module progress to 100% and status to completed', function () {
+test('teacher interacting with material advances progress but requires the module quiz to complete', function () {
     $teacher = User::factory()->create(['role' => 'teacher', 'email_verified_at' => now()]);
     $workshop1 = Workshop::where('title', 'like', '%Earthquake%')->first();
     $mod1 = $workshop1->course->modules->where('sequence', 1)->first();
@@ -323,9 +360,12 @@ test('teacher interacting with material sets module progress to 100% and status 
         'workshop_id' => $workshop1->id,
         'module_id' => $mod2->id,
         'user_id' => $teacher->id,
-        'progress' => 100,
-        'status' => 'completed',
+        'progress' => 75,
+        'status' => 'in_progress',
     ]);
+
+    $this->actingAs($teacher)
+        ->post(route('teacher.learning.module.complete', [$workshop1, $mod2]))
+        ->assertRedirect(route('teacher.learning.module', [$workshop1, $mod2]))
+        ->assertSessionHas('warning');
 });
-
-

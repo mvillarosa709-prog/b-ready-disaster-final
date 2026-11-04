@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Assessment;
+use App\Models\AssessmentAttempt;
 use App\Models\Course;
 
 class TrainerController extends Controller
@@ -32,6 +34,12 @@ class TrainerController extends Controller
             ->where('status', 'published')
             ->count();
 
+        $quizCount = Assessment::whereNotNull('module_id')
+            ->whereHas('module.course', fn ($query) => $query->where('trainer_id', $trainerId))
+            ->count();
+        $submissionCount = AssessmentAttempt::whereHas('assessment.module.course', fn ($query) => $query->where('trainer_id', $trainerId))
+            ->count();
+
         // Count draft courses.
         $draftCount = $courses
             ->where('status', 'draft')
@@ -41,6 +49,8 @@ class TrainerController extends Controller
             'courses',
             'courseCount',
             'moduleCount',
+            'quizCount',
+            'submissionCount',
             'publishedCount',
             'draftCount'
         ));

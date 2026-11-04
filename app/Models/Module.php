@@ -14,7 +14,7 @@ class Module extends Model
         'title',
         'description',
         'learning_objectives',
-        'duration',
+        'estimated_duration',
         'sequence',
     ];
 
@@ -33,6 +33,17 @@ class Module extends Model
     {
         return $this->hasMany(Material::class, 'module_id')
             ->orderBy('sequence');
+    }
+
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class, 'module_id');
+    }
+
+    public function quiz()
+    {
+        return $this->hasOne(Assessment::class, 'module_id')
+            ->whereNull('workshop_id');
     }
 
     /**

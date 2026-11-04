@@ -1,3 +1,11 @@
+@if (auth()->user()->role === 'admin')
+    <li>
+        <a href="{{ route('trainer.certificates.pending') }}"
+           class="group flex gap-x-3 rounded-xl p-2.5 text-sm font-semibold transition-colors {{ request()->routeIs('trainer.certificates.*') ? 'bg-emerald-600 text-white' : 'text-slate-700 hover:bg-slate-100 hover:text-emerald-600' }}">
+            Certificate Approvals
+        </a>
+    </li>
+@else
 <!-- Trainer Dashboard -->
 <li>
     <a href="{{ route('trainer.dashboard') }}" 
@@ -6,6 +14,17 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
         </svg>
         Dashboard Overview
+    </a>
+</li>
+
+<!-- Trainer Workshops -->
+<li>
+    <a href="{{ route('trainer.workshops.index') }}"
+       class="group flex gap-x-3 rounded-xl p-2.5 text-sm font-semibold transition-colors {{ request()->routeIs('trainer.workshops.*') ? 'bg-emerald-600 text-white shadow-xs shadow-emerald-600/20' : 'text-slate-700 hover:bg-slate-100 hover:text-emerald-600' }}">
+        <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('trainer.workshops.*') ? 'text-white' : 'text-slate-400 group-hover:text-emerald-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z"/>
+        </svg>
+        Workshop Management
     </a>
 </li>
 
@@ -20,17 +39,6 @@
     </a>
 </li>
 
-<!-- Assessments & Question Bank -->
-<li>
-    <a href="{{ route('trainer.assessments.index') }}" 
-       class="group flex gap-x-3 rounded-xl p-2.5 text-sm font-semibold transition-colors {{ request()->routeIs('trainer.assessments.*') ? 'bg-emerald-600 text-white shadow-xs shadow-emerald-600/20' : 'text-slate-700 hover:bg-slate-100 hover:text-emerald-600' }}">
-        <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('trainer.assessments.*') ? 'text-white' : 'text-slate-400 group-hover:text-emerald-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-        </svg>
-        Assessment Bank & Quiz
-    </a>
-</li>
-
 <!-- Trainer Monitoring & Reports -->
 <li>
     <a href="{{ route('trainer.reports') }}" 
@@ -41,3 +49,4 @@
         Monitoring & Reports
     </a>
 </li>
+@endif

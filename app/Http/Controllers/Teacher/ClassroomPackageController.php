@@ -22,18 +22,20 @@ class ClassroomPackageController extends Controller
         $teacher = $request->user();
 
         $enrolledWorkshopIds = WorkshopTeacher::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
             ->whereIn('status', ['registered', 'completed'])
             ->pluck('workshop_id');
 
         $packages = ClassroomPackage::whereIn('workshop_id', $enrolledWorkshopIds)
+            ->whereHas('workshop.course', fn ($query) => $query->published())
             ->with(['workshop.trainer', 'materials'])
             ->get();
 
         $certifiedWorkshopIds = Certification::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
+            ->where('status', 'approved')
             ->pluck('workshop_id')
             ->toArray();
 
@@ -54,9 +56,10 @@ class ClassroomPackageController extends Controller
         $isUnlocked = Gate::allows('unlock', $package);
 
         $certification = Certification::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
             ->where('workshop_id', $package->workshop_id)
+            ->where('status', 'approved')
             ->first();
 
         // Categorize materials by type (teacher_guide, student_manual, worksheet, etc.)
@@ -73,7 +76,7 @@ class ClassroomPackageController extends Controller
         Gate::authorize('download', $package);
 
         if ($material->classroom_package_id !== $package->id) {
-            abort(404, "Material not found in this package.");
+            abort(404, 'Material not found in this package.');
         }
 
         if (Storage::disk('public')->exists($material->file_path)) {
@@ -91,7 +94,7 @@ class ClassroomPackageController extends Controller
         Gate::authorize('download', $package);
 
         if ($material->classroom_package_id !== $package->id) {
-            abort(404, "Material not found in this package.");
+            abort(404, 'Material not found in this package.');
         }
 
         if (Storage::disk('public')->exists($material->file_path)) {

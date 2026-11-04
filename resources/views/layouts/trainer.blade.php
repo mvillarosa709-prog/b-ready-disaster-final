@@ -48,11 +48,8 @@
                     <!-- Sidebar component for mobile -->
                     <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-900 px-6 pb-4">
                         <div class="flex h-16 shrink-0 items-center gap-3">
-                            <div class="h-10 w-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/30 font-bold text-xl">
-                                B
-                            </div>
+                            <x-application-logo class="h-12 w-16 shrink-0" />
                             <div>
-                                <span class="text-white font-bold tracking-tight text-lg">B-READY</span>
                                 <span class="block text-xs text-emerald-400 font-medium">DRR Trainer Portal</span>
                             </div>
                         </div>
@@ -76,11 +73,8 @@
                 <!-- Branding -->
                 <div class="flex h-20 shrink-0 items-center justify-between border-b border-slate-100">
                     <a href="{{ route('trainer.dashboard') }}" class="flex items-center gap-3">
-                        <div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/25 font-black text-xl tracking-wider">
-                            B
-                        </div>
-                        <div>
-                            <span class="text-slate-900 font-extrabold tracking-tight text-xl">B-READY</span>
+                        <x-application-logo class="h-14 w-[4.75rem] shrink-0" />
+                        <div class="min-w-0">
                             <span class="flex items-center gap-1.5 text-xs text-emerald-600 font-semibold uppercase tracking-wider">
                                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Trainer Portal
                             </span>

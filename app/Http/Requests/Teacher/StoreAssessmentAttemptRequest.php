@@ -23,7 +23,7 @@ class StoreAssessmentAttemptRequest extends FormRequest
     {
         return [
             'answers' => ['required', 'array'],
-            'answers.*' => ['required', 'integer', 'exists:choices,id'],
+            'answers.*' => ['required', 'string', 'max:1000'],
         ];
     }
 
@@ -35,7 +35,7 @@ class StoreAssessmentAttemptRequest extends FormRequest
         return [
             'answers.required' => 'Please provide answers before submitting your assessment.',
             'answers.*.required' => 'Each question must have a chosen option.',
-            'answers.*.exists' => 'The selected option is invalid.',
+            'answers.*.string' => 'Each answer must be valid text or an option selection.',
         ];
     }
 }

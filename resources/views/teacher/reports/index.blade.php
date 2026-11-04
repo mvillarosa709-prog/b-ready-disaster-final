@@ -1,6 +1,6 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Personal Reports &bull; Teacher Accreditation</x-slot>
-    <x-slot name="header">Teacher Personal Reports &amp; Accreditation Dashboard</x-slot>
+    <x-slot name="header">Personal Reports</x-slot>
 
     <div class="space-y-8" x-data="{ activeTab: 'all' }">
         
@@ -220,7 +220,7 @@
                                     @endphp
                                     <tr class="hover:bg-slate-50/70 transition-colors">
                                         <td class="p-4 font-bold text-slate-900">
-                                            {{ $att->assessment->workshop->title ?? 'DRR Workshop' }}
+                                            {{ $att->workshop->title ?? $att->assessment->workshop->title ?? 'DRR Workshop' }}
                                             <span class="block text-[11px] font-normal text-slate-500 mt-0.5">{{ $att->assessment->title }}</span>
                                         </td>
                                         <td class="p-4 text-center font-bold text-slate-700">#{{ $att->attempt_number }}</td>
@@ -240,8 +240,8 @@
                                             {{ $att->submitted_at ? $att->submitted_at->format('M d, Y &bull; h:i A') : 'Submitted' }}
                                         </td>
                                         <td class="p-4 text-right">
-                                            @if ($att->assessment && $att->assessment->workshop)
-                                                <a href="{{ route('teacher.assessments.result', [$att->assessment->workshop, $att]) }}"
+                                            @if ($att->assessment && ($att->workshop || $att->assessment->workshop))
+                                                <a href="{{ route('teacher.assessments.result', [$att->workshop ?? $att->assessment->workshop, $att]) }}"
                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-indigo-600 hover:bg-slate-50 shadow-2xs transition-colors">
                                                     View Feedback
                                                 </a>
@@ -271,14 +271,14 @@
                         &larr; Back to All
                     </button>
                     <span class="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
-                        {{ $certifications->count() }} Issued Credentials
+                        {{ $certifications->count() }} Certificate Requests
                     </span>
                 </div>
             </div>
 
             @if ($certifications->isEmpty())
                 <div class="bg-white rounded-2xl border border-dashed border-slate-300 p-8 text-center text-xs text-slate-500">
-                    No certifications earned yet. Score at or above the passing mark on a workshop final exam to earn your official certificate and digital badge.
+                    No certificate requests yet. Complete the required workshop modules and pass the final assessment to request a certificate.
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -300,6 +300,9 @@
                                     <div>
                                         <span class="text-[10px] font-black uppercase tracking-widest text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                                             {{ $cert->badge_name }}
+                                        </span>
+                                        <span class="ml-1 text-[10px] font-bold uppercase {{ $cert->status === 'approved' ? 'text-emerald-700' : 'text-amber-700' }}">
+                                            {{ $cert->status === 'approved' ? 'Approved' : 'Pending approval' }}
                                         </span>
                                         <h4 class="mt-1 text-sm font-extrabold text-slate-900 leading-tight">
                                             {{ $cert->workshop->title }}

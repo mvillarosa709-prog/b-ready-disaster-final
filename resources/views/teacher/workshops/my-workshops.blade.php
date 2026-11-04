@@ -1,6 +1,6 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">My Workshops</x-slot>
-    <x-slot name="header">My Registered Workshops</x-slot>
+    <x-slot name="header">My Workshops</x-slot>
 
     <div class="space-y-6" x-data="{ activeTab: 'active' }">
         <!-- Back Button -->
@@ -106,10 +106,17 @@
                                         {{ $item->completed_modules === 0 ? 'Start Module ' . $item->next_module->sequence : 'Resume Module ' . $item->next_module->sequence }} &rarr;
                                     </a>
                                 @else
-                                    <a href="{{ route('teacher.assessments.show', $item->workshop) }}"
-                                       class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-xl transition-colors shadow-xs">
-                                        Take Exam &rarr;
-                                    </a>
+                                    @if ($item->workshop->assessment?->module_id)
+                                        <a href="{{ route('teacher.learning.module', [$item->workshop, $item->workshop->assessment->module_id]) }}"
+                                           class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-xl transition-colors shadow-xs">
+                                            Continue to Module Quiz &rarr;
+                                        </a>
+                                    @else
+                                        <a href="{{ route('teacher.workshops.show', $item->workshop) }}"
+                                           class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl transition-colors shadow-xs">
+                                            View Modules &rarr;
+                                        </a>
+                                    @endif
                                 @endif
                             </div>
                         </div>

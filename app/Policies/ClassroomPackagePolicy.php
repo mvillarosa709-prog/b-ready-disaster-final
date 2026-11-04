@@ -18,6 +18,10 @@ class ClassroomPackagePolicy
             return false;
         }
 
+        if (! $package->workshop || ! $package->workshop->courseIsPublished()) {
+            return false;
+        }
+
         return WorkshopTeacher::where('workshop_id', $package->workshop_id)
             ->where('teacher_id', $user->id)
             ->whereIn('status', ['registered', 'completed'])
@@ -35,6 +39,7 @@ class ClassroomPackagePolicy
 
         return Certification::where('teacher_id', $user->id)
             ->where('workshop_id', $package->workshop_id)
+            ->where('status', 'approved')
             ->exists();
     }
 

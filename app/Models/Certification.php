@@ -17,12 +17,16 @@ class Certification extends Model
         'badge_name',
         'certificate_file',
         'certified_at',
+        'status',
+        'approved_by',
+        'approved_at',
     ];
 
     protected function casts(): array
     {
         return [
             'certified_at' => 'datetime',
+            'approved_at' => 'datetime',
         ];
     }
 
@@ -48,5 +52,10 @@ class Certification extends Model
             AssessmentAttempt::class,
             'assessment_attempt_id'
         );
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }

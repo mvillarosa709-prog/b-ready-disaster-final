@@ -20,9 +20,15 @@ class PasswordController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
-        ]);
+        $user = $request->user();
+        $user->password = Hash::make($validated['password']);
+        $user->must_change_password = false;
+        $user->save();
+
+        if ($user->role === 'trainer' && $request->routeIs('trainer.password.update')) {
+            return redirect()->route('trainer.dashboard')
+                ->with('status', 'password-updated');
+        }
 
         return back()->with('status', 'password-updated');
     }

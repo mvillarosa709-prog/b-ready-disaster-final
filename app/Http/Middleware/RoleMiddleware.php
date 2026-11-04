@@ -11,15 +11,14 @@ class RoleMiddleware
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, Closure $next, $roles): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        $roles = explode(',', $roles);
-        
-        if (! $request->user() || ! in_array($request->user()->role, $roles)){
+        $roles = array_merge(...array_map(fn ($role) => explode(',', $role), $roles));
+
+        if (! $request->user() || ! in_array($request->user()->role, $roles, true)) {
             abort(403);
         }
 
         return $next($request);
     }
-    
 }

@@ -28,25 +28,26 @@ class EnsureTeacherCertified
         // Check if workshop model or parameter is present
         if ($request->route('workshop')) {
             $workshop = $request->route('workshop');
-            $workshopId = $workshop instanceof Workshop ? $workshop->id : (int)$workshop;
+            $workshopId = $workshop instanceof Workshop ? $workshop->id : (int) $workshop;
         } elseif ($request->route('package')) {
             $package = $request->route('package');
             if ($package instanceof ClassroomPackage) {
                 $workshopId = $package->workshop_id;
             } else {
-                $pkg = ClassroomPackage::find((int)$package);
+                $pkg = ClassroomPackage::find((int) $package);
                 $workshopId = $pkg ? $pkg->workshop_id : null;
             }
         } elseif ($request->filled('workshop_id')) {
-            $workshopId = (int)$request->input('workshop_id');
+            $workshopId = (int) $request->input('workshop_id');
         }
 
         if ($workshopId) {
             $isCertified = Certification::where(function ($q) use ($user) {
                 $q->where('teacher_id', $user->id)->orWhere('user_id', $user->id);
             })
-            ->where('workshop_id', $workshopId)
-            ->exists();
+                ->where('workshop_id', $workshopId)
+                ->where('status', 'approved')
+                ->exists();
 
             if (! $isCertified) {
                 if ($request->expectsJson()) {

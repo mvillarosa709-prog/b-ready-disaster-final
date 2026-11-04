@@ -1,6 +1,6 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Log Classroom Implementation</x-slot>
-    <x-slot name="header">Record Classroom Implementation &amp; Student Scores</x-slot>
+    <x-slot name="header">New Classroom Report</x-slot>
 
     <div class="max-w-4xl mx-auto space-y-6">
         <!-- Back Navigation -->

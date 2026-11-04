@@ -1,6 +1,6 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Classroom Implementations</x-slot>
-    <x-slot name="header">Classroom Implementation Reports</x-slot>
+    <x-slot name="header">Classroom Implementations</x-slot>
 
     <div class="space-y-6">
         <!-- Back Button -->

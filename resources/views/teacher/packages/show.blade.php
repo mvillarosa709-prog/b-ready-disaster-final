@@ -1,6 +1,6 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">{{ $package->title }} &bull; Workshop Repository</x-slot>
-    <x-slot name="header">{{ $package->title }}</x-slot>
+    <x-slot name="header">Workshop Repository</x-slot>
 
     <div class="space-y-6">
         <!-- Top Back Bar -->
@@ -68,9 +68,9 @@
                         <p class="text-xs text-slate-500 leading-relaxed">
                             Pass the workshop final assessment to unlock all materials and enable implementation reporting.
                         </p>
-                        <a href="{{ route('teacher.assessments.show', $package->workshop) }}"
+                        <a href="{{ route('teacher.workshops.show', $package->workshop) }}"
                            class="block text-center w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors">
-                            Complete Certification &rarr;
+                            Go to Workshop Modules &rarr;
                         </a>
                     @endif
                 </div>

@@ -11,6 +11,7 @@ class AssessmentAttempt extends Model
 
     protected $fillable = [
         'assessment_id',
+        'workshop_id',
         'teacher_id',
         'attempt_number',
         'score',
@@ -43,6 +44,11 @@ class AssessmentAttempt extends Model
         );
     }
 
+    public function workshop()
+    {
+        return $this->belongsTo(Workshop::class, 'workshop_id');
+    }
+
     public function teacher()
     {
         return $this->belongsTo(
@@ -67,4 +73,3 @@ class AssessmentAttempt extends Model
         );
     }
 }
-

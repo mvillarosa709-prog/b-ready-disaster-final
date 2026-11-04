@@ -185,51 +185,6 @@
                         </div>
 
 
-                        {{-- Status --}}
-                        <div class="mb-8">
-
-                            <label
-                                for="status"
-                                class="block text-sm font-medium text-gray-700"
-                            >
-                                Publication Status
-                            </label>
-
-                            <select
-                                id="status"
-                                name="status"
-                                required
-                                class="mt-1 block w-full rounded-md border-gray-300
-                                       shadow-sm focus:border-indigo-500
-                                       focus:ring-indigo-500"
-                            >
-
-                                <option
-                                    value="draft"
-                                    {{ old('status', $course->status) === 'draft' ? 'selected' : '' }}
-                                >
-                                    Draft
-                                </option>
-
-                                <option
-                                    value="published"
-                                    {{ old('status', $course->status) === 'published' ? 'selected' : '' }}
-                                >
-                                    Published
-                                </option>
-
-                                <option
-                                    value="unpublished"
-                                    {{ old('status', $course->status) === 'unpublished' ? 'selected' : '' }}
-                                >
-                                    Unpublished
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
                         {{-- Buttons --}}
                         <div class="flex items-center justify-end gap-3">
 

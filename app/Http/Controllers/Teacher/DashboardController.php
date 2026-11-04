@@ -24,8 +24,9 @@ class DashboardController extends Controller
 
         // Enrolled workshops
         $enrollments = WorkshopTeacher::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
+            ->whereHas('workshop.course', fn ($query) => $query->published())
             ->with(['workshop.course.modules', 'workshop.trainer', 'workshop.classroomPackage'])
             ->get();
 
@@ -38,8 +39,8 @@ class DashboardController extends Controller
 
         // Total certifications
         $certifications = Certification::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
             ->with(['workshop.trainer', 'workshop.classroomPackage', 'assessmentAttempt'])
             ->latest('certified_at')
             ->get();
@@ -47,15 +48,15 @@ class DashboardController extends Controller
 
         // Modules completed count
         $completedModulesCount = ModuleProgress::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
             ->where('status', 'completed')
             ->count();
 
         // Implementations & Students Reached
         $implementations = ClassroomImplementation::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
             ->with(['workshop', 'classroomPackage', 'studentResults'])
             ->latest('implementation_date')
             ->get();
@@ -97,9 +98,10 @@ class DashboardController extends Controller
 
             // Check certification
             $hasCertificate = Certification::where(function ($q) use ($teacher) {
-                    $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-                })
+                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+            })
                 ->where('workshop_id', $workshop->id)
+                ->where('status', 'approved')
                 ->exists();
 
             return (object) [
@@ -116,19 +118,20 @@ class DashboardController extends Controller
 
         // 2. My Assessment: Recent attempt logs, percentages, and final status
         $recentAttempts = AssessmentAttempt::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
-            ->with(['assessment.workshop'])
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
+            ->with(['assessment.workshop', 'workshop'])
             ->latest('submitted_at')
             ->take(5)
             ->get();
 
         // Available upcoming published workshops (not yet enrolled & registration deadline open)
         $availableWorkshops = Workshop::whereIn('status', ['published', 'ongoing'])
+            ->whereHas('course', fn ($query) => $query->published())
             ->whereNotIn('id', $enrolledWorkshopIds)
             ->where(function ($q) {
                 $q->whereNull('registration_deadline')
-                  ->orWhere('registration_deadline', '>=', now());
+                    ->orWhere('registration_deadline', '>=', now());
             })
             ->with(['trainer', 'course'])
             ->latest('start_date')

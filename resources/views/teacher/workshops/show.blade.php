@@ -1,6 +1,6 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">{{ $workshop->title }}</x-slot>
-    <x-slot name="header">{{ $workshop->title }}</x-slot>
+    <x-slot name="header">Workshop Overview</x-slot>
 
     <div class="space-y-8">
         <!-- Back Button -->
@@ -231,81 +231,43 @@
 
             <!-- Right Col: Gating Blocks (Assessment & Classroom Packages) -->
             <div class="space-y-6">
-                <!-- 1. Assessment Gating Card -->
+                <!-- 1. Inline Module Quiz Card -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Accreditation Exam</span>
-                        @if ($certification)
+                        <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Module Quiz</span>
+                        @if ($certification?->status === 'approved')
                             <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                                 Passed
                             </span>
-                        @elseif ($allRequiredCompleted)
-                            <span class="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
-                                Unlocked
-                            </span>
                         @else
-                            <span class="inline-flex items-center gap-1 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
-                                Locked
+                            <span class="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
+                                In module
                             </span>
                         @endif
                     </div>
 
-                    <h4 class="mt-2 text-base font-bold text-slate-900">Final Assessment</h4>
+                    <h4 class="mt-2 text-base font-bold text-slate-900">Quizzes are part of module content</h4>
                     <p class="mt-1 text-xs text-slate-500 leading-relaxed">
-                        Demonstrate mastery of disaster readiness concepts to receive your certificate and unlock the workshop repository.
+                        Complete each module's learning materials and pass its quiz to unlock the next module.
                     </p>
 
-                    @if ($assessment)
-                        <div class="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs space-y-1.5 text-slate-600">
-                            <div class="flex justify-between">
-                                <span>Passing Score:</span>
-                                <span class="font-bold text-slate-800">{{ $assessment->passing_score }}%</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Time Limit:</span>
-                                <span class="font-bold text-slate-800">{{ $assessment->time_limit }} minutes</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Attempts Used:</span>
-                                <span class="font-bold text-slate-800">{{ $attemptCount }} / {{ $assessment->max_attempts }}</span>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Gating notification -->
                     <div class="mt-4">
                         @if ($certification)
                             <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
-                                <div class="font-bold">You are certified!</div>
+                                <div class="font-bold">{{ $certification->status === 'approved' ? 'You are certified!' : 'Certificate pending approval' }}</div>
                                 <div class="text-[11px] text-emerald-700 mt-0.5">Certificate #{{ $certification->certificate_number }}</div>
                             </div>
                             <a href="{{ route('teacher.assessments.certificate', $workshop) }}" target="_blank"
-                               class="mt-3 block w-full text-center py-2 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-2xs transition-colors">
-                                View / Print Certificate
+                               class="mt-3 block w-full text-center py-2 px-4 rounded-xl {{ $certification->status === 'approved' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-slate-500 hover:bg-slate-600' }} text-white font-bold text-xs shadow-2xs transition-colors">
+                                {{ $certification->status === 'approved' ? 'View / Print Certificate' : 'View Certificate Status' }}
                             </a>
-                        @elseif (! $allRequiredCompleted)
-                            <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800">
-                                <div class="font-bold flex items-center gap-1.5">
-                                    <span>🔒 Exam Locked</span>
-                                </div>
-                                <div class="text-[11px] text-amber-700 mt-1 leading-relaxed">
-                                    Finish 100% of required modules above to unlock the final examination.
-                                </div>
-                            </div>
-                            <button type="button" disabled 
-                                    class="mt-3 w-full py-2.5 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200">
-                                Exam Locked
-                            </button>
-                        @elseif ($attemptCount >= ($assessment->max_attempts ?? 3))
-                            <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800">
-                                <div class="font-bold">Maximum Attempts Reached</div>
-                                <div class="text-[11px] text-rose-700 mt-1">Please contact your DRR trainer for re-evaluation.</div>
-                            </div>
-                        @else
-                            <a href="{{ route('teacher.assessments.show', $workshop) }}"
+                        @elseif ($assessment?->module_id)
+                            <a href="{{ route('teacher.learning.module', [$workshop, $assessment->module_id]) }}"
                                class="block w-full text-center py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors">
-                                Take Final Assessment &rarr;
+                                Go to Module {{ $assessment->module->sequence ?? '' }} Quiz &rarr;
                             </a>
+                        @else
+                            <p class="text-xs text-slate-500">Start a module to access its learning materials and quiz.</p>
                         @endif
                     </div>
                 </div>

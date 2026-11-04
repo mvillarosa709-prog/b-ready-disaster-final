@@ -36,6 +36,11 @@ class Workshop extends Model
         return $this->belongsTo(Course::class, 'course_id');
     }
 
+    public function courseIsPublished(): bool
+    {
+        return $this->course()->published()->exists();
+    }
+
     public function trainer()
     {
         return $this->belongsTo(User::class, 'trainer_id');
@@ -94,7 +99,12 @@ class Workshop extends Model
         return $this->hasOne(
             Assessment::class,
             'workshop_id'
-        );
+        )->latestOfMany();
+    }
+
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class, 'workshop_id');
     }
 
     public function classroomPackage()

@@ -1,26 +1,14 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Discover Workshops</x-slot>
-    <x-slot name="header">Discover & Register for DRR Workshops</x-slot>
+    <x-slot name="header">Discover Workshops</x-slot>
 
     <div class="space-y-6">
-
-    <!-- Back Button -->
-    <div>
-        <a href="{{ url()->previous() }}"
-           class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 19l-7-7 7-7"/>
-            </svg>
-            Back
-        </a>
-    </div>
 
     <!-- Top Search & Filter Bar -->
     <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="w-full sm:w-auto">
             <h2 class="text-lg font-bold text-slate-900">Available Workshops</h2>
-            <p class="text-xs text-slate-500">Find training workshops designed by Disaster Risk Reduction experts.</p>
+            <p class="text-xs text-slate-500">Browse published workshops from Disaster Risk Reduction trainers.</p>
         </div>
         <!-- Search Form -->
         <form method="GET" action="{{ route('teacher.workshops.index') }}" class="w-full sm:w-80 flex items-center gap-2">

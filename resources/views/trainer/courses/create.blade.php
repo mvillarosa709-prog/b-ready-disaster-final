@@ -9,7 +9,7 @@
             </h2>
 
             <p class="text-sm text-gray-500 mt-1">
-                Create a new training course.
+                New courses start as drafts. Add modules and publish a quiz for each before publishing the course.
             </p>
 
         </div>
@@ -182,55 +182,6 @@
                                 </span>
 
                             </div>
-
-                        </div>
-
-
-                        {{-- Status --}}
-                        <div class="mb-8">
-
-                            <label
-                                for="status"
-                                class="block text-sm font-medium text-gray-700"
-                            >
-                                Publication Status
-                            </label>
-
-                            <select
-                                id="status"
-                                name="status"
-                                required
-                                class="mt-1 block w-full rounded-md border-gray-300
-                                       shadow-sm focus:border-indigo-500
-                                       focus:ring-indigo-500"
-                            >
-
-                                <option
-                                    value="draft"
-                                    {{ old('status', 'draft') === 'draft' ? 'selected' : '' }}
-                                >
-                                    Draft
-                                </option>
-
-                                <option
-                                    value="published"
-                                    {{ old('status') === 'published' ? 'selected' : '' }}
-                                >
-                                    Published
-                                </option>
-
-                                <option
-                                    value="unpublished"
-                                    {{ old('status') === 'unpublished' ? 'selected' : '' }}
-                                >
-                                    Unpublished
-                                </option>
-
-                            </select>
-
-                            <p class="text-xs text-gray-500 mt-1">
-                                Draft courses are not yet ready for workshop use.
-                            </p>
 
                         </div>
 

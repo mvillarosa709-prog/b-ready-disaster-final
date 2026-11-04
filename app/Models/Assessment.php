@@ -11,6 +11,7 @@ class Assessment extends Model
 
     protected $fillable = [
         'workshop_id',
+        'module_id',
         'trainer_id',
         'title',
         'description',
@@ -36,6 +37,11 @@ class Assessment extends Model
             Workshop::class,
             'workshop_id'
         );
+    }
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class, 'module_id');
     }
 
     public function trainer()

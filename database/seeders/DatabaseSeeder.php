@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Assessment;
-use App\Models\AssessmentAnswer;
 use App\Models\AssessmentAttempt;
 use App\Models\Certification;
 use App\Models\Choice;
@@ -173,6 +172,7 @@ class DatabaseSeeder extends Seeder
         // Assessment for Workshop 1
         $assessment1 = Assessment::create([
             'workshop_id' => $workshop1->id,
+            'module_id' => $mod3->id,
             'trainer_id' => $trainer->id,
             'title' => 'Final Examination: Earthquake Readiness & School Evacuation Facilitation',
             'description' => 'Evaluation of disaster response principles, teacher leadership during emergency conditions, and drill execution.',
@@ -337,6 +337,7 @@ class DatabaseSeeder extends Seeder
 
         $assessment2 = Assessment::create([
             'workshop_id' => $workshop2->id,
+            'module_id' => $mod2_1->id,
             'trainer_id' => $trainer->id,
             'title' => 'Typhoon Preparedness Competency Exam',
             'description' => 'Accreditation examination on hydrometeorological risk management.',
@@ -348,6 +349,7 @@ class DatabaseSeeder extends Seeder
 
         $attempt2 = AssessmentAttempt::create([
             'assessment_id' => $assessment2->id,
+            'workshop_id' => $workshop2->id,
             'teacher_id' => $historicalTeacher->id,
             'attempt_number' => 1,
             'score' => 92.00,
@@ -365,6 +367,9 @@ class DatabaseSeeder extends Seeder
             'certificate_number' => 'BRD-2026-TF9284K',
             'badge_name' => 'DRR Certified Educator',
             'certified_at' => now()->subDays(15),
+            'status' => 'approved',
+            'approved_by' => $trainer->id,
+            'approved_at' => now()->subDays(15),
         ]);
 
         // Classroom Package for Workshop 2
@@ -439,7 +444,7 @@ class DatabaseSeeder extends Seeder
             'course_id' => $course3->id,
             'title' => 'Chemistry Lab Safety & Hazardous Spill Containment',
             'description' => 'Storage classifications, SDS sheets, and neutralizing chemical spills.',
-            'learning_objectives' => "Identify toxic chemicals and proper containment methods.",
+            'learning_objectives' => 'Identify toxic chemicals and proper containment methods.',
             'estimated_duration' => 35,
             'sequence' => 1,
             'is_required' => true,
@@ -449,7 +454,7 @@ class DatabaseSeeder extends Seeder
             'course_id' => $course3->id,
             'title' => 'Fire Extinguisher P.A.S.S. Method & Suppression Drills',
             'description' => 'Operating Class A, B, and C fire extinguishers in school environments.',
-            'learning_objectives' => "Master the Pull-Aim-Squeeze-Sweep technique safely.",
+            'learning_objectives' => 'Master the Pull-Aim-Squeeze-Sweep technique safely.',
             'estimated_duration' => 45,
             'sequence' => 2,
             'is_required' => true,
@@ -468,5 +473,52 @@ class DatabaseSeeder extends Seeder
 
         WorkshopModule::create(['workshop_id' => $workshop3->id, 'module_id' => $mod3_1->id, 'sequence' => 1]);
         WorkshopModule::create(['workshop_id' => $workshop3->id, 'module_id' => $mod3_2->id, 'sequence' => 2]);
+
+        foreach (Module::with('course')->get() as $module) {
+            $quiz = Assessment::create([
+                'workshop_id' => null,
+                'module_id' => $module->id,
+                'trainer_id' => $module->course->trainer_id,
+                'title' => 'Knowledge Check: '.$module->title,
+                'description' => 'Answer the question to demonstrate the key safety principles from this module.',
+                'passing_score' => 75,
+                'time_limit' => 10,
+                'max_attempts' => 3,
+                'is_published' => true,
+            ]);
+
+            $question = Question::create([
+                'assessment_id' => $quiz->id,
+                'question_text' => 'Which response best reflects the key learning goal of "'.$module->title.'"?',
+                'question_type' => 'multiple_choice',
+                'points' => 1,
+                'sequence' => 1,
+            ]);
+
+            Choice::create([
+                'question_id' => $question->id,
+                'choice_text' => 'Follow the module safety guidance, verify conditions, and coordinate with responsible personnel.',
+                'is_correct' => true,
+                'sequence' => 1,
+            ]);
+            Choice::create([
+                'question_id' => $question->id,
+                'choice_text' => 'Ignore official guidance and act without coordinating with others.',
+                'is_correct' => false,
+                'sequence' => 2,
+            ]);
+            Choice::create([
+                'question_id' => $question->id,
+                'choice_text' => 'Use the same response for every hazard, regardless of the conditions.',
+                'is_correct' => false,
+                'sequence' => 3,
+            ]);
+            Choice::create([
+                'question_id' => $question->id,
+                'choice_text' => 'Wait until the situation ends before reporting a safety concern.',
+                'is_correct' => false,
+                'sequence' => 4,
+            ]);
+        }
     }
 }

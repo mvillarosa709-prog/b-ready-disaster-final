@@ -59,7 +59,9 @@ class ImplementationController extends Controller
         $teacher = $request->user();
 
         // Get workshops where teacher is officially certified
-        $certifiedWorkshopIds = Certification::where('teacher_id', $teacher->id)->pluck('workshop_id');
+        $certifiedWorkshopIds = Certification::where('teacher_id', $teacher->id)
+            ->where('status', 'approved')
+            ->pluck('workshop_id');
 
         $eligibleWorkshops = Workshop::whereIn('id', $certifiedWorkshopIds)
             ->whereHas('classroomPackage')
@@ -75,7 +77,7 @@ class ImplementationController extends Controller
         }
 
         $selectedWorkshopId = $request->query('workshop_id', $eligibleWorkshops->first()->id);
-        $selectedWorkshop = $eligibleWorkshops->firstWhere('id', (int)$selectedWorkshopId) ?? $eligibleWorkshops->first();
+        $selectedWorkshop = $eligibleWorkshops->firstWhere('id', (int) $selectedWorkshopId) ?? $eligibleWorkshops->first();
 
         return view('teacher.implementation.create', [
             'eligibleWorkshops' => $eligibleWorkshops,

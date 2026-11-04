@@ -1,10 +1,10 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Classroom Packages</x-slot>
-    <x-slot name="header">Classroom Packages</x-slot>
+    <x-slot name="header">Workshop Packages</x-slot>
 
     <div class="space-y-6">
         <!-- Back Button -->
-        <div>
+        <div class="flex justify-end">
             <a href="{{ url()->previous() }}"
                class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,6 +1,6 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Implementation Analytics &bull; {{ $implementation->workshop->title }}</x-slot>
-    <x-slot name="header">Classroom Implementation Report</x-slot>
+    <x-slot name="header">Implementation Report</x-slot>
 
     <div class="space-y-6">
         <!-- Top Navigation -->

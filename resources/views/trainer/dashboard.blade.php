@@ -15,7 +15,7 @@
                     Welcome back, {{ auth()->user()->name }}! 👋
                 </h1>
                 <p class="text-slate-500 text-sm mt-1">
-                    Manage disaster preparedness courses, learning modules, assessment questions, and monitor teacher training outcomes.
+                    Manage disaster preparedness courses, module quizzes, and teacher training outcomes.
                 </p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -24,12 +24,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     New Course
-                </a>
-                <a href="{{ route('trainer.assessments.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-50 shadow-xs transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                    </svg>
-                    Upload CSV Questions
                 </a>
             </div>
         </div>
@@ -70,10 +64,10 @@
                 </div>
             </div>
 
-            <!-- Assessments Stat -->
+            <!-- Module Quizzes Stat -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-200 transition">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Question Bank</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Module Quizzes</span>
                     <div class="p-2.5 rounded-xl bg-amber-50 text-amber-600">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
@@ -81,8 +75,8 @@
                     </div>
                 </div>
                 <div class="mt-4 flex items-baseline gap-2">
-                    <span class="text-3xl font-extrabold text-slate-900">{{ \App\Models\Question::count() }}</span>
-                    <span class="text-xs text-amber-600 font-semibold">Active questions</span>
+                    <span class="text-3xl font-extrabold text-slate-900">{{ $quizCount ?? 0 }}</span>
+                    <span class="text-xs text-amber-600 font-semibold">Across your modules</span>
                 </div>
             </div>
 
@@ -97,7 +91,7 @@
                     </div>
                 </div>
                 <div class="mt-4 flex items-baseline gap-2">
-                    <span class="text-3xl font-extrabold text-slate-900">{{ \App\Models\TeacherAssessmentResult::count() + \App\Models\AssessmentAttempt::count() }}</span>
+                    <span class="text-3xl font-extrabold text-slate-900">{{ $submissionCount ?? 0 }}</span>
                     <span class="text-xs text-purple-600 font-semibold">Tracked records</span>
                 </div>
             </div>

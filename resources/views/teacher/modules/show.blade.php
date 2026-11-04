@@ -1,8 +1,28 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Module {{ $module->sequence }}: {{ $module->title }}</x-slot>
-    <x-slot name="header">{{ $workshop->title }} &bull; Module {{ $module->sequence }}</x-slot>
+    <x-slot name="header">Module {{ $module->sequence }}</x-slot>
 
     <div class="space-y-6">
+        @if ($quizResult && (int) ($quizResult['module_id'] ?? 0) !== (int) $module->id)
+            <div class="rounded-2xl border p-5 {{ $quizResult['passed'] ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-rose-200 bg-rose-50 text-rose-900' }}">
+                <h2 class="font-bold">
+                    {{ $quizResult['passed'] ? 'Quiz passed' : 'Quiz not passed yet' }}
+                    &mdash; {{ number_format($quizResult['percentage'], 2) }}%
+                </h2>
+                <p class="mt-1 text-sm">
+                    Score {{ $quizResult['score'] }} / {{ $quizResult['total_points'] }} points.
+                    Passing score: {{ $quizResult['passing_score'] }}%.
+                    @if ($quizResult['passed'] && ! empty($quizResult['next_module_title']))
+                        {{ $quizResult['next_module_title'] }} is now unlocked.
+                    @elseif (! $quizResult['passed'] && $quizResult['attempts_left'] > 0)
+                        You have {{ $quizResult['attempts_left'] }} retake(s) remaining.
+                    @elseif (! $quizResult['passed'])
+                        No attempts remain. Contact your trainer for support.
+                    @endif
+                </p>
+            </div>
+        @endif
+
         <!-- Top Workshop Bar with Back Link -->
         <div class="flex items-center justify-between">
             <a href="{{ route('teacher.workshops.show', $workshop) }}" 
@@ -121,7 +141,7 @@
                             <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: {{ $currentProgress ? $currentProgress->progress : 0 }}%"></div>
                         </div>
                         <p class="text-[11px] text-slate-500 mt-2">
-                            <span class="font-semibold text-slate-700">Sequential Tracking:</span> Interacting with training materials (PDF, presentation, video) updates your module progress to 100% and unlocks the next sequential module.
+                            <span class="font-semibold text-slate-700">Sequential Tracking:</span>                             Materials update your progress. If this module has a quiz, you must pass it to complete the module and unlock the next one.
                         </p>
                     </div>
 
@@ -229,6 +249,105 @@
                     @endif
                 </div>
 
+                @if ($assessment)
+                    <section id="module-quiz" class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
+                        <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
+                                    Module Quiz
+                                </span>
+                                <h3 class="mt-2 text-lg font-bold text-slate-900">{{ $assessment->title }}</h3>
+                                <p class="mt-1 text-xs text-slate-600">
+                                    {{ $assessment->description ?? 'Answer the questions below. A passing score completes this module and unlocks the next one.' }}
+                                </p>
+                            </div>
+                            <div class="text-right text-xs text-slate-600">
+                                <div>Passing: <strong>{{ $assessment->passing_score }}%</strong></div>
+                                <div>Attempts left: <strong>{{ $quizAttemptsLeft }}</strong></div>
+                            </div>
+                        </div>
+
+                        @if ($latestQuizAttempt)
+                            <div class="rounded-xl border p-4 {{ $latestQuizAttempt->result === 'passed' ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-rose-200 bg-rose-50 text-rose-900' }}">
+                                <div class="flex flex-wrap items-start justify-between gap-2">
+                                    <div>
+                                        <h4 class="font-bold">Your latest quiz result</h4>
+                                        <p class="mt-1 text-sm">
+                                            Score {{ number_format((float) $latestQuizAttempt->score, 2) }} / {{ number_format($latestQuizAttempt->total_points, 2) }} points
+                                            ({{ number_format($latestQuizAttempt->percentage, 2) }}%).
+                                            Passing score: {{ $assessment->passing_score }}%.
+                                        </p>
+                                    </div>
+                                    <span class="text-xs font-bold uppercase">
+                                        {{ ucfirst($latestQuizAttempt->result) }}
+                                    </span>
+                                </div>
+                                <p class="mt-1 text-xs opacity-80">
+                                    Attempt #{{ $latestQuizAttempt->attempt_number }}
+                                    @if ($latestQuizAttempt->submitted_at)
+                                        · Submitted {{ $latestQuizAttempt->submitted_at->format('M d, Y h:i A') }}
+                                    @endif
+                                </p>
+                            </div>
+                        @endif
+
+                        @if ($latestQuizAttempt?->result === 'passed')
+                            <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+                                This module is complete. Your score is shown above.
+                                @if ($hasCertification)
+                                    <a class="ml-1 font-bold underline" href="{{ route('teacher.assessments.certificate', $workshop) }}" target="_blank">View certificate</a>
+                                @endif
+                            </div>
+                        @elseif (! $assessment->is_published)
+                            <p class="text-sm text-slate-500">This quiz is not available yet.</p>
+                        @elseif (! $canAttemptQuiz)
+                            <p class="text-sm text-rose-700">
+                                {{ $quizAttemptsLeft > 0 ? 'Complete the previous required modules before taking this quiz.' : 'No attempts remain. Contact your trainer for support.' }}
+                            </p>
+                        @else
+                            <form method="POST" action="{{ route('teacher.learning.module.assessment.submit', [$workshop, $module]) }}" class="space-y-5">
+                                @csrf
+                                @foreach ($questions as $index => $question)
+                                    <fieldset class="rounded-xl border border-slate-200 p-4">
+                                        <legend class="px-1 text-sm font-semibold text-slate-900">
+                                            {{ $index + 1 }}. {{ $question->question_text }}
+                                            <span class="text-xs font-normal text-slate-500">({{ $question->points }} pts)</span>
+                                        </legend>
+                                        @if ($question->question_type === 'fill_blank')
+                                            <input type="text" name="answers[{{ $question->id }}]" maxlength="1000" required
+                                                value="{{ old('answers.' . $question->id) }}"
+                                                placeholder="Type your answer"
+                                                class="mt-3 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        @else
+                                            <div class="mt-3 space-y-2">
+                                                @foreach ($question->choices as $choice)
+                                                    <label class="flex items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm hover:bg-slate-50">
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="{{ $choice->id }}"
+                                                            @checked((string) old('answers.' . $question->id) === (string) $choice->id)
+                                                            required class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                                        <span>{{ $choice->choice_text }}</span>
+                                                    </label>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </fieldset>
+                                @endforeach
+
+                                @error('answers')
+                                    <p class="text-sm text-rose-600">{{ $message }}</p>
+                                @enderror
+                                <button type="submit" class="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700">
+                                    {{ $latestQuizAttempt ? 'Retake Quiz' : 'Submit Quiz' }}
+                                </button>
+                            </form>
+                        @endif
+                    </section>
+                @else
+                    <section id="module-quiz" class="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900">
+                        The required quiz for this module is being prepared. Contact your trainer before continuing.
+                    </section>
+                @endif
+
                 <!-- Bottom Navigation / Complete Module Action Bar -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
@@ -250,22 +369,18 @@
                                     Next: Module {{ $nextModule->sequence }} &rarr;
                                 </a>
                             @else
-                                <a href="{{ route('teacher.assessments.show', $workshop) }}"
+                                <a href="{{ route('teacher.workshops.show', $workshop) }}"
                                    class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white px-5 py-2.5 transition-colors shadow-xs">
-                                    Proceed to Final Assessment &rarr;
+                                    Workshop Overview
                                 </a>
                             @endif
+                        @elseif ($assessment)
+                            <a href="#module-quiz"
+                               class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white px-5 py-2.5 transition-colors shadow-xs">
+                                Pass Module Quiz to Continue &darr;
+                            </a>
                         @else
-                            <form method="POST" action="{{ route('teacher.learning.module.complete', [$workshop, $module]) }}">
-                                @csrf
-                                <button type="submit" 
-                                        class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white px-5 py-2.5 transition-colors shadow-xs">
-                                    Mark as Completed & Continue
-                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                    </svg>
-                                </button>
-                            </form>
+                            <span class="text-xs font-semibold text-amber-700">Required quiz is not available yet</span>
                         @endif
                     </div>
                 </div>

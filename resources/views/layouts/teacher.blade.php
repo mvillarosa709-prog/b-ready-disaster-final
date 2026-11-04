@@ -14,7 +14,7 @@
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full font-sans antialiased text-slate-800" x-data="{ sidebarOpen: false, profileDropdown: false }">
+<body class="h-full font-sans antialiased text-slate-800" x-data="{ sidebarOpen: false }">
     <div class="min-h-full flex">
         <!-- Off-canvas mobile menu -->
         <div x-show="sidebarOpen" class="relative z-50 lg:hidden" role="dialog" aria-modal="true" style="display: none;">
@@ -48,12 +48,9 @@
                     <!-- Sidebar component for mobile -->
                     <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-900 px-6 pb-4">
                         <div class="flex h-16 shrink-0 items-center gap-3">
-                            <div class="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30 font-bold text-xl">
-                                B
-                            </div>
+                            <x-application-logo class="h-12 w-16 shrink-0" />
                             <div>
-                                <span class="text-white font-bold tracking-tight text-lg">B-READY</span>
-                                <span class="block text-xs text-indigo-400 font-medium">Teacher Portal</span>
+                                <span class="block text-xs text-emerald-400 font-medium">Teacher Portal</span>
                             </div>
                         </div>
                         <nav class="flex flex-1 flex-col">
@@ -76,12 +73,9 @@
                 <!-- Branding -->
                 <div class="flex h-20 shrink-0 items-center justify-between border-b border-slate-100">
                     <a href="{{ route('teacher.dashboard') }}" class="flex items-center gap-3">
-                        <div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 font-black text-xl tracking-wider">
-                            B
-                        </div>
-                        <div>
-                            <span class="text-slate-900 font-extrabold tracking-tight text-xl">B-READY</span>
-                            <span class="flex items-center gap-1.5 text-xs text-indigo-600 font-semibold uppercase tracking-wider">
+                        <x-application-logo class="h-14 w-[4.75rem] shrink-0" />
+                        <div class="min-w-0">
+                            <span class="flex items-center gap-1.5 text-xs text-emerald-600 font-semibold uppercase tracking-wider">
                                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Teacher Portal
                             </span>
                         </div>
@@ -100,9 +94,9 @@
 
                         <!-- Quick Info Card -->
                         <li class="mt-auto">
-                            <div class="rounded-xl bg-gradient-to-br from-indigo-50 to-slate-100 p-4 border border-indigo-100/60">
-                                <div class="flex items-center gap-2 text-indigo-900 font-semibold text-xs tracking-wide uppercase">
-                                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="rounded-xl bg-gradient-to-br from-emerald-50 to-slate-100 p-4 border border-emerald-100/60">
+                                <div class="flex items-center gap-2 text-emerald-900 font-semibold text-xs tracking-wide uppercase">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     DRR Preparedness
@@ -117,7 +111,7 @@
                         <li class="border-t border-slate-100 pt-3">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-9 w-9 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm border border-indigo-200">
+                                    <div class="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm border border-emerald-200">
                                         {{ substr(auth()->user()->name, 0, 1) }}
                                     </div>
                                     <div class="overflow-hidden">
@@ -143,7 +137,7 @@
         <!-- Main Layout Area -->
         <div class="lg:pl-72 flex flex-col flex-1 min-w-0">
             <!-- Sticky Top Header -->
-            <header class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-4 sm:px-6 lg:px-8 justify-between shadow-xs">
+            <header class="sticky top-0 z-30 grid h-16 shrink-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 border-b border-slate-200/80 bg-white/90 px-4 shadow-xs backdrop-blur-md sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)] lg:px-8">
                 <!-- Hamburger Button (Mobile) -->
                 <button type="button" class="-m-2.5 p-2.5 text-slate-700 lg:hidden" @click="sidebarOpen = true">
                     <span class="sr-only">Open sidebar</span>
@@ -152,27 +146,19 @@
                     </svg>
                 </button>
 
-                <!-- Page Header Title / Breadcrumbs -->
-                <div class="flex items-center gap-3">
-                    <h1 class="text-base sm:text-lg font-bold text-slate-800">
-                        {{ $header ?? 'Disaster Preparedness Learning Platform' }}
-                    </h1>
-                </div>
-
-                <!-- Right Header Actions & Profile Dropdown -->
-                <div class="flex items-center gap-3 sm:gap-4">
-                    <a href="{{ route('teacher.workshops.index') }}" 
-                       class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-100 transition-colors">
-                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Centered Workshop Discovery Action -->
+                <div class="col-start-2 flex w-full items-center justify-center lg:col-start-2">
+                    <a href="{{ route('teacher.workshops.index') }}"
+                       class="inline-flex h-10 w-full max-w-sm items-center justify-center gap-2 rounded-lg border border-emerald-600 bg-white px-3 text-xs font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-50 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                        <svg class="h-4 w-4 shrink-0 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
-                        Find Workshops
+                        <span>Find Workshops</span>
                     </a>
 
-                    <!-- Profile Dropdown -->
-                    <div class="relative" @click.away="profileDropdown = false">
-                        <button type="button" 
-                                @click="profileDropdown = !profileDropdown"
+                    <!-- Account menu moved to the sidebar -->
+                    <div class="hidden">
+                        <button type="button"
                                 class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 focus:outline-hidden transition-colors">
                             <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white font-bold flex items-center justify-center text-xs shadow-xs">
                                 {{ substr(auth()->user()->name, 0, 1) }}
@@ -183,7 +169,7 @@
                             </svg>
                         </button>
 
-                        <div x-show="profileDropdown" 
+                        <div x-show="false"
                              x-transition:enter="transition ease-out duration-100"
                              x-transition:enter-start="transform opacity-0 scale-95"
                              x-transition:enter-end="transform opacity-100 scale-100"
@@ -193,14 +179,13 @@
                              class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl bg-white py-1.5 shadow-lg border border-slate-100 focus:outline-hidden"
                              style="display: none;">
                             <div class="px-4 py-2 border-b border-slate-100">
-                                <div class="text-xs text-slate-400 font-medium">Signed in as</div>
-                                <div class="text-xs font-bold text-slate-800 truncate">{{ auth()->user()->email }}</div>
+                                <div class="text-xs text-slate-400 font-medium"></div>
+                                <div class="text-xs font-bold text-slate-800 truncate"></div>
                             </div>
                             <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50">
                                 <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
-                                Account Profile
                             </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -217,7 +202,12 @@
             </header>
 
             <!-- Main Content Container -->
-            <main class="flex-1 py-8 px-4 sm:px-6 lg:px-8">
+            <main class="flex-1 px-4 pb-8 sm:px-6 lg:px-8">
+                <div class="pt-24 pb-6">
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+                        {{ $header ?? 'Disaster Preparedness Learning Platform' }}
+                    </h1>
+                </div>
                 <!-- Flash Alerts -->
                 @if (session('success'))
                     <div class="mb-6 flex items-center gap-3 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3.5 text-sm text-emerald-800 shadow-xs" role="alert">

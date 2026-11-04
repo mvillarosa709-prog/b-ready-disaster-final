@@ -1,4 +1,11 @@
 <x-guest-layout>
+    <div class="mb-6 text-center">
+        <h1 class="text-xl font-bold text-gray-900">{{ __('Welcome back') }}</h1>
+        <p class="mt-1 text-sm text-gray-600">
+            {{ __('Sign in with your teacher or trainer account to continue.') }}
+        </p>
+    </div>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

@@ -7,6 +7,7 @@ use App\Models\AssessmentAttempt;
 use App\Models\Certification;
 use App\Models\ModuleProgress;
 use App\Models\User;
+use App\Models\Workshop;
 use App\Models\WorkshopTeacher;
 
 class AssessmentPolicy
@@ -14,13 +15,26 @@ class AssessmentPolicy
     /**
      * Determine whether the teacher can view assessment info.
      */
-    public function view(User $user, Assessment $assessment): bool
+    public function view(User $user, Assessment $assessment, ?Workshop $workshop = null): bool
     {
         if ($user->role !== 'teacher') {
             return false;
         }
 
-        return WorkshopTeacher::where('workshop_id', $assessment->workshop_id)
+        $workshop ??= $assessment->workshop;
+        if (! $workshop || ! $workshop->courseIsPublished()) {
+            return false;
+        }
+
+        if ($assessment->workshop_id && (int) $assessment->workshop_id !== (int) $workshop->id) {
+            return false;
+        }
+
+        if ($assessment->module_id && (int) $assessment->module?->course_id !== (int) $workshop->course_id) {
+            return false;
+        }
+
+        return WorkshopTeacher::where('workshop_id', $workshop->id)
             ->where(function ($q) use ($user) {
                 $q->where('teacher_id', $user->id)->orWhere('user_id', $user->id);
             })
@@ -32,9 +46,9 @@ class AssessmentPolicy
      * Determine whether the teacher can attempt the assessment.
      * Unlocking Rule: Evaluate if all required modules for the workshop have module_progress.status == 'completed' (100% completion).
      */
-    public function attempt(User $user, Assessment $assessment): bool
+    public function attempt(User $user, Assessment $assessment, Workshop $workshop): bool
     {
-        if (! $this->view($user, $assessment)) {
+        if (! $this->view($user, $assessment, $workshop)) {
             return false;
         }
 
@@ -46,7 +60,7 @@ class AssessmentPolicy
         $alreadyCertified = Certification::where(function ($q) use ($user) {
                 $q->where('teacher_id', $user->id)->orWhere('user_id', $user->id);
             })
-            ->where('workshop_id', $assessment->workshop_id)
+            ->where('workshop_id', $workshop->id)
             ->exists();
 
         if ($alreadyCertified) {
@@ -55,6 +69,7 @@ class AssessmentPolicy
 
         // Check max attempts
         $attemptCount = AssessmentAttempt::where('assessment_id', $assessment->id)
+            ->where('workshop_id', $workshop->id)
             ->where(function ($q) use ($user) {
                 $q->where('teacher_id', $user->id)->orWhere('user_id', $user->id);
             })
@@ -64,12 +79,51 @@ class AssessmentPolicy
             return false;
         }
 
-        // Unlocking Rule: Evaluate if all required modules for the workshop have status == 'completed' (100% completion)
-        $workshop = $assessment->workshop;
-        if (! $workshop) {
+        $alreadyPassed = AssessmentAttempt::where('assessment_id', $assessment->id)
+            ->where('workshop_id', $workshop->id)
+            ->where(function ($query) use ($user) {
+                $query->where('teacher_id', $user->id)->orWhere('user_id', $user->id);
+            })
+            ->where('result', 'passed')
+            ->exists();
+
+        if ($alreadyPassed) {
             return false;
         }
 
+        if ($assessment->module_id) {
+            $modules = $workshop->ordered_modules->sortBy('sequence')->values();
+            $moduleIndex = $modules->search(
+                fn ($module) => (int) $module->id === (int) $assessment->module_id
+            );
+
+            if ($moduleIndex === false) {
+                return false;
+            }
+
+            $prerequisiteIds = $modules
+                ->take($moduleIndex)
+                ->where('is_required', true)
+                ->pluck('id');
+
+            if ($prerequisiteIds->isNotEmpty()) {
+                $completedPrerequisiteCount = ModuleProgress::where('workshop_id', $workshop->id)
+                    ->where(function ($query) use ($user) {
+                        $query->where('teacher_id', $user->id)->orWhere('user_id', $user->id);
+                    })
+                    ->whereIn('module_id', $prerequisiteIds)
+                    ->where('status', 'completed')
+                    ->count();
+
+                if ($completedPrerequisiteCount < $prerequisiteIds->count()) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Unlocking Rule: Evaluate if all required modules for the workshop have status == 'completed' (100% completion)
         $modules = $workshop->ordered_modules;
         $requiredModules = $modules->where('is_required', true);
 

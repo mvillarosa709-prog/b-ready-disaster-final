@@ -1,6 +1,6 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Assessment Results &bull; {{ $workshop->title }}</x-slot>
-    <x-slot name="header">Assessment Feedback &bull; Attempt #{{ $attempt->attempt_number }}</x-slot>
+    <x-slot name="header">Quiz Results</x-slot>
 
     <div class="max-w-3xl mx-auto space-y-6">
         @php
@@ -39,9 +39,9 @@
             <!-- Descriptive Text -->
             <p class="text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
                 @if ($isPassed)
-                    Congratulations! You have demonstrated exceptional competence in Disaster Risk Reduction and Management principles. Your accreditation has been officially issued.
+                    Congratulations! You have passed the assessment. Your certificate is awaiting DRR Trainer verification and signature.
                 @else
-                    You did not meet the {{ $passingScore }}% passing requirement on Attempt #{{ $attempt->attempt_number }}. Review the questions below to prepare for your next attempt.
+                    You did not meet the {{ $passingScore }}% passing requirement on Attempt #{{ $attempt->attempt_number }}. Your answers and the answer key are available only to your trainer.
                 @endif
             </p>
 
@@ -56,7 +56,7 @@
                         View Official Certificate
                     </a>
 
-                    @if ($workshop->classroomPackage)
+                    @if ($workshop->classroomPackage && $certification?->status === 'approved')
                         <a href="{{ route('teacher.packages.show', $workshop->classroomPackage) }}"
                            class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
                             Open Workshop Repository &rarr;
@@ -64,10 +64,17 @@
                     @endif
                 @else
                     @if ($attemptsLeft > 0)
-                        <a href="{{ route('teacher.assessments.show', $workshop) }}"
+                        @if ($attempt->assessment->module_id)
+                            <a href="{{ route('teacher.learning.module', [$workshop, $attempt->assessment->module_id]) }}"
                            class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
-                            Retake Assessment ({{ $attemptsLeft }} {{ Str::plural('attempt', $attemptsLeft) }} left)
-                        </a>
+                            Retake Quiz ({{ $attemptsLeft }} {{ Str::plural('attempt', $attemptsLeft) }} left)
+                            </a>
+                        @else
+                            <a href="{{ route('teacher.workshops.show', $workshop) }}"
+                               class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
+                                Return to Workshop Modules
+                            </a>
+                        @endif
                     @else
                         <span class="inline-block text-xs font-semibold text-rose-600 bg-rose-50 px-3 py-2 rounded-xl border border-rose-200">
                             No remaining attempts left. Contact trainer for support.
@@ -81,44 +88,5 @@
             </div>
         </div>
 
-        <!-- Answers Review Section -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-4">
-            <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">
-                Question Breakdown
-            </h3>
-
-            <div class="space-y-4">
-                @foreach ($attempt->answers as $index => $answer)
-                    @php
-                        $q = $answer->question;
-                        $selectedChoice = $answer->choice;
-                        $isCorrect = $answer->is_correct;
-                    @endphp
-
-                    <div class="p-4 rounded-xl border {{ $isCorrect ? 'bg-emerald-50/30 border-emerald-200/60' : 'bg-rose-50/30 border-rose-200/60' }}">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex items-start gap-2.5">
-                                <span class="h-6 w-6 rounded-md flex items-center justify-center text-xs font-bold shrink-0 {{ $isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
-                                    {{ $index + 1 }}
-                                </span>
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-900">{{ $q->question_text }}</h4>
-                                    <div class="mt-2 text-xs">
-                                        <span class="text-slate-500">Your Answer:</span>
-                                        <span class="font-semibold {{ $isCorrect ? 'text-emerald-700' : 'text-rose-700' }}">
-                                            {{ $selectedChoice->choice_text ?? 'No answer provided' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <span class="text-xs font-bold shrink-0 {{ $isCorrect ? 'text-emerald-700' : 'text-rose-600' }}">
-                                {{ $answer->points_earned }} / {{ $q->points }} pts
-                            </span>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
     </div>
 </x-dynamic-component>

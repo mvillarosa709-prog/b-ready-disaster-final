@@ -24,25 +24,18 @@ class WorkshopController extends Controller
     {
         $teacher = $request->user();
         $query = Workshop::whereIn('status', ['published', 'ongoing'])
+            ->whereHas('course', fn ($query) => $query->published())
             ->with(['trainer', 'course.modules', 'assessment']);
-
-        // Default: Fetch active workshops where registration deadline has not passed
-        if (! $request->boolean('include_closed')) {
-            $query->where(function ($q) {
-                $q->whereNull('registration_deadline')
-                  ->orWhere('registration_deadline', '>=', now());
-            });
-        }
 
         // Search query
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhereHas('course', function ($cq) use ($search) {
-                      $cq->where('title', 'like', "%{$search}%");
-                  });
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('course', function ($cq) use ($search) {
+                        $cq->where('title', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -50,8 +43,8 @@ class WorkshopController extends Controller
 
         // Fetch enrolled workshop IDs for current teacher (check workshop_teachers)
         $enrolledWorkshopIds = WorkshopTeacher::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
             ->whereIn('status', ['registered', 'completed'])
             ->pluck('workshop_id')
             ->toArray();
@@ -67,13 +60,14 @@ class WorkshopController extends Controller
         $teacher = $request->user();
 
         $enrollments = WorkshopTeacher::where(function ($q) use ($teacher) {
-                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-            })
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
+            ->whereHas('workshop.course', fn ($query) => $query->published())
             ->with([
                 'workshop.trainer',
                 'workshop.course.modules',
                 'workshop.assessment',
-                'workshop.classroomPackage'
+                'workshop.classroomPackage',
             ])
             ->latest('joined_at')
             ->get();
@@ -106,8 +100,8 @@ class WorkshopController extends Controller
             });
 
             $certification = Certification::where(function ($q) use ($teacher) {
-                    $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-                })
+                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+            })
                 ->where('workshop_id', $workshop->id)
                 ->first();
 
@@ -178,7 +172,7 @@ class WorkshopController extends Controller
             $isCompleted = in_array($mod->id, $completedModuleIds);
             $isInProgress = in_array($mod->id, $inProgressModuleIds);
             $modProgress = $progressMap->get($mod->id);
-            $progressPercentage = $modProgress ? (int)$modProgress->progress : ($isCompleted ? 100 : 0);
+            $progressPercentage = $modProgress ? (int) $modProgress->progress : ($isCompleted ? 100 : 0);
 
             // Strict Sequencing Rule:
             // Module 0 (or sequence <= 1) is unlocked by default if enrolled.
@@ -231,17 +225,17 @@ class WorkshopController extends Controller
                 ->first();
 
             $certification = Certification::where(function ($q) use ($teacher) {
-                    $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-                })
+                $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+            })
                 ->where('workshop_id', $workshop->id)
                 ->first();
         }
 
         $package = $workshop->classroomPackage;
-        $isPackageUnlocked = $certification !== null;
+        $isPackageUnlocked = $certification?->status === 'approved';
 
         $firstModule = $modules->sortBy('sequence')->first();
-        $firstUnlockedItem = $modulesWithAccess->first(fn($item) => $item->is_unlocked && ! $item->is_completed)
+        $firstUnlockedItem = $modulesWithAccess->first(fn ($item) => $item->is_unlocked && ! $item->is_completed)
             ?? $modulesWithAccess->firstWhere('is_unlocked', true);
         $firstUnlockedModule = $firstUnlockedItem ? $firstUnlockedItem->module : null;
 

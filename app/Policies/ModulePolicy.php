@@ -20,6 +20,10 @@ class ModulePolicy
             return false;
         }
 
+        if (! $workshop->courseIsPublished()) {
+            return false;
+        }
+
         // Must be enrolled in workshop
         $isEnrolled = WorkshopTeacher::where('workshop_id', $workshop->id)
             ->where(function ($q) use ($user) {

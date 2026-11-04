@@ -13,6 +13,7 @@ class Choice extends Model
         'question_id',
         'choice_text',
         'is_correct',
+        'sequence',
     ];
 
     protected function casts(): array

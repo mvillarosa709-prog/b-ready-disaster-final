@@ -80,7 +80,7 @@ class ReportController extends Controller
         $assessmentAttempts = AssessmentAttempt::where(function ($q) use ($teacher) {
                 $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
             })
-            ->with(['assessment.workshop', 'answers'])
+            ->with(['assessment.workshop', 'workshop', 'answers'])
             ->latest('submitted_at')
             ->get();
 

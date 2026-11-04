@@ -17,6 +17,10 @@ class WorkshopPolicy
             return false;
         }
 
+        if (! $workshop->courseIsPublished()) {
+            return false;
+        }
+
         // Available if published or if the teacher is already enrolled
         if (in_array($workshop->status, ['published', 'ongoing'])) {
             return true;
@@ -33,6 +37,10 @@ class WorkshopPolicy
     public function join(User $user, Workshop $workshop): bool
     {
         if ($user->role !== 'teacher') {
+            return false;
+        }
+
+        if (! $workshop->courseIsPublished()) {
             return false;
         }
 

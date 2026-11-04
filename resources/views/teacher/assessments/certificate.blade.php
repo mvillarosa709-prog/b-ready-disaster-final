@@ -76,6 +76,9 @@
             <p class="text-xs sm:text-sm font-semibold tracking-widest uppercase text-amber-700 pt-1">
                 DISASTER RISK REDUCTION & MANAGEMENT ACCREDITATION
             </p>
+            <span class="inline-flex rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider {{ $certification->status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
+                {{ $certification->status === 'approved' ? 'Approved & Signed' : 'Pending Verification' }}
+            </span>
         </div>
 
         <!-- Awarded to -->
@@ -106,11 +109,17 @@
         <div class="relative z-10 mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 items-end pt-8 border-t border-slate-200">
             <!-- Left: Lead Trainer Signature -->
             <div class="text-center sm:text-left space-y-1">
-                <div class="h-10 border-b border-slate-400 max-w-[200px] mx-auto sm:mx-0 flex items-end justify-center sm:justify-start pb-1">
-                    <span class="font-serif italic text-base text-slate-800 font-semibold">{{ $workshop->trainer->name ?? 'Lead DRR Trainer' }}</span>
-                </div>
-                <div class="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Lead DRR Trainer</div>
-                <div class="text-[10px] text-slate-400">Master Instructor</div>
+                @if ($certification->status === 'approved')
+                    <div class="h-10 border-b border-slate-400 max-w-[200px] mx-auto sm:mx-0 flex items-end justify-center sm:justify-start pb-1">
+                        <span class="font-serif italic text-base text-indigo-900 font-semibold">{{ $certification->approver?->name ?? 'DRR Trainer' }}</span>
+                    </div>
+                    <div class="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Digitally signed by {{ $certification->approver?->name ?? 'DRR Trainer' }}</div>
+                    <div class="text-[10px] text-slate-400">Approved {{ $certification->approved_at?->format('F d, Y') }}</div>
+                @else
+                    <div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-semibold leading-relaxed text-amber-900 sm:max-w-[240px]">
+                        Naghihintay pa ng beripikasyon at lagda mula sa DRR Trainer.
+                    </div>
+                @endif
             </div>
 
             <!-- Center: Gold Badge / Seal -->

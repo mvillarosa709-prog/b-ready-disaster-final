@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Module;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ModuleController extends Controller
 {
@@ -33,7 +34,24 @@ class ModuleController extends Controller
         $validated['course_id'] = $course->id;
         $validated['is_required'] = $request->has('is_required');
 
-        Module::create($validated);
+        DB::transaction(function () use ($validated, $course) {
+            $module = Module::create($validated);
+
+            $module->assessments()->create([
+                'workshop_id' => null,
+                'trainer_id' => $course->trainer_id,
+                'title' => 'Module Quiz: '.$module->title,
+                'description' => 'Complete this quiz to pass the module and unlock the next one.',
+                'passing_score' => 75,
+                'time_limit' => 30,
+                'max_attempts' => 3,
+                'is_published' => false,
+            ]);
+
+            if ($course->status === 'published') {
+                $course->update(['status' => 'draft']);
+            }
+        });
 
         return redirect()
             ->route('trainer.courses.show', $course->id)
@@ -89,6 +107,10 @@ class ModuleController extends Controller
             ->findOrFail($moduleId);
 
         $module->delete();
+
+        if ($course->status === 'published' && ! $course->hasReadyModuleQuizzes()) {
+            $course->update(['status' => 'draft']);
+        }
 
         return redirect()
             ->route('trainer.courses.show', $course->id)

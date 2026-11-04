@@ -18,9 +18,14 @@ class ClassroomImplementationPolicy
             return false;
         }
 
+        if (! $workshop->courseIsPublished()) {
+            return false;
+        }
+
         // Must be certified in this workshop to conduct classroom implementations
         return Certification::where('teacher_id', $user->id)
             ->where('workshop_id', $workshop->id)
+            ->where('status', 'approved')
             ->exists();
     }
 
@@ -33,6 +38,7 @@ class ClassroomImplementationPolicy
             return false;
         }
 
-        return $implementation->teacher_id === $user->id;
+        return $implementation->teacher_id === $user->id
+            && ($implementation->workshop?->courseIsPublished() ?? false);
     }
 }
