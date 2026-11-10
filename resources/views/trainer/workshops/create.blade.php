@@ -16,7 +16,7 @@
 
                 <div class="flex items-center gap-3">
                     <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
-                        {{ __('Create New Workshop') }}
+                        {{ __('Create Workshop') }}
                     </h1>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
                         Draft Mode

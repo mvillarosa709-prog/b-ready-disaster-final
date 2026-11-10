@@ -46,6 +46,14 @@ class Course extends Model
             ->orderBy('sequence');
     }
 
+    /**
+     * Workshops associated with this course.
+     */
+    public function workshops()
+    {
+        return $this->hasMany(Workshop::class, 'course_id');
+    }
+
     public function hasReadyModuleQuizzes(): bool
     {
         $modules = $this->modules()

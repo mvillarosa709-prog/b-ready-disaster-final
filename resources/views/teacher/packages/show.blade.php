@@ -1,22 +1,32 @@
 <x-dynamic-component component="layouts.teacher">
-    <x-slot name="title">{{ $package->title }} &bull; Workshop Repository</x-slot>
-    <x-slot name="header">Workshop Repository</x-slot>
+    <x-slot name="title">{{ $package->title }} — B-READY</x-slot>
 
-    <div class="space-y-6">
-        <!-- Top Back Bar -->
-        <div class="flex items-center justify-between">
-            <a href="{{ route('teacher.packages.index') }}" 
-               class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Back to Workshop Repository
-            </a>
-
-            <span class="text-xs font-semibold text-slate-500">
-                Workshop: <strong class="text-slate-800">{{ $package->workshop->title }}</strong>
-            </span>
+    <!-- Header Banner (Matches Trainer Side) -->
+    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                    <a href="{{ route('teacher.packages.index') }}" class="hover:text-emerald-600 transition font-medium">
+                        Workshop Packages
+                    </a>
+                    <span>/</span>
+                    <span class="text-slate-800 font-semibold truncate max-w-xs">{{ $package->title }}</span>
+                </nav>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Workshop Repository</h1>
+                <p class="text-xs text-slate-500 mt-1">Workshop: <strong class="text-slate-700">{{ $package->workshop->title }}</strong></p>
+            </div>
+            <div>
+                <a href="{{ route('teacher.packages.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-xs">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Workshop Repository
+                </a>
+            </div>
         </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
 
         <!-- Repository Overview Card -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
@@ -61,7 +71,7 @@
                             Now that you hold accreditation for this workshop, execute your classroom teaching session and log student performance metrics.
                         </p>
                         <a href="{{ route('teacher.implementations.create', ['workshop_id' => $package->workshop_id]) }}"
-                           class="block text-center w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors">
+                           class="block text-center w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors">
                             Log Classroom Implementation &rarr;
                         </a>
                     @else
@@ -69,7 +79,7 @@
                             Pass the workshop final assessment to unlock all materials and enable implementation reporting.
                         </p>
                         <a href="{{ route('teacher.workshops.show', $package->workshop) }}"
-                           class="block text-center w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors">
+                           class="block text-center w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors">
                             Go to Workshop Modules &rarr;
                         </a>
                     @endif
@@ -126,10 +136,10 @@
                             $label = str_replace('_', ' ', $mat->material_type);
                         @endphp
 
-                        <div class="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 flex flex-col justify-between hover:border-indigo-200 transition-all {{ ! $isUnlocked ? 'opacity-60 cursor-not-allowed' : '' }}">
+                        <div class="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 flex flex-col justify-between hover:border-emerald-200 transition-all {{ ! $isUnlocked ? 'opacity-60 cursor-not-allowed' : '' }}">
                             <div>
                                 <div class="flex items-center justify-between gap-2">
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-100 rounded px-2 py-0.5">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-100 rounded px-2 py-0.5">
                                         {{ $label }}
                                     </span>
                                     <span class="text-[10px] text-slate-400 font-mono">
@@ -154,7 +164,7 @@
                                 @if ($isUnlocked)
                                     <div class="flex items-center gap-2">
                                         <a href="{{ route('teacher.packages.material.preview', [$package, $mat]) }}" target="_blank"
-                                           class="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 hover:text-indigo-600 bg-white hover:bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200 transition-colors shadow-2xs">
+                                           class="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 hover:text-emerald-600 bg-white hover:bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200 transition-colors shadow-2xs">
                                             <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -162,7 +172,7 @@
                                             Preview
                                         </a>
                                         <a href="{{ route('teacher.packages.material.download', [$package, $mat]) }}"
-                                           class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg shadow-2xs transition-colors">
+                                           class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg shadow-2xs transition-colors">
                                             <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                             </svg>

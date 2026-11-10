@@ -57,16 +57,22 @@ class WorkshopController extends Controller
             ]);
         }
 
-        // New workshops always start as draft
-        $workshop = Workshop::create([
+        $status = $validated['status'] ?? 'draft';
+        if ($status === 'published' && ! $this->canPublishWorkshopFor($course)) {
+            return back()->withInput()->withErrors([
+                'status' => 'Publish the selected course and complete and publish its module quizzes before publishing the workshop.',
+            ]);
+        }
+
+        Workshop::create([
             ...$validated,
-            'status' => 'draft',
+            'status' => $status,
             'trainer_id' => $request->user()->id,
         ]);
 
         return redirect()
-            ->route('trainer.workshops.show', $workshop)
-            ->with('success', 'Workshop created as Draft. Review the attached course modules and click Edit or Publish when ready.');
+            ->route('trainer.workshops.index')
+            ->with('success', 'Workshop created successfully.');
     }
 
     public function edit(Workshop $workshop): View
@@ -134,7 +140,7 @@ class WorkshopController extends Controller
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after:start_date'],
             'registration_deadline' => ['required', 'date', 'before_or_equal:start_date'],
-            'status' => $isCreating ? ['nullable', Rule::in(['draft'])] : ['required', Rule::in(['draft', 'published'])],
+            'status' => $isCreating ? ['nullable', Rule::in(['draft', 'published'])] : ['required', Rule::in(['draft', 'published'])],
         ];
     }
 

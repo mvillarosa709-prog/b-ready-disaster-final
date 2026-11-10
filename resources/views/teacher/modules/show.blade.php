@@ -1,8 +1,31 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Module {{ $module->sequence }}: {{ $module->title }}</x-slot>
-    <x-slot name="header">Module {{ $module->sequence }}</x-slot>
 
-    <div class="space-y-6">
+    <!-- Header Banner (Matches Trainer Side) -->
+    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                    <a href="{{ route('teacher.workshops.show', $workshop) }}" class="hover:text-emerald-600 transition font-medium">
+                        {{ $workshop->title }}
+                    </a>
+                    <span>/</span>
+                    <span class="text-slate-800 font-semibold">Module {{ $module->sequence }}</span>
+                </nav>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Module {{ $module->sequence }}: {{ $module->title }}</h1>
+            </div>
+            <div>
+                <a href="{{ route('teacher.workshops.show', $workshop) }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-xs">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Workshop
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
         @if ($quizResult && (int) ($quizResult['module_id'] ?? 0) !== (int) $module->id)
             <div class="rounded-2xl border p-5 {{ $quizResult['passed'] ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-rose-200 bg-rose-50 text-rose-900' }}">
                 <h2 class="font-bold">
@@ -23,16 +46,8 @@
             </div>
         @endif
 
-        <!-- Top Workshop Bar with Back Link -->
-        <div class="flex items-center justify-between">
-            <a href="{{ route('teacher.workshops.show', $workshop) }}" 
-               class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Back to Workshop Overview
-            </a>
-
+        <!-- Module Progress Count -->
+        <div class="flex items-center justify-end">
             <div class="text-xs font-semibold text-slate-500">
                 Module <span class="text-slate-800">{{ $module->sequence }}</span> of <span class="text-slate-800">{{ $moduleNav->count() }}</span>
             </div>
@@ -51,8 +66,8 @@
                     @foreach ($moduleNav as $item)
                         @if ($item->is_unlocked)
                             <a href="{{ route('teacher.learning.module', [$workshop, $item->id]) }}"
-                               class="flex items-start gap-3 p-3 rounded-xl transition-all {{ $item->is_current ? 'bg-indigo-50/80 border border-indigo-200 text-indigo-900' : 'hover:bg-slate-50 text-slate-700' }}">
-                                <div class="h-7 w-7 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold {{ $item->is_completed ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : ($item->is_current ? 'bg-indigo-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600') }}">
+                               class="flex items-start gap-3 p-3 rounded-xl transition-all {{ $item->is_current ? 'bg-emerald-50/80 border border-emerald-200 text-emerald-900' : 'hover:bg-slate-50 text-slate-700' }}">
+                                <div class="h-7 w-7 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold {{ $item->is_completed ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : ($item->is_current ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600') }}">
                                     @if ($item->is_completed)
                                         <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
@@ -62,7 +77,7 @@
                                     @endif
                                 </div>
                                 <div class="overflow-hidden">
-                                    <div class="text-xs font-bold truncate {{ $item->is_current ? 'text-indigo-950 font-extrabold' : '' }}">
+                                    <div class="text-xs font-bold truncate {{ $item->is_current ? 'text-emerald-950 font-extrabold' : '' }}">
                                         {{ $item->title }}
                                     </div>
                                     <div class="text-[11px] text-slate-500 mt-0.5">
@@ -70,7 +85,7 @@
                                         @if ($item->is_completed)
                                             <span class="text-emerald-700 font-semibold">Completed</span>
                                         @elseif ($item->is_current)
-                                            <span class="text-indigo-700 font-semibold">Currently Viewing</span>
+                                            <span class="text-emerald-700 font-semibold">Currently Viewing</span>
                                         @else
                                             <span>Unlocked</span>
                                         @endif
@@ -101,7 +116,7 @@
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
                     <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
                         <div class="flex items-center gap-2">
-                            <span class="inline-block text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md px-2.5 py-1">
+                            <span class="inline-block text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-md px-2.5 py-1">
                                 Sequence {{ $module->sequence }}
                             </span>
                             <span class="text-xs text-slate-500 font-medium">Estimated: {{ $module->estimated_duration ?? '30' }} Minutes</span>
@@ -135,7 +150,7 @@
                     <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
                         <div class="flex items-center justify-between text-xs font-semibold mb-1.5">
                             <span class="text-slate-700">Module Completion Progress:</span>
-                            <span class="font-bold text-indigo-700 font-mono">{{ $currentProgress ? $currentProgress->progress : 0 }}%</span>
+                            <span class="font-bold text-emerald-700 font-mono">{{ $currentProgress ? $currentProgress->progress : 0 }}%</span>
                         </div>
                         <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
                             <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: {{ $currentProgress ? $currentProgress->progress : 0 }}%"></div>
@@ -149,7 +164,7 @@
                     @if ($module->learning_objectives)
                         <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 Key Learning Objectives
@@ -184,7 +199,7 @@
                                     $type = strtolower($mat->type ?? 'pdf');
                                 @endphp
 
-                                <div class="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-50 hover:border-indigo-200 transition-all flex flex-col justify-between">
+                                <div class="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-50 hover:border-emerald-200 transition-all flex flex-col justify-between">
                                     <div class="flex items-start gap-3">
                                         <!-- File format icon -->
                                         <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 
@@ -236,7 +251,7 @@
                                         </form>
 
                                         <a href="{{ route('teacher.learning.material.download', [$workshop, $module, $mat]) }}" target="_blank"
-                                           class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200">
+                                           class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200">
                                             <span>Access Resource</span>
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -253,7 +268,7 @@
                     <section id="module-quiz" class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
                         <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
                             <div>
-                                <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
                                     Module Quiz
                                 </span>
                                 <h3 class="mt-2 text-lg font-bold text-slate-900">{{ $assessment->title }}</h3>
@@ -317,14 +332,14 @@
                                             <input type="text" name="answers[{{ $question->id }}]" maxlength="1000" required
                                                 value="{{ old('answers.' . $question->id) }}"
                                                 placeholder="Type your answer"
-                                                class="mt-3 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                class="mt-3 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                                         @else
                                             <div class="mt-3 space-y-2">
                                                 @foreach ($question->choices as $choice)
                                                     <label class="flex items-start gap-2 rounded-lg border border-slate-200 p-3 text-sm hover:bg-slate-50">
                                                         <input type="radio" name="answers[{{ $question->id }}]" value="{{ $choice->id }}"
                                                             @checked((string) old('answers.' . $question->id) === (string) $choice->id)
-                                                            required class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                                            required class="mt-1 text-emerald-600 focus:ring-emerald-500">
                                                         <span>{{ $choice->choice_text }}</span>
                                                     </label>
                                                 @endforeach
@@ -336,7 +351,7 @@
                                 @error('answers')
                                     <p class="text-sm text-rose-600">{{ $message }}</p>
                                 @enderror
-                                <button type="submit" class="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700">
+                                <button type="submit" class="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700">
                                     {{ $latestQuizAttempt ? 'Retake Quiz' : 'Submit Quiz' }}
                                 </button>
                             </form>
@@ -365,7 +380,7 @@
                         @if ($currentProgress && $currentProgress->status === 'completed')
                             @if ($nextModule)
                                 <a href="{{ route('teacher.learning.module', [$workshop, $nextModule]) }}"
-                                   class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white px-5 py-2.5 transition-colors shadow-xs">
+                                   class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white px-5 py-2.5 transition-colors shadow-xs">
                                     Next: Module {{ $nextModule->sequence }} &rarr;
                                 </a>
                             @else
@@ -376,7 +391,7 @@
                             @endif
                         @elseif ($assessment)
                             <a href="#module-quiz"
-                               class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white px-5 py-2.5 transition-colors shadow-xs">
+                               class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white px-5 py-2.5 transition-colors shadow-xs">
                                 Pass Module Quiz to Continue &darr;
                             </a>
                         @else

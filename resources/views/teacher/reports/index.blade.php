@@ -1,93 +1,96 @@
 <x-dynamic-component component="layouts.teacher">
-    <x-slot name="title">Personal Reports &bull; Teacher Accreditation</x-slot>
-    <x-slot name="header">Personal Reports</x-slot>
+    <x-slot name="title">Personal Reports — B-READY</x-slot>
 
-    <div class="space-y-8" x-data="{ activeTab: 'all' }">
-        
-        <!-- Back Button -->
-        <div>
-            <a href="{{ url()->previous() }}"
-               class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M15 19l-7-7 7-7"/>
-                </svg>
-                Back
-            </a>
+    <!-- Header Banner (Matches Trainer Side) -->
+    <div class="bg-white border-b border-slate-200/80 px-4 py-8 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        DRR Educator Portfolio
+                    </span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
+                    Personal Reports
+                </h1>
+                <p class="text-slate-500 text-sm mt-1">
+                    Comprehensive audit of {{ auth()->user()->name }}'s DRR training progress, assessment logs, digital certifications, and classroom deployments.
+                </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <a href="{{ route('teacher.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 shadow-xs transition">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Dashboard
+                </a>
+                <a href="{{ route('teacher.implementations.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm transition">
+                    + Log Session
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8" x-data="{ activeTab: 'all' }">
+
+        <!-- Aggregate Stats Row (Matches Trainer Side) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Workshops Joined</span>
+                <div class="mt-3 text-3xl font-extrabold text-slate-900">{{ $trainingProgress->count() }}</div>
+                <div class="mt-1 text-xs text-slate-400">Active &amp; completed cohorts</div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Certificates</span>
+                <div class="mt-3 text-3xl font-extrabold text-amber-600">{{ $certifications->count() }}</div>
+                <div class="mt-1 text-xs text-slate-400">Accreditation credentials</div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Students Reached</span>
+                <div class="mt-3 text-3xl font-extrabold text-slate-900">{{ number_format($totalStudentsReached) }}</div>
+                <div class="mt-1 text-xs text-emerald-600 font-semibold">Classroom deployments</div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Class Average</span>
+                <div class="mt-3 text-3xl font-extrabold text-emerald-600">{{ $overallClassAverage }}%</div>
+                <div class="mt-1 text-xs text-slate-400">Student assessment score</div>
+            </div>
         </div>
 
-        <!-- Top Hero Banner with Performance Summary (Clean White Theme) -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-gray-200 p-6 sm:p-8 text-gray-900 shadow-sm mb-8">
-            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div class="max-w-2xl space-y-2">
-                    <span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-200">
-                        <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        DRR Educator Personal Portfolio
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-gray-900">
-                        {{ auth()->user()->name }}'s Accreditation Record
-                    </h2>
-                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                        Comprehensive audit of your DRR training progress, final assessment attempts, digital certifications, and post-training classroom student deployments.
-                    </p>
-                </div>
-
-                <!-- Aggregate Stats Pillbox -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-200 shrink-0 text-center">
-                    <div class="p-2">
-                        <span class="block text-[10px] font-bold uppercase tracking-wider text-gray-500">Workshops</span>
-                        <span class="text-2xl font-black text-gray-900">{{ $trainingProgress->count() }}</span>
-                    </div>
-                    <div class="p-2">
-                        <span class="block text-[10px] font-bold uppercase tracking-wider text-amber-600">Certificates</span>
-                        <span class="text-2xl font-black text-amber-600">{{ $certifications->count() }}</span>
-                    </div>
-                    <div class="p-2">
-                        <span class="block text-[10px] font-bold uppercase tracking-wider text-sky-600">Students Reached</span>
-                        <span class="text-2xl font-black text-sky-600">{{ number_format($totalStudentsReached) }}</span>
-                    </div>
-                    <div class="p-2">
-                        <span class="block text-[10px] font-bold uppercase tracking-wider text-emerald-600">Class Average</span>
-                        <span class="text-2xl font-black text-emerald-600">{{ $overallClassAverage }}%</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Navigation Tabs -->
-            <div class="relative z-10 mt-6 pt-5 border-t border-gray-200 flex flex-wrap gap-2 text-xs font-bold">
-                <button type="button" @click="activeTab = 'all'"
-                        :class="activeTab === 'all' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                        class="px-4 py-2 rounded-xl transition-all">
-                    All Reports
-                </button>
-                <button type="button" @click="activeTab = 'progress'"
-                        :class="activeTab === 'progress' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                        class="px-4 py-2 rounded-xl transition-all">
-                    1. Training Progress ({{ $trainingProgress->count() }})
-                </button>
-                <button type="button" @click="activeTab = 'assessment'"
-                        :class="activeTab === 'assessment' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                        class="px-4 py-2 rounded-xl transition-all">
-                    2. Assessment Logs ({{ $assessmentAttempts->count() }})
-                </button>
-                <button type="button" @click="activeTab = 'certificate'"
-                        :class="activeTab === 'certificate' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                        class="px-4 py-2 rounded-xl transition-all">
-                    3. Digital Certificates ({{ $certifications->count() }})
-                </button>
-                <button type="button" @click="activeTab = 'implementation'"
-                        :class="activeTab === 'implementation' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                        class="px-4 py-2 rounded-xl transition-all">
-                    4. Classroom Implementations ({{ $totalImplementations }})
-                </button>
-            </div>
+        <!-- Quick Navigation Tabs -->
+        <div class="flex flex-wrap gap-6 border-b border-slate-200 text-sm font-semibold">
+            <button type="button" @click="activeTab = 'all'"
+                    :class="activeTab === 'all' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                    class="pb-3.5 border-b-2 transition">
+                All Reports
+            </button>
+            <button type="button" @click="activeTab = 'progress'"
+                    :class="activeTab === 'progress' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                    class="pb-3.5 border-b-2 transition">
+                1. Training Progress ({{ $trainingProgress->count() }})
+            </button>
+            <button type="button" @click="activeTab = 'assessment'"
+                    :class="activeTab === 'assessment' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                    class="pb-3.5 border-b-2 transition">
+                2. Assessment Logs ({{ $assessmentAttempts->count() }})
+            </button>
+            <button type="button" @click="activeTab = 'certificate'"
+                    :class="activeTab === 'certificate' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                    class="pb-3.5 border-b-2 transition">
+                3. Digital Certificates ({{ $certifications->count() }})
+            </button>
+            <button type="button" @click="activeTab = 'implementation'"
+                    :class="activeTab === 'implementation' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                    class="pb-3.5 border-b-2 transition">
+                4. Classroom Implementations ({{ $totalImplementations }})
+            </button>
         </div>
 
         <!-- 1. MY TRAINING PROGRESS -->
         <section x-show="activeTab === 'all' || activeTab === 'progress'" class="space-y-4">
             <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
                 <div class="flex items-center gap-2">
-                    <span class="p-2 rounded-xl bg-indigo-50 text-indigo-700 font-extrabold text-xs">01</span>
+                    <span class="p-2 rounded-xl bg-emerald-50 text-emerald-700 font-extrabold text-xs">01</span>
                     <div>
                         <h3 class="text-lg font-black text-slate-900">My Training Progress</h3>
                         <p class="text-xs text-slate-500">Workshops joined, sequential modules completed, and completion percentages.</p>
@@ -97,7 +100,7 @@
                     <button type="button" @click="activeTab = 'all'" x-show="activeTab === 'progress'" class="text-xs font-semibold text-slate-500 hover:text-slate-800">
                         &larr; Back to All
                     </button>
-                    <a href="{{ route('teacher.workshops.my') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                    <a href="{{ route('teacher.workshops.my') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-800">
                         Manage Registrations &rarr;
                     </a>
                 </div>
@@ -107,7 +110,7 @@
                 <div class="bg-white rounded-2xl border border-dashed border-slate-300 p-8 text-center text-xs text-slate-500">
                     You have not registered for any disaster risk reduction workshops yet.
                     <div class="mt-3">
-                        <a href="{{ route('teacher.workshops.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs shadow-xs hover:bg-indigo-700">
+                        <a href="{{ route('teacher.workshops.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-xs hover:bg-emerald-700">
                             Discover Workshops
                         </a>
                     </div>
@@ -115,11 +118,11 @@
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     @foreach ($trainingProgress as $item)
-                        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between hover:border-indigo-300 transition-all">
+                        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between hover:border-emerald-300 transition-all">
                             <div>
                                 <div class="flex items-start justify-between gap-3">
                                     <div>
-                                        <span class="inline-block text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md px-2.5 py-0.5">
+                                        <span class="inline-block text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-md px-2.5 py-0.5">
                                             {{ $item->workshop->course->title ?? 'DRR Foundation' }}
                                         </span>
                                         <h4 class="mt-2 text-base font-extrabold text-slate-900">{{ $item->workshop->title }}</h4>
@@ -144,7 +147,7 @@
                                         <span class="font-extrabold text-slate-900">{{ $item->progress_percentage }}% ({{ $item->completed_modules }}/{{ $item->total_modules }} Modules)</span>
                                     </div>
                                     <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                                        <div class="h-full bg-indigo-600 rounded-full transition-all duration-500" style="width: {{ $item->progress_percentage }}%"></div>
+                                        <div class="h-full bg-emerald-600 rounded-full transition-all duration-500" style="width: {{ $item->progress_percentage }}%"></div>
                                     </div>
                                 </div>
 
@@ -161,7 +164,7 @@
 
                                 @if ($item->next_module)
                                     <a href="{{ route('teacher.learning.module', [$item->workshop, $item->next_module]) }}"
-                                       class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors">
+                                       class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors">
                                         Resume Module {{ $item->next_module->sequence }} &rarr;
                                     </a>
                                 @else
@@ -242,7 +245,7 @@
                                         <td class="p-4 text-right">
                                             @if ($att->assessment && ($att->workshop || $att->assessment->workshop))
                                                 <a href="{{ route('teacher.assessments.result', [$att->workshop ?? $att->assessment->workshop, $att]) }}"
-                                                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-indigo-600 hover:bg-slate-50 shadow-2xs transition-colors">
+                                                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-emerald-600 hover:bg-slate-50 shadow-2xs transition-colors">
                                                     View Feedback
                                                 </a>
                                             @endif
@@ -334,7 +337,7 @@
 
                                 @if ($cert->workshop->classroomPackage)
                                     <a href="{{ route('teacher.packages.show', $cert->workshop->classroomPackage) }}"
-                                       class="py-2 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-indigo-700 font-bold text-xs transition-colors shadow-2xs">
+                                       class="py-2 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-emerald-700 font-bold text-xs transition-colors shadow-2xs">
                                         Repository
                                     </a>
                                 @endif
@@ -361,7 +364,7 @@
                         &larr; Back to All
                     </button>
                     <a href="{{ route('teacher.implementations.create') }}" 
-                       class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition-colors">
+                       class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
@@ -379,7 +382,7 @@
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
                     <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Students Reached</span>
-                    <div class="mt-2 text-3xl font-black text-indigo-600">{{ number_format($totalStudentsReached) }}</div>
+                    <div class="mt-2 text-3xl font-black text-emerald-600">{{ number_format($totalStudentsReached) }}</div>
                     <span class="text-[11px] text-slate-500 mt-1 block">Anonymously evaluated</span>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
@@ -410,7 +413,7 @@
                         <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4 hover:border-slate-300 transition-all">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
                                 <div>
-                                    <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">
+                                    <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
                                         {{ $imp->workshop->title }}
                                     </span>
                                     <h4 class="mt-1 text-base font-extrabold text-slate-900">
@@ -444,7 +447,7 @@
                                 </div>
                                 <div>
                                     <span class="text-slate-400 block text-[10px] uppercase font-bold">Computed Class Average:</span>
-                                    <span class="font-extrabold text-indigo-700 text-sm">{{ $sessionAverage }}%</span>
+                                    <span class="font-extrabold text-emerald-700 text-sm">{{ $sessionAverage }}%</span>
                                 </div>
                             </div>
 

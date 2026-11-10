@@ -1,8 +1,25 @@
 <x-dynamic-component component="layouts.teacher">
-    <x-slot name="title">Assessment Results &bull; {{ $workshop->title }}</x-slot>
-    <x-slot name="header">Quiz Results</x-slot>
+    <x-slot name="title">Assessment Results — {{ $workshop->title }}</x-slot>
 
-    <div class="max-w-3xl mx-auto space-y-6">
+    <!-- Header Banner (Matches Trainer Side) -->
+    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Quiz Results</h1>
+                <p class="text-xs text-slate-500 mt-1">{{ $workshop->title }}</p>
+            </div>
+            <div>
+                <a href="{{ route('teacher.workshops.show', $workshop) }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-xs">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Workshop
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
         @php
             $isPassed = $attempt->result === 'passed';
             $passingScore = $attempt->assessment->passing_score;
@@ -58,7 +75,7 @@
 
                     @if ($workshop->classroomPackage && $certification?->status === 'approved')
                         <a href="{{ route('teacher.packages.show', $workshop->classroomPackage) }}"
-                           class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
+                           class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
                             Open Workshop Repository &rarr;
                         </a>
                     @endif
@@ -66,12 +83,12 @@
                     @if ($attemptsLeft > 0)
                         @if ($attempt->assessment->module_id)
                             <a href="{{ route('teacher.learning.module', [$workshop, $attempt->assessment->module_id]) }}"
-                           class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
+                           class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
                             Retake Quiz ({{ $attemptsLeft }} {{ Str::plural('attempt', $attemptsLeft) }} left)
                             </a>
                         @else
                             <a href="{{ route('teacher.workshops.show', $workshop) }}"
-                               class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
+                               class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
                                 Return to Workshop Modules
                             </a>
                         @endif

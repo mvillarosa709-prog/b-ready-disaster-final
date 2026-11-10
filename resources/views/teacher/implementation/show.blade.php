@@ -1,28 +1,38 @@
 <x-dynamic-component component="layouts.teacher">
-    <x-slot name="title">Implementation Analytics &bull; {{ $implementation->workshop->title }}</x-slot>
-    <x-slot name="header">Implementation Report</x-slot>
+    <x-slot name="title">Implementation Analytics — {{ $implementation->workshop->title }}</x-slot>
 
-    <div class="space-y-6">
-        <!-- Top Navigation -->
-        <div class="flex items-center justify-between">
-            <a href="{{ route('teacher.implementations.index') }}" 
-               class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Back to All Implementations
-            </a>
-
-            <div class="text-xs font-semibold text-slate-500">
-                Conducted on <strong class="text-slate-800">{{ $implementation->implementation_date->format('F d, Y') }}</strong>
+    <!-- Header Banner (Matches Trainer Side) -->
+    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                    <a href="{{ route('teacher.implementations.index') }}" class="hover:text-emerald-600 transition font-medium">
+                        Classroom Implementations
+                    </a>
+                    <span>/</span>
+                    <span class="text-slate-800 font-semibold">Report Details</span>
+                </nav>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Implementation Report</h1>
+                <p class="text-xs text-slate-500 mt-1">Conducted on <strong class="text-slate-700">{{ $implementation->implementation_date->format('F d, Y') }}</strong></p>
+            </div>
+            <div>
+                <a href="{{ route('teacher.implementations.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-xs">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to All Implementations
+                </a>
             </div>
         </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
 
         <!-- Implementation Overview Header Card -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                 <div>
-                    <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md px-2.5 py-1">
+                    <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-md px-2.5 py-1">
                         {{ $implementation->workshop->title }}
                     </span>
                     <h2 class="mt-2 text-xl sm:text-2xl font-black text-slate-900">
@@ -77,7 +87,7 @@
                 <!-- Class Average -->
                 <div class="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs">
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Class Average</span>
-                    <div class="mt-2 text-3xl font-extrabold text-indigo-600">{{ $analytics['average_percentage'] }}%</div>
+                    <div class="mt-2 text-3xl font-extrabold text-emerald-600">{{ $analytics['average_percentage'] }}%</div>
                     <span class="text-[11px] text-slate-500 mt-1 block">Mean score: {{ $analytics['average_score'] }}</span>
                 </div>
 
@@ -119,7 +129,7 @@
                     <div class="pt-2 flex items-center justify-between text-xs">
                         <span class="text-slate-500">Supporting Documentation Attachment:</span>
                         <a href="{{ Storage::disk('public')->url($implementation->supporting_record) }}" target="_blank"
-                           class="inline-flex items-center gap-1.5 font-bold text-indigo-600 hover:text-indigo-800">
+                           class="inline-flex items-center gap-1.5 font-bold text-emerald-600 hover:text-emerald-800">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                             </svg>

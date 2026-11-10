@@ -40,7 +40,7 @@
     <div class="no-print mb-6 flex items-center gap-4">
         <button type="button" 
                 onclick="window.print()" 
-                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-colors">
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
             </svg>
@@ -84,7 +84,7 @@
         <!-- Awarded to -->
         <div class="relative z-10 my-8 space-y-2">
             <p class="text-xs italic text-slate-500 font-serif">This is proudly presented to</p>
-            <h2 class="font-serif-title text-3xl sm:text-4xl font-extrabold text-indigo-950 underline decoration-amber-500/60 decoration-2 underline-offset-8">
+            <h2 class="font-serif-title text-3xl sm:text-4xl font-extrabold text-emerald-950 underline decoration-amber-500/60 decoration-2 underline-offset-8">
                 {{ $teacher->name }}
             </h2>
             <p class="text-xs font-semibold text-slate-500 pt-2 tracking-wide uppercase">
@@ -111,7 +111,7 @@
             <div class="text-center sm:text-left space-y-1">
                 @if ($certification->status === 'approved')
                     <div class="h-10 border-b border-slate-400 max-w-[200px] mx-auto sm:mx-0 flex items-end justify-center sm:justify-start pb-1">
-                        <span class="font-serif italic text-base text-indigo-900 font-semibold">{{ $certification->approver?->name ?? 'DRR Trainer' }}</span>
+                        <span class="font-serif italic text-base text-emerald-900 font-semibold">{{ $certification->approver?->name ?? 'DRR Trainer' }}</span>
                     </div>
                     <div class="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Digitally signed by {{ $certification->approver?->name ?? 'DRR Trainer' }}</div>
                     <div class="text-[10px] text-slate-400">Approved {{ $certification->approved_at?->format('F d, Y') }}</div>
@@ -154,7 +154,7 @@
                 Verification ID: <span class="font-mono font-bold text-slate-700">{{ $certification->certificate_number }}</span>
             </div>
             <div>
-                Authenticity verifiable at: <span class="font-mono text-indigo-600 font-semibold">https://bready.org/verify/{{ $certification->certificate_number }}</span>
+                Authenticity verifiable at: <span class="font-mono text-emerald-600 font-semibold">https://bready.org/verify/{{ $certification->certificate_number }}</span>
             </div>
         </div>
     </div>

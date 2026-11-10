@@ -1,18 +1,32 @@
 <x-dynamic-component component="layouts.teacher">
-    <x-slot name="title">Log Classroom Implementation</x-slot>
-    <x-slot name="header">New Classroom Report</x-slot>
+    <x-slot name="title">Log Classroom Implementation — B-READY</x-slot>
 
-    <div class="max-w-4xl mx-auto space-y-6">
-        <!-- Back Navigation -->
-        <div>
-            <a href="{{ route('teacher.implementations.index') }}" 
-               class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Back to Implementation Reports
-            </a>
+    <!-- Header Banner (Matches Trainer Side) -->
+    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                    <a href="{{ route('teacher.implementations.index') }}" class="hover:text-emerald-600 transition font-medium">
+                        Classroom Implementations
+                    </a>
+                    <span>/</span>
+                    <span class="text-slate-800 font-semibold">New Report</span>
+                </nav>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Log Classroom Implementation</h1>
+                <p class="text-xs text-slate-500 mt-1">Record student reach and assessment outcomes from your classroom DRR session.</p>
+            </div>
+            <div>
+                <a href="{{ route('teacher.implementations.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-xs">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Reports
+                </a>
+            </div>
         </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
 
         @if ($noCertifications)
             <!-- Uncertified Alert Banner -->
@@ -27,7 +41,7 @@
                     To maintain educational fidelity, classroom implementations can only be logged for workshops where you have passed the final assessment and earned official DRR certification.
                 </p>
                 <div class="pt-2">
-                    <a href="{{ route('teacher.workshops.my') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 shadow-xs transition-colors">
+                    <a href="{{ route('teacher.workshops.my') }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 shadow-xs transition-colors">
                         Go to My Workshops
                     </a>
                 </div>
@@ -44,7 +58,7 @@
                 <!-- Section 1: Workshop & Session Context -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
                     <div class="border-b border-slate-100 pb-3">
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">Section 1</span>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Section 1</span>
                         <h3 class="text-base font-bold text-slate-900">Implementation Details</h3>
                         <p class="text-xs text-slate-500">Select the accredited workshop and date you rolled out the lesson to students.</p>
                     </div>
@@ -58,7 +72,7 @@
                             <select id="workshop_id" 
                                     name="workshop_id" 
                                     required
-                                    class="block w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-indigo-500">
+                                    class="block w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 focus:border-emerald-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-emerald-500">
                                 @foreach ($eligibleWorkshops as $w)
                                     <option value="{{ $w->id }}" {{ old('workshop_id', $selectedWorkshop->id ?? '') == $w->id ? 'selected' : '' }}>
                                         {{ $w->title }} ({{ $w->classroomPackage->title ?? 'Workshop Repository' }})
@@ -82,7 +96,7 @@
                                    value="{{ old('implementation_date', date('Y-m-d')) }}"
                                    max="{{ date('Y-m-d') }}"
                                    required
-                                   class="block w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-indigo-500">
+                                   class="block w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 focus:border-emerald-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-emerald-500">
                             @error('implementation_date')
                                 <p class="text-xs text-rose-600 mt-1 font-medium">{{ $message }}</p>
                             @enderror
@@ -93,7 +107,7 @@
                 <!-- Section 2: Qualitative Remarks & Teacher Reflection -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
                     <div class="border-b border-slate-100 pb-3">
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">Section 2</span>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Section 2</span>
                         <h3 class="text-base font-bold text-slate-900">Qualitative Reflection & Observations</h3>
                         <p class="text-xs text-slate-500">Record pedagogical insights, student engagement, and implementation hurdles.</p>
                     </div>
@@ -107,7 +121,7 @@
                                       name="teacher_reflection" 
                                       rows="3"
                                       placeholder="Reflect on student engagement, drill execution, understanding of evacuation protocols, etc..."
-                                      class="block w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-indigo-500">{{ old('teacher_reflection') }}</textarea>
+                                      class="block w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs text-slate-900 focus:border-emerald-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-emerald-500">{{ old('teacher_reflection') }}</textarea>
                             @error('teacher_reflection')
                                 <p class="text-xs text-rose-600 mt-1 font-medium">{{ $message }}</p>
                             @enderror
@@ -121,7 +135,7 @@
                                       name="remarks" 
                                       rows="2"
                                       placeholder="Any notes for the trainer or school administration..."
-                                      class="block w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-indigo-500">{{ old('remarks') }}</textarea>
+                                      class="block w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs text-slate-900 focus:border-emerald-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-emerald-500">{{ old('remarks') }}</textarea>
                         </div>
 
                         <div>
@@ -132,7 +146,7 @@
                                    id="supporting_record" 
                                    name="supporting_record"
                                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                                   class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                   class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
                             <p class="text-[11px] text-slate-400 mt-1">PDF, JPG, PNG, DOC up to 10MB.</p>
                             @error('supporting_record')
                                 <p class="text-xs text-rose-600 mt-1 font-medium">{{ $message }}</p>
@@ -145,7 +159,7 @@
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                         <div>
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">Section 3</span>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Section 3</span>
                             <h3 class="text-base font-bold text-slate-900">Dynamic Student Assessment Matrix</h3>
                             <p class="text-xs text-slate-500">Add individual student scores. Aggregates are computed automatically.</p>
                         </div>
@@ -158,8 +172,8 @@
                             <span class="px-3 py-1 rounded-xl bg-emerald-50 text-xs font-semibold text-emerald-800 border border-emerald-200">
                                 Passed: <strong class="text-emerald-950" x-text="computedPassedCount()"></strong>
                             </span>
-                            <span class="px-3 py-1 rounded-xl bg-indigo-50 text-xs font-semibold text-indigo-800 border border-indigo-200">
-                                Avg: <strong class="text-indigo-950" x-text="computedAverage() + '%'"></strong>
+                            <span class="px-3 py-1 rounded-xl bg-emerald-50 text-xs font-semibold text-emerald-800 border border-emerald-200">
+                                Avg: <strong class="text-emerald-950" x-text="computedAverage() + '%'"></strong>
                             </span>
                         </div>
                     </div>
@@ -188,7 +202,7 @@
                                                    x-model="student.student_identifier"
                                                    placeholder="e.g. Student-101 / Anonymous-01"
                                                    required
-                                                   class="block w-full rounded-lg border border-slate-200 p-2 text-xs text-slate-900 focus:border-indigo-500 focus:outline-hidden">
+                                                   class="block w-full rounded-lg border border-slate-200 p-2 text-xs text-slate-900 focus:border-emerald-500 focus:outline-hidden">
                                         </td>
                                         <td class="p-3">
                                             <input type="number" 
@@ -197,7 +211,7 @@
                                                    step="0.5"
                                                    min="0"
                                                    required
-                                                   class="block w-full rounded-lg border border-slate-200 p-2 text-xs text-slate-900 focus:border-indigo-500 focus:outline-hidden">
+                                                   class="block w-full rounded-lg border border-slate-200 p-2 text-xs text-slate-900 focus:border-emerald-500 focus:outline-hidden">
                                         </td>
                                         <td class="p-3">
                                             <input type="number" 
@@ -206,7 +220,7 @@
                                                    step="1"
                                                    min="1"
                                                    required
-                                                   class="block w-full rounded-lg border border-slate-200 p-2 text-xs text-slate-900 focus:border-indigo-500 focus:outline-hidden">
+                                                   class="block w-full rounded-lg border border-slate-200 p-2 text-xs text-slate-900 focus:border-emerald-500 focus:outline-hidden">
                                             <input type="hidden" :name="'students[' + index + '][max_score]'" :value="student.total_questions">
                                         </td>
                                         <td class="p-3 text-center font-bold text-slate-800" x-text="calculatePercentage(student) + '%'"></td>
@@ -245,7 +259,7 @@
 
                         <button type="button" 
                                 @click="addSampleRows(3)"
-                                class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors">
+                                class="text-xs font-semibold text-emerald-600 hover:text-emerald-800 transition-colors">
                             + Add 3 More Rows
                         </button>
                     </div>
@@ -259,7 +273,7 @@
                     </a>
 
                     <button type="submit" 
-                            class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-6 py-3 shadow-xs transition-colors">
+                            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-6 py-3 shadow-xs transition-colors">
                         Save Implementation &amp; Generate Analytics
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>

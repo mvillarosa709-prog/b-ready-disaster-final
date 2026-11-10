@@ -27,19 +27,22 @@ class ClassroomPackageController extends Controller
             ->whereIn('status', ['registered', 'completed'])
             ->pluck('workshop_id');
 
-        $packages = ClassroomPackage::whereIn('workshop_id', $enrolledWorkshopIds)
+        $certificationsByWorkshop = Certification::where(function ($q) use ($teacher) {
+            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+        })
+            ->where('status', 'approved')
+            ->get()
+            ->keyBy('workshop_id');
+
+        $certifiedWorkshopIds = $certificationsByWorkshop->keys()->toArray();
+        $accessibleWorkshopIds = $enrolledWorkshopIds->merge($certifiedWorkshopIds)->unique();
+
+        $packages = ClassroomPackage::whereIn('workshop_id', $accessibleWorkshopIds)
             ->whereHas('workshop.course', fn ($query) => $query->published())
             ->with(['workshop.trainer', 'materials'])
             ->get();
 
-        $certifiedWorkshopIds = Certification::where(function ($q) use ($teacher) {
-            $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-        })
-            ->where('status', 'approved')
-            ->pluck('workshop_id')
-            ->toArray();
-
-        return view('teacher.packages.index', compact('packages', 'certifiedWorkshopIds'));
+        return view('teacher.packages.index', compact('packages', 'certifiedWorkshopIds', 'certificationsByWorkshop'));
     }
 
     /**

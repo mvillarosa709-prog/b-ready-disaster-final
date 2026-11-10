@@ -1,26 +1,38 @@
 <x-dynamic-component component="layouts.teacher">
-    <x-slot name="title">{{ $workshop->title }}</x-slot>
-    <x-slot name="header">Workshop Overview</x-slot>
+    <x-slot name="title">{{ $workshop->title }} — B-READY</x-slot>
 
-    <div class="space-y-8">
-        <!-- Back Button -->
-        <div>
-            <a href="{{ url()->previous() }}"
-               class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M15 19l-7-7 7-7"/>
-                </svg>
-                Back
-            </a>
+    <!-- Header Banner (Matches Trainer Side) -->
+    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                    <a href="{{ route('teacher.workshops.index') }}" class="hover:text-emerald-600 transition font-medium">
+                        Workshops
+                    </a>
+                    <span>/</span>
+                    <span class="text-slate-800 font-semibold truncate max-w-xs">{{ $workshop->title }}</span>
+                </nav>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Workshop Overview</h1>
+            </div>
+            <div>
+                <a href="{{ route('teacher.workshops.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-xs">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Workshops
+                </a>
+            </div>
         </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
 
         <!-- Top Workshop Header Card -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div class="max-w-3xl">
                     <div class="flex items-center gap-2">
-                        <span class="inline-block text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md px-2.5 py-1">
+                        <span class="inline-block text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-md px-2.5 py-1">
                             {{ $workshop->course->title ?? 'DRR Training Course' }}
                         </span>
                         <span class="inline-block text-xs font-semibold text-slate-500">
@@ -38,7 +50,7 @@
 
                     <!-- Trainer details -->
                     <div class="mt-5 flex items-center gap-3">
-                        <div class="h-9 w-9 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm border border-indigo-200">
+                        <div class="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm border border-emerald-200">
                             {{ substr($workshop->trainer->name ?? 'T', 0, 1) }}
                         </div>
                         <div class="text-xs">
@@ -75,7 +87,7 @@
                         @if ($isEnrolled)
                             @if ($firstUnlockedModule)
                                 <a href="{{ route('teacher.learning.module', [$workshop, $firstUnlockedModule]) }}"
-                                   class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white shadow-xs transition-colors flex items-center justify-center gap-1.5">
+                                   class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white shadow-xs transition-colors flex items-center justify-center gap-1.5">
                                     <span>{{ $firstUnlockedModule->sequence === 1 ? 'Start Course (Module 1)' : 'Continue to Module ' . $firstUnlockedModule->sequence }}</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
@@ -89,7 +101,7 @@
                         @else
                             <form method="POST" action="{{ route('teacher.workshops.register', $workshop) }}">
                                 @csrf
-                                <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white shadow-xs transition-colors flex items-center justify-center gap-2">
+                                <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white shadow-xs transition-colors flex items-center justify-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
@@ -114,21 +126,21 @@
                 </div>
 
                 @if (! $isEnrolled)
-                    <div class="p-4 rounded-2xl bg-indigo-50/80 border border-indigo-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div class="flex items-center gap-3">
-                            <span class="p-2 rounded-xl bg-indigo-600 text-white shrink-0">
+                            <span class="p-2 rounded-xl bg-emerald-600 text-white shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                 </svg>
                             </span>
                             <div>
-                                <div class="text-xs font-bold text-indigo-950">Registration Required to Begin</div>
-                                <div class="text-[11px] text-indigo-800">Register first to take this training course. Once registered, you will start immediately with Module 1.</div>
+                                <div class="text-xs font-bold text-emerald-950">Registration Required to Begin</div>
+                                <div class="text-[11px] text-emerald-800">Register first to take this training course. Once registered, you will start immediately with Module 1.</div>
                             </div>
                         </div>
                         <form method="POST" action="{{ route('teacher.workshops.register', $workshop) }}" class="shrink-0">
                             @csrf
-                            <button type="submit" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-1.5">
+                            <button type="submit" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-1.5">
                                 <span>Register Now &rarr;</span>
                             </button>
                         </form>
@@ -146,11 +158,11 @@
                                 $mod = $item->module;
                             @endphp
 
-                            <div class="rounded-2xl border p-5 transition-all {{ $item->is_unlocked ? 'bg-white border-slate-200/90 shadow-2xs hover:border-indigo-300' : 'bg-slate-50 border-slate-200 opacity-60 cursor-not-allowed' }}">
+                            <div class="rounded-2xl border p-5 transition-all {{ $item->is_unlocked ? 'bg-white border-slate-200/90 shadow-2xs hover:border-emerald-300' : 'bg-slate-50 border-slate-200 opacity-60 cursor-not-allowed' }}">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                     <div class="flex items-start gap-4">
                                         <!-- Sequence Icon Badge -->
-                                        <div class="h-10 w-10 shrink-0 rounded-xl flex items-center justify-center font-bold text-sm {{ $item->is_completed ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : ($item->is_unlocked ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-slate-200 text-slate-500') }}">
+                                        <div class="h-10 w-10 shrink-0 rounded-xl flex items-center justify-center font-bold text-sm {{ $item->is_completed ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : ($item->is_unlocked ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-slate-200 text-slate-500') }}">
                                             @if ($item->is_completed)
                                                 <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
@@ -199,8 +211,8 @@
                                         @if (! $isEnrolled)
                                             <form method="POST" action="{{ route('teacher.workshops.register', $workshop) }}">
                                                 @csrf
-                                                <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold transition-colors">
-                                                    <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition-colors">
+                                                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                                     </svg>
                                                     Register to Unlock
@@ -213,7 +225,7 @@
                                             </a>
                                         @elseif ($item->is_unlocked)
                                             <a href="{{ route('teacher.learning.module', [$workshop, $mod]) }}"
-                                               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white transition-colors shadow-xs">
+                                               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white transition-colors shadow-xs">
                                                 {{ $item->is_in_progress ? 'Continue' : 'Start Module' }} &rarr;
                                             </a>
                                         @else
@@ -234,13 +246,13 @@
                 <!-- 1. Inline Module Quiz Card -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Module Quiz</span>
+                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Module Quiz</span>
                         @if ($certification?->status === 'approved')
                             <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                                 Passed
                             </span>
                         @else
-                            <span class="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
+                            <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                                 In module
                             </span>
                         @endif
@@ -263,7 +275,7 @@
                             </a>
                         @elseif ($assessment?->module_id)
                             <a href="{{ route('teacher.learning.module', [$workshop, $assessment->module_id]) }}"
-                               class="block w-full text-center py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors">
+                               class="block w-full text-center py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors">
                                 Go to Module {{ $assessment->module->sequence ?? '' }} Quiz &rarr;
                             </a>
                         @else
@@ -299,7 +311,7 @@
                             </div>
                             @if ($package)
                                 <a href="{{ route('teacher.packages.show', $package) }}"
-                                   class="block w-full text-center py-2 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-2xs transition-colors">
+                                   class="block w-full text-center py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition-colors">
                                     Open Workshop Repository
                                 </a>
                             @endif

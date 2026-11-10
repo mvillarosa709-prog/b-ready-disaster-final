@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Models\AssessmentAttempt;
 use App\Models\Certification;
+use App\Models\Course;
 use App\Models\Module;
 use App\Models\ModuleProgress;
 use App\Models\Workshop;
@@ -17,29 +18,33 @@ use Illuminate\View\View;
 class WorkshopController extends Controller
 {
     /**
-     * Display a listing of available published workshops for discovery and enrollment.
-     * Fetches active workshops where the registration deadline has not passed.
+     * Display a listing of available published workshops and published course modules for discovery.
      */
     public function index(Request $request): View
     {
         $teacher = $request->user();
+        $search = trim((string) $request->input('search', ''));
+
         $query = Workshop::whereIn('status', ['published', 'ongoing'])
             ->whereHas('course', fn ($query) => $query->published())
             ->with(['trainer', 'course.modules', 'assessment']);
 
-        // Search query
-        if ($request->filled('search')) {
-            $search = $request->input('search');
+        // Search across workshop title/description, course title, and module titles/descriptions
+        if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%")
                     ->orWhereHas('course', function ($cq) use ($search) {
                         $cq->where('title', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('course.modules', function ($mq) use ($search) {
+                        $mq->where('title', 'like', "%{$search}%")
+                            ->orWhere('description', 'like', "%{$search}%");
                     });
             });
         }
 
-        $workshops = $query->latest('start_date')->paginate(9);
+        $workshops = $query->latest('start_date')->paginate(9)->withQueryString();
 
         // Fetch enrolled workshop IDs for current teacher (check workshop_teachers)
         $enrolledWorkshopIds = WorkshopTeacher::where(function ($q) use ($teacher) {
