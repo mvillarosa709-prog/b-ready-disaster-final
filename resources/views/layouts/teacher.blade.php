@@ -109,17 +109,17 @@
 
                         <!-- User Profile card -->
                         <li class="border-t border-slate-100 pt-3">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div class="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm border border-emerald-200">
+                            <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-emerald-300 transition">
+                                <a href="{{ route('profile.edit') }}" title="Profile &amp; Change Password" class="flex items-center gap-3 min-w-0 flex-1 group">
+                                    <div class="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm border border-emerald-200 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition">
                                         {{ substr(auth()->user()->name, 0, 1) }}
                                     </div>
                                     <div class="overflow-hidden">
-                                        <div class="text-sm font-semibold text-slate-800 truncate">{{ auth()->user()->name }}</div>
-                                        <div class="text-xs text-slate-500 capitalize">Educator / Teacher</div>
+                                        <div class="text-sm font-semibold text-slate-800 truncate group-hover:text-emerald-700 transition">{{ auth()->user()->name }}</div>
+                                        <div class="text-xs text-slate-500 capitalize">Educator • Account</div>
                                     </div>
-                                </div>
-                                <form method="POST" action="{{ route('logout') }}">
+                                </a>
+                                <form method="POST" action="{{ route('logout') }}" class="shrink-0">
                                     @csrf
                                     <button type="submit" title="Sign out" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

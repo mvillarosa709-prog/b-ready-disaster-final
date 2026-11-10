@@ -96,19 +96,22 @@
 
                 <!-- User Profile Footer Card -->
                 <div class="border-t border-slate-100 pt-4 mt-auto">
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 border border-slate-100">
-                        <div class="flex items-center gap-3">
-                            <div class="h-9 w-9 rounded-lg bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm border border-emerald-200">
+                    <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50/80 border border-slate-100 hover:border-emerald-300 transition">
+                        <a href="{{ route('profile.edit') }}" title="Profile &amp; Change Password" class="flex items-center gap-3 min-w-0 flex-1 group">
+                            <div class="h-9 w-9 rounded-lg bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm border border-emerald-200 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition">
                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                             </div>
                             <div class="overflow-hidden">
-                                <p class="text-xs font-semibold text-slate-900 truncate">{{ auth()->user()->name }}</p>
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800">
-                                    DRR Expert
-                                </span>
+                                <p class="text-xs font-semibold text-slate-900 truncate group-hover:text-emerald-700 transition">{{ auth()->user()->name }}</p>
+                                <div class="flex items-center gap-1.5 mt-0.5">
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800">
+                                        DRR Expert
+                                    </span>
+                                    <span class="text-[10px] text-slate-400 group-hover:text-emerald-600">• Account</span>
+                                </div>
                             </div>
-                        </div>
-                        <form method="POST" action="{{ route('logout') }}">
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="shrink-0">
                             @csrf
                             <button type="submit" title="Log Out" class="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
