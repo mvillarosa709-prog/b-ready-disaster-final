@@ -56,7 +56,6 @@ Route::middleware(['auth', 'role:trainer'])->group(function () {
 Route::middleware(['auth', 'role:trainer', 'trainer.password', 'verified'])->group(function () {
     Route::get('/trainer/dashboard', [TrainerController::class, 'dashboard'])->name('trainer.dashboard');
     Route::resource('/trainer/workshops', TrainerWorkshopController::class)
-        ->except('show')
         ->names('trainer.workshops');
 
     // Trainer Courses Management

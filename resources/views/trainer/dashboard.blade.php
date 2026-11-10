@@ -12,7 +12,7 @@
                     <span class="text-xs text-slate-400">Accredited Facilitator</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
-                    Welcome back, {{ auth()->user()->name }}! 👋
+                    Welcome back, {{ auth()->user()->name }}!
                 </h1>
                 <p class="text-slate-500 text-sm mt-1">
                     Manage disaster preparedness courses, module quizzes, and teacher training outcomes.
@@ -29,18 +29,13 @@
         </div>
     </div>
 
-    <!-- Quick Stats Grid -->
+    <!-- Quick Stats Grid (Clean, Icon-free) -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <!-- Courses Stat -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-emerald-200 transition">
-                <div class="flex items-center justify-between">
+                <div>
                     <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Courses</span>
-                    <div class="p-2.5 rounded-xl bg-emerald-50 text-emerald-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                    </div>
                 </div>
                 <div class="mt-4 flex items-baseline gap-2">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $courseCount ?? 0 }}</span>
@@ -50,13 +45,8 @@
 
             <!-- Modules Stat -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-blue-200 transition">
-                <div class="flex items-center justify-between">
+                <div>
                     <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Learning Modules</span>
-                    <div class="p-2.5 rounded-xl bg-blue-50 text-blue-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                        </svg>
-                    </div>
                 </div>
                 <div class="mt-4 flex items-baseline gap-2">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $moduleCount ?? 0 }}</span>
@@ -66,13 +56,8 @@
 
             <!-- Module Quizzes Stat -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-200 transition">
-                <div class="flex items-center justify-between">
+                <div>
                     <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Module Quizzes</span>
-                    <div class="p-2.5 rounded-xl bg-amber-50 text-amber-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                        </svg>
-                    </div>
                 </div>
                 <div class="mt-4 flex items-baseline gap-2">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $quizCount ?? 0 }}</span>
@@ -82,13 +67,8 @@
 
             <!-- Monitoring Stat -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-purple-200 transition">
-                <div class="flex items-center justify-between">
+                <div>
                     <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Teacher Submissions</span>
-                    <div class="p-2.5 rounded-xl bg-purple-50 text-purple-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                        </svg>
-                    </div>
                 </div>
                 <div class="mt-4 flex items-baseline gap-2">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $submissionCount ?? 0 }}</span>

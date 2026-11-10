@@ -46,7 +46,9 @@
                             @foreach ($workshops as $workshop)
                                 <tr class="hover:bg-slate-50/70">
                                     <td class="px-5 py-4">
-                                        <div class="font-bold text-slate-900">{{ $workshop->title }}</div>
+                                        <a href="{{ route('trainer.workshops.show', $workshop) }}" class="font-bold text-slate-900 hover:text-emerald-700 transition">
+                                            {{ $workshop->title }}
+                                        </a>
                                         <div class="mt-1 text-xs text-slate-500">{{ \Illuminate\Support\Str::limit($workshop->description, 90) }}</div>
                                     </td>
                                     <td class="px-5 py-4 text-slate-700">{{ $workshop->course->title }}</td>
@@ -62,6 +64,7 @@
                                     </td>
                                     <td class="px-5 py-4">
                                         <div class="flex items-center justify-end gap-3">
+                                            <a href="{{ route('trainer.workshops.show', $workshop) }}" class="text-xs font-semibold text-slate-700 hover:text-emerald-700">View</a>
                                             <a href="{{ route('trainer.workshops.edit', $workshop) }}" class="text-xs font-semibold text-emerald-700 hover:text-emerald-900">Edit</a>
                                             <form method="POST" action="{{ route('trainer.workshops.destroy', $workshop) }}" onsubmit="return confirm('Delete this workshop?');">
                                                 @csrf

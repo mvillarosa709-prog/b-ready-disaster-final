@@ -23,6 +23,21 @@ class WorkshopController extends Controller
         return view('trainer.workshops.index', compact('workshops'));
     }
 
+    public function show(Workshop $workshop): View
+    {
+        $this->authorizeTrainer($workshop);
+
+        $workshop->load([
+            'course.modules.quiz',
+            'workshopTeachers.teacher',
+            'certifications.teacher',
+        ]);
+
+        $canPublish = $workshop->course ? $this->canPublishWorkshopFor($workshop->course) : false;
+
+        return view('trainer.workshops.show', compact('workshop', 'canPublish'));
+    }
+
     public function create(): View
     {
         $courses = $this->availableCourses();
@@ -32,7 +47,7 @@ class WorkshopController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate($this->rules());
+        $validated = $request->validate($this->rules(isCreating: true));
         $course = Course::where('trainer_id', $request->user()->id)
             ->find($validated['course_id']);
 
@@ -42,20 +57,16 @@ class WorkshopController extends Controller
             ]);
         }
 
-        if ($validated['status'] === 'published' && ! $this->canPublishWorkshopFor($course)) {
-            return back()->withInput()->withErrors([
-                'status' => 'Publish the selected course and complete and publish its module quizzes before publishing the workshop.',
-            ]);
-        }
-
-        Workshop::create([
+        // New workshops always start as draft
+        $workshop = Workshop::create([
             ...$validated,
+            'status' => 'draft',
             'trainer_id' => $request->user()->id,
         ]);
 
         return redirect()
-            ->route('trainer.workshops.index')
-            ->with('success', 'Workshop created successfully.');
+            ->route('trainer.workshops.show', $workshop)
+            ->with('success', 'Workshop created as Draft. Review the attached course modules and click Edit or Publish when ready.');
     }
 
     public function edit(Workshop $workshop): View
@@ -69,7 +80,7 @@ class WorkshopController extends Controller
     public function update(Request $request, Workshop $workshop): RedirectResponse
     {
         $this->authorizeTrainer($workshop);
-        $validated = $request->validate($this->rules());
+        $validated = $request->validate($this->rules(isCreating: false));
         $course = Course::where('trainer_id', $request->user()->id)
             ->find($validated['course_id']);
 
@@ -88,7 +99,7 @@ class WorkshopController extends Controller
         $workshop->update($validated);
 
         return redirect()
-            ->route('trainer.workshops.index')
+            ->route('trainer.workshops.show', $workshop)
             ->with('success', 'Workshop updated successfully.');
     }
 
@@ -114,7 +125,7 @@ class WorkshopController extends Controller
             ->with('success', 'Workshop deleted successfully.');
     }
 
-    private function rules(): array
+    private function rules(bool $isCreating = false): array
     {
         return [
             'course_id' => ['required', 'integer'],
@@ -123,13 +134,14 @@ class WorkshopController extends Controller
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after:start_date'],
             'registration_deadline' => ['required', 'date', 'before_or_equal:start_date'],
-            'status' => ['required', Rule::in(['draft', 'published'])],
+            'status' => $isCreating ? ['nullable', Rule::in(['draft'])] : ['required', Rule::in(['draft', 'published'])],
         ];
     }
 
     private function availableCourses()
     {
         return Course::where('trainer_id', auth()->id())
+            ->withCount('modules')
             ->with('modules')
             ->orderBy('title')
             ->get()

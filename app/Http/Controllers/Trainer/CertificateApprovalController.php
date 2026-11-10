@@ -13,11 +13,20 @@ class CertificateApprovalController extends Controller
     public function index(): View
     {
         $pendingCertificates = Certification::where('status', 'pending')
-            ->with(['teacher', 'workshop', 'assessmentAttempt'])
+            ->with(['teacher', 'workshop.course', 'assessmentAttempt'])
             ->latest('certified_at')
             ->get();
 
-        return view('trainer.certificates.pending', compact('pendingCertificates'));
+        $approvedCertificates = Certification::where('status', 'approved')
+            ->with(['teacher', 'workshop.course', 'assessmentAttempt', 'approver'])
+            ->latest('approved_at')
+            ->latest('certified_at')
+            ->get();
+
+        return view('trainer.certificates.pending', compact(
+            'pendingCertificates',
+            'approvedCertificates'
+        ));
     }
 
     public function approve(Request $request, Certification $certification): RedirectResponse
@@ -34,6 +43,6 @@ class CertificateApprovalController extends Controller
             return back()->with('info', 'This certificate has already been approved.');
         }
 
-        return back()->with('success', 'Certificate approved and signed.');
+        return back()->with('success', 'Certificate approved and digitally signed.');
     }
 }
