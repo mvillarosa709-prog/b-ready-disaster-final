@@ -197,3 +197,31 @@ test('invalid quiz CSV imports do not replace existing questions', function () {
 
     expect($quiz->fresh()->questions()->pluck('id')->all())->toBe($originalQuestionIds);
 });
+
+test('trainers can view and update module details from the edit page', function () {
+    $trainer = User::where('email', 'trainer@example.com')->firstOrFail();
+    $module = Module::where('title', 'Fundamentals of Seismic Hazards & School Risk Assessment')->firstOrFail();
+
+    $this->actingAs($trainer)
+        ->get(route('trainer.modules.edit', [$module->course_id, $module->id]))
+        ->assertOk()
+        ->assertSee('Edit Module')
+        ->assertSee($module->title);
+
+    $this->actingAs($trainer)
+        ->put(route('trainer.modules.update', [$module->course_id, $module->id]), [
+            'title' => 'Updated Seismic Fundamentals',
+            'description' => 'Updated description',
+            'learning_objectives' => 'Updated objectives',
+            'estimated_duration' => 35,
+            'sequence' => 1,
+            'is_required' => '1',
+        ])
+        ->assertRedirect(route('trainer.courses.show', $module->course_id));
+
+    $this->assertDatabaseHas('modules', [
+        'id' => $module->id,
+        'title' => 'Updated Seismic Fundamentals',
+        'estimated_duration' => 35,
+    ]);
+});
