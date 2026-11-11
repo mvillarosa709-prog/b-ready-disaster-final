@@ -1,231 +1,292 @@
 <x-app-layout>
     <x-slot name="header">
-        <div>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Add Module') }}
-            </h2>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                    <a href="{{ route('trainer.courses.show', $course->id) }}" class="hover:text-emerald-600 transition font-medium truncate max-w-xs">
+                        {{ $course->title }}
+                    </a>
+                    <span>/</span>
+                    <span class="text-slate-800 font-semibold">Add Module</span>
+                </nav>
 
-            <p class="text-sm text-gray-500 mt-1">
-                Add a new module to {{ $course->title }}.
-            </p>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">
+                        {{ __('Add New Module') }}
+                    </h2>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        Curriculum Unit
+                    </span>
+                </div>
+                <p class="text-sm text-slate-500 mt-1">
+                    Add a structured learning module to <strong>{{ $course->title }}</strong>.
+                </p>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <a
+                    href="{{ route('trainer.courses.show', $course->id) }}"
+                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition shadow-sm"
+                >
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Course
+                </a>
+            </div>
         </div>
     </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-8 bg-slate-50/70 min-h-[calc(100vh-10rem)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-            <div class="bg-white shadow-sm sm:rounded-lg">
+                <!-- Main Form (2 cols) -->
+                <div class="lg:col-span-2 space-y-6">
 
-                <div class="p-6">
-
-                    {{-- Validation Errors --}}
-                    @if ($errors->any())
-                        <div class="mb-6 bg-red-100 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-
-                            <p class="font-semibold mb-2">
-                                Please correct the following errors:
-                            </p>
-
-                            <ul class="list-disc list-inside text-sm">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-
+                    @if (session('success'))
+                        <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-900 shadow-sm flex items-center gap-3">
+                            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>{{ session('success') }}</span>
                         </div>
                     @endif
 
+                    @if ($errors->any())
+                        <div class="rounded-2xl bg-red-50 border border-red-200 p-4 shadow-xs">
+                            <div class="flex items-start gap-3">
+                                <div class="shrink-0 p-1 bg-red-100 rounded-lg text-red-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="text-sm font-bold text-red-900">Please fix the following errors:</h3>
+                                    <ul class="mt-2 list-disc list-inside text-xs text-red-700 space-y-1">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
 
-                    {{-- Module Form --}}
-                    <form
-                        method="POST"
-                        action="{{ route('trainer.modules.store', $course->id) }}"
-                    >
-
+                    <form method="POST" action="{{ route('trainer.modules.store', $course->id) }}" class="space-y-6">
                         @csrf
 
-
-                        {{-- Module Title --}}
-                        <div class="mb-6">
-
-                            <label
-                                for="title"
-                                class="block text-sm font-medium text-gray-700"
-                            >
-                                Module Title
-                            </label>
-
-                            <input
-                                type="text"
-                                id="title"
-                                name="title"
-                                value="{{ old('title') }}"
-                                required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                placeholder="Example: Understanding Disaster Risks"
-                            >
-
-                        </div>
-
-
-                        {{-- Description --}}
-                        <div class="mb-6">
-
-                            <label
-                                for="description"
-                                class="block text-sm font-medium text-gray-700"
-                            >
-                                Description
-                            </label>
-
-                            <textarea
-                                id="description"
-                                name="description"
-                                rows="4"
-                                required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                placeholder="Describe what this module covers."
-                            >{{ old('description') }}</textarea>
-
-                        </div>
-
-
-                        {{-- Learning Objectives --}}
-                        <div class="mb-6">
-
-                            <label
-                                for="learning_objectives"
-                                class="block text-sm font-medium text-gray-700"
-                            >
-                                Learning Objectives
-                            </label>
-
-                            <textarea
-                                id="learning_objectives"
-                                name="learning_objectives"
-                                rows="4"
-                                required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                placeholder="What should participants learn from this module?"
-                            >{{ old('learning_objectives') }}</textarea>
-
-                        </div>
-
-
-                        {{-- Estimated Duration --}}
-                        <div class="mb-6">
-
-                            <label
-                                for="estimated_duration"
-                                class="block text-sm font-medium text-gray-700"
-                            >
-                                Estimated Duration
-                            </label>
-
-                            <div class="flex items-center gap-3">
-
-                                <input
-                                    type="number"
-                                    id="estimated_duration"
-                                    name="estimated_duration"
-                                    value="{{ old('estimated_duration') }}"
-                                    min="1"
-                                    required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                    placeholder="30"
-                                >
-
-                                <span class="text-sm text-gray-500">
-                                    minutes
-                                </span>
-
+                        <!-- Card 1: Module Essentials -->
+                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sm:p-7 space-y-6">
+                            <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900">Module Essentials</h3>
+                                    <p class="text-xs text-slate-500">Define the module title and what teachers will cover.</p>
+                                </div>
                             </div>
 
-                        </div>
-
-
-                        {{-- Module Order --}}
-                        <div class="mb-6">
-
-                            <label
-                                for="sequence"
-                                class="block text-sm font-medium text-gray-700"
-                            >
-                                Module Order
-                            </label>
-
-                            <div class="flex items-center gap-3">
-
+                            <div>
+                                <label for="title" class="block text-sm font-semibold text-slate-800 mb-1.5">
+                                    Module Title <span class="text-red-500">*</span>
+                                </label>
                                 <input
-                                    type="number"
-                                    id="sequence"
-                                    name="sequence"
-                                    value="{{ old('sequence', 1) }}"
-                                    min="1"
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    value="{{ old('title') }}"
                                     required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    placeholder="e.g. Understanding Seismic Risks & Classroom Safety"
+                                    class="block w-full rounded-xl border-slate-300 shadow-xs text-slate-900 text-sm focus:border-emerald-500 focus:ring-emerald-500/20 py-2.5 px-3.5 placeholder:text-slate-400 transition"
                                 >
-
-                                <span class="text-sm text-gray-500">
-                                    order
-                                </span>
-
                             </div>
 
-                            <p class="text-xs text-gray-500 mt-1">
-                                Example: 1 for the first module, 2 for the second module.
-                            </p>
-
+                            <div>
+                                <label for="description" class="block text-sm font-semibold text-slate-800 mb-1.5">
+                                    Module Description <span class="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    rows="4"
+                                    required
+                                    placeholder="Describe the topics, drills, and preparedness activities covered in this module."
+                                    class="block w-full rounded-xl border-slate-300 shadow-xs text-slate-900 text-sm focus:border-emerald-500 focus:ring-emerald-500/20 py-2.5 px-3.5 placeholder:text-slate-400 transition"
+                                >{{ old('description') }}</textarea>
+                            </div>
                         </div>
 
+                        <!-- Card 2: Learning Objectives -->
+                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sm:p-7 space-y-6">
+                            <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-xs">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900">Learning Objectives</h3>
+                                    <p class="text-xs text-slate-500">Specify the skills teachers should master after completing this unit.</p>
+                                </div>
+                            </div>
 
-                        {{-- Required Module --}}
-                        <div class="mb-8">
-
-                            <label class="flex items-center">
-
-                                <input
-                                    type="checkbox"
-                                    name="is_required"
-                                    value="1"
-                                    {{ old('is_required', true) ? 'checked' : '' }}
-                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
-                                >
-
-                                <span class="ml-2 text-sm text-gray-700">
-                                    This module is required
-                                </span>
-
-                            </label>
-
+                            <div>
+                                <label for="learning_objectives" class="block text-sm font-semibold text-slate-800 mb-1.5">
+                                    Key Outcomes <span class="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    id="learning_objectives"
+                                    name="learning_objectives"
+                                    rows="4"
+                                    required
+                                    placeholder="• Identify primary structural hazards in classrooms&#10;• Practice rapid student evacuation alignment"
+                                    class="block w-full rounded-xl border-slate-300 shadow-xs text-slate-900 text-sm focus:border-emerald-500 focus:ring-emerald-500/20 py-2.5 px-3.5 placeholder:text-slate-400 transition"
+                                >{{ old('learning_objectives') }}</textarea>
+                            </div>
                         </div>
 
+                        <!-- Card 3: Duration, Order & Requirement -->
+                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sm:p-7 space-y-6">
+                            <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
+                                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-xs">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900">Duration &amp; Sequencing</h3>
+                                    <p class="text-xs text-slate-500">Set the module duration and its sequential position in the course.</p>
+                                </div>
+                            </div>
 
-                        {{-- Buttons --}}
-                        <div class="flex items-center justify-end gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="estimated_duration" class="block text-sm font-semibold text-slate-800 mb-1.5">
+                                        Estimated Duration <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex rounded-xl shadow-xs">
+                                        <input
+                                            type="number"
+                                            id="estimated_duration"
+                                            name="estimated_duration"
+                                            value="{{ old('estimated_duration', 30) }}"
+                                            min="1"
+                                            required
+                                            placeholder="30"
+                                            class="block w-full rounded-l-xl border-slate-300 text-slate-900 text-sm focus:border-emerald-500 focus:ring-emerald-500/20 py-2.5 px-3.5 transition"
+                                        >
+                                        <span class="inline-flex items-center px-3.5 rounded-r-xl border border-l-0 border-slate-300 bg-slate-50 text-slate-600 text-xs font-semibold">
+                                            Minutes
+                                        </span>
+                                    </div>
+                                </div>
 
+                                <div>
+                                    <label for="sequence" class="block text-sm font-semibold text-slate-800 mb-1.5">
+                                        Module Order <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex rounded-xl shadow-xs">
+                                        <span class="inline-flex items-center px-3.5 rounded-l-xl border border-r-0 border-slate-300 bg-slate-50 text-slate-600 text-xs font-semibold">
+                                            #
+                                        </span>
+                                        <input
+                                            type="number"
+                                            id="sequence"
+                                            name="sequence"
+                                            value="{{ old('sequence', ($course->modules()->max('sequence') ?? 0) + 1) }}"
+                                            min="1"
+                                            required
+                                            class="block w-full rounded-r-xl border-slate-300 text-slate-900 text-sm focus:border-emerald-500 focus:ring-emerald-500/20 py-2.5 px-3.5 transition"
+                                        >
+                                    </div>
+                                    <p class="mt-1 text-xs text-slate-500">Order in which teachers unlock modules.</p>
+                                </div>
+                            </div>
+
+                            <div class="pt-2 border-t border-slate-100">
+                                <label class="inline-flex items-center gap-2.5 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        name="is_required"
+                                        value="1"
+                                        {{ old('is_required', true) ? 'checked' : '' }}
+                                        class="rounded border-slate-300 text-emerald-600 shadow-xs focus:ring-emerald-500"
+                                    >
+                                    <span class="text-sm font-medium text-slate-700">
+                                        This module is required for certification
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Actions -->
+                        <div class="flex items-center justify-between gap-4 pt-2">
                             <a
                                 href="{{ route('trainer.courses.show', $course->id) }}"
-                                class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-xs"
                             >
-                                Cancel
+                                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                </svg>
+                                Cancel &amp; Return
                             </a>
 
                             <button
                                 type="submit"
-                                class="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
+                                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm shadow-emerald-600/30 transition transform active:scale-95"
                             >
-                                Create Module
+                                <span>Create Module &amp; Continue</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
                             </button>
-
                         </div>
-
                     </form>
 
                 </div>
 
-            </div>
+                <!-- Right Sidebar -->
+                <div class="space-y-6">
+                    @include('trainer.courses._creation-steps', ['activeStep' => 2, 'course' => $course])
 
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-3 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            Parent Course
+                        </h4>
+                        <p class="text-sm font-bold text-slate-900">{{ $course->title }}</p>
+                        <p class="text-xs text-slate-500 mt-1 line-clamp-3">{{ $course->description }}</p>
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+                            <span>Existing Modules:</span>
+                            <span class="font-bold text-slate-900">{{ $course->modules()->count() }}</span>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-teal-50/40 p-5">
+                        <div class="flex items-start gap-3">
+                            <span class="text-2xl">💡</span>
+                            <div>
+                                <h4 class="text-sm font-bold text-emerald-950">Module Tips</h4>
+                                <ul class="mt-2 text-xs text-emerald-900 space-y-2">
+                                    <li class="flex items-start gap-1.5">
+                                        <span class="text-emerald-600 font-bold">•</span>
+                                        <span>After creating this module, add learning materials (PDFs, slides, videos) and publish its quiz.</span>
+                                    </li>
+                                    <li class="flex items-start gap-1.5">
+                                        <span class="text-emerald-600 font-bold">•</span>
+                                        <span>Teachers complete modules in exact sequence order (1, 2, 3...).</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </x-app-layout>

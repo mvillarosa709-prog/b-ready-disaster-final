@@ -20,7 +20,7 @@
                     </span>
                 </div>
                 <p class="text-sm text-slate-500 mt-1">
-                    Define the core curriculum details. You'll add modules, materials, and quizzes after saving.
+                    Define the core curriculum details. Next, you'll add modules, materials, and quizzes.
                 </p>
             </div>
 
@@ -28,7 +28,7 @@
             <div class="flex items-center gap-2">
                 <a
                     href="{{ route('trainer.courses.index') }}"
-                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition shadow-xs"
+                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition shadow-sm"
                 >
                     <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -246,52 +246,7 @@
 
                 <!-- Right Sidebar (Guide & Tips) (1 col) -->
                 <div class="space-y-6">
-                    
-                    <!-- Roadmap Card -->
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
-                        <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider text-xs text-emerald-700 mb-4 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                            Course Creation Steps
-                        </h4>
-
-                        <ol class="relative border-l border-emerald-200 ml-3 space-y-6 text-sm">
-                            <li class="ml-6">
-                                <span class="absolute -left-3 flex items-center justify-center w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-bold ring-4 ring-white">
-                                    1
-                                </span>
-                                <h5 class="font-bold text-slate-900">Course Information</h5>
-                                <p class="text-xs text-emerald-700 mt-0.5 font-medium">Currently completing</p>
-                            </li>
-                            <li class="ml-6">
-                                <span class="absolute -left-3 flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-bold ring-4 ring-white">
-                                    2
-                                </span>
-                                <h5 class="font-semibold text-slate-700">Add Learning Modules</h5>
-                                <p class="text-xs text-slate-400 mt-0.5">Sequential topics & lessons</p>
-                            </li>
-                            <li class="ml-6">
-                                <span class="absolute -left-3 flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-bold ring-4 ring-white">
-                                    3
-                                </span>
-                                <h5 class="font-semibold text-slate-700">Attach Materials</h5>
-                                <p class="text-xs text-slate-400 mt-0.5">PDF guides, slides, hazard maps</p>
-                            </li>
-                            <li class="ml-6">
-                                <span class="absolute -left-3 flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-bold ring-4 ring-white">
-                                    4
-                                </span>
-                                <h5 class="font-semibold text-slate-700">Set Module Quizzes</h5>
-                                <p class="text-xs text-slate-400 mt-0.5">Evaluation questions & 75% passing</p>
-                            </li>
-                            <li class="ml-6">
-                                <span class="absolute -left-3 flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-bold ring-4 ring-white">
-                                    5
-                                </span>
-                                <h5 class="font-semibold text-slate-700">Publish Course</h5>
-                                <p class="text-xs text-slate-400 mt-0.5">Make available for teacher workshops</p>
-                            </li>
-                        </ol>
-                    </div>
+                    @include('trainer.courses._creation-steps', ['activeStep' => 1])
 
                     <!-- Best Practices Card -->
                     <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-teal-50/40 p-5">

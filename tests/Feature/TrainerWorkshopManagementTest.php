@@ -143,3 +143,68 @@ test('trainers cannot publish workshops until their selected course and quizzes 
 
     $this->assertDatabaseMissing('workshops', ['title' => 'Prematurely Published Workshop']);
 });
+
+test('trainers can publish a ready draft workshop in one click and manage its classroom package', function () {
+    \Illuminate\Support\Facades\Storage::fake('public');
+
+    $trainer = User::where('email', 'trainer@example.com')->firstOrFail();
+    $course = Course::where('title', 'School Earthquake & Fire Readiness Protocol')->firstOrFail();
+    $start = now()->addDays(10)->startOfHour();
+
+    $workshop = Workshop::create([
+        'course_id' => $course->id,
+        'trainer_id' => $trainer->id,
+        'title' => 'One Click Publish Cohort',
+        'description' => 'Ready cohort',
+        'start_date' => $start,
+        'end_date' => $start->copy()->addDays(2),
+        'registration_deadline' => $start->copy()->subDay(),
+        'status' => 'draft',
+    ]);
+
+    $this->actingAs($trainer)
+        ->get(route('trainer.workshops.show', $workshop))
+        ->assertOk()
+        ->assertSee('Publish Workshop')
+        ->assertSee('Quiz Ready')
+        ->assertDontSee('Quiz Pending');
+
+    $this->actingAs($trainer)
+        ->post(route('trainer.workshops.publish', $workshop))
+        ->assertRedirect(route('trainer.workshops.show', $workshop));
+
+    expect($workshop->fresh()->status)->toBe('published');
+    expect($workshop->fresh()->classroomPackage)->not->toBeNull();
+
+    $this->actingAs($trainer)
+        ->get(route('trainer.workshops.show', $workshop))
+        ->assertOk()
+        ->assertDontSee('Switch to Draft');
+
+    $this->actingAs($trainer)
+        ->post(route('trainer.workshops.package.save', $workshop), [
+            'title' => 'Custom Classroom Toolkit',
+            'description' => 'Ready for teachers',
+            'is_published' => '1',
+        ])
+        ->assertRedirect(route('trainer.workshops.show', $workshop));
+
+    $this->actingAs($trainer)
+        ->post(route('trainer.workshops.package.materials.store', $workshop), [
+            'title' => 'Classroom Drill Guide',
+            'material_type' => 'teacher_guide',
+            'description' => 'Step-by-step instructions',
+            'file' => \Illuminate\Http\UploadedFile::fake()->create('drill-guide.pdf', 100, 'application/pdf'),
+        ])
+        ->assertRedirect(route('trainer.workshops.show', $workshop));
+
+    $this->assertDatabaseHas('classroom_packages', [
+        'workshop_id' => $workshop->id,
+        'title' => 'Custom Classroom Toolkit',
+        'is_published' => true,
+    ]);
+    $this->assertDatabaseHas('classroom_materials', [
+        'title' => 'Classroom Drill Guide',
+        'material_type' => 'teacher_guide',
+    ]);
+});

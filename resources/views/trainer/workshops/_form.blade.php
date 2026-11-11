@@ -115,7 +115,7 @@
                             data-modules="{{ $course->modules_count ?? $course->modules->count() }}"
                             data-duration="{{ $course->estimated_duration ?? 0 }}"
                             data-status="{{ ucfirst($course->status) }}"
-                            @selected((string) old('course_id', $workshop?->course_id) === (string) $course->id)
+                            @selected((string) old('course_id', $workshop?->course_id ?? request('course_id')) === (string) $course->id)
                         >
                             {{ $course->title }} — {{ ucfirst($course->status) }}
                         </option>
@@ -236,11 +236,13 @@
                         required
                         class="block max-w-xs w-full rounded-xl border-slate-300 shadow-xs text-slate-900 text-sm focus:border-emerald-500 focus:ring-emerald-500/20 py-2.5 px-3.5 transition"
                     >
-                        <option value="draft" @selected(old('status', $workshop?->status ?? 'draft') === 'draft')>Draft (Hidden from Teachers)</option>
+                        @if ($workshop->status !== 'published' && $workshop->status !== 'ongoing')
+                            <option value="draft" @selected(old('status', $workshop?->status ?? 'draft') === 'draft')>Draft (Hidden from Teachers)</option>
+                        @endif
                         <option
                             value="published"
                             @disabled(! $courses->firstWhere('id', (int) old('course_id', $workshop?->course_id))?->workshop_publishable)
-                            @selected(old('status', $workshop?->status) === 'published')
+                            @selected(old('status', $workshop?->status) === 'published' || $workshop?->status === 'ongoing')
                         >
                             Published (Open for Registration)
                         </option>

@@ -28,7 +28,7 @@ test('new courses default to draft', function () {
         ->assertDontSee('name="status"', false)
         ->assertDontSee('Publication Status');
 
-    $this->actingAs($trainer)
+    $response = $this->actingAs($trainer)
         ->post(route('trainer.courses.store'), [
             'title' => 'Course without a status',
             'description' => 'Course description',
@@ -36,13 +36,22 @@ test('new courses default to draft', function () {
             'target_participants' => 'Teachers',
             'estimated_duration' => 1,
             'status' => 'published',
-        ])
-        ->assertRedirect(route('trainer.courses.index'));
+        ]);
+
+    $createdCourse = Course::where('title', 'Course without a status')->firstOrFail();
+
+    $response->assertRedirect(route('trainer.modules.create', $createdCourse->id));
 
     $this->assertDatabaseHas('courses', [
+        'id' => $createdCourse->id,
         'title' => 'Course without a status',
         'status' => 'draft',
     ]);
+
+    $this->actingAs($trainer)
+        ->get(route('trainer.courses.show', $createdCourse->id))
+        ->assertOk()
+        ->assertDontSee('Publish Course');
 });
 
 test('trainers can publish only completed courses and see unpublish only after publication', function () {
@@ -97,4 +106,61 @@ test('draft courses are hidden from teachers but visible to trainers', function 
         ->assertOk()
         ->assertSee($course->title)
         ->assertSee('Draft');
+});
+
+test('courses with published fill-in-the-blank module quizzes can be published', function () {
+    $trainer = User::where('email', 'trainer@example.com')->firstOrFail();
+
+    $course = Course::create([
+        'trainer_id' => $trainer->id,
+        'title' => 'Fill Blank Course',
+        'description' => 'Course description',
+        'learning_objectives' => 'Course objectives',
+        'target_participants' => 'Teachers',
+        'estimated_duration' => 30,
+        'status' => 'draft',
+    ]);
+
+    $module = $course->modules()->create([
+        'title' => 'Module 1',
+        'description' => 'Module description',
+        'learning_objectives' => 'Module objectives',
+        'estimated_duration' => 15,
+        'sequence' => 1,
+        'is_required' => true,
+    ]);
+
+    $quiz = $module->quiz()->create([
+        'trainer_id' => $trainer->id,
+        'title' => 'Module 1 Quiz',
+        'description' => 'Answer carefully',
+        'passing_score' => 75,
+        'time_limit' => 30,
+        'max_attempts' => 3,
+        'is_published' => false,
+    ]);
+
+    $question = $quiz->questions()->create([
+        'question_text' => 'What stands for DRRM?',
+        'question_type' => 'fill_blank',
+        'points' => 1,
+        'sequence' => 1,
+    ]);
+    $question->choices()->create([
+        'choice_text' => 'Disaster Risk Reduction and Management',
+        'is_correct' => true,
+        'sequence' => 1,
+    ]);
+
+    expect($course->fresh()->hasReadyModuleQuizzes())->toBeFalse();
+
+    $quiz->update(['is_published' => true]);
+
+    expect($course->fresh()->hasReadyModuleQuizzes())->toBeTrue();
+
+    $this->actingAs($trainer)
+        ->post(route('trainer.courses.publish', $course->id))
+        ->assertRedirect(route('trainer.courses.show', $course->id));
+
+    $this->assertDatabaseHas('courses', ['id' => $course->id, 'status' => 'published']);
 });

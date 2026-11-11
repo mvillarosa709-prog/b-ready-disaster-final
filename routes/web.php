@@ -57,6 +57,14 @@ Route::middleware(['auth', 'role:trainer', 'trainer.password', 'verified'])->gro
     Route::get('/trainer/dashboard', [TrainerController::class, 'dashboard'])->name('trainer.dashboard');
     Route::resource('/trainer/workshops', TrainerWorkshopController::class)
         ->names('trainer.workshops');
+    Route::post('/trainer/workshops/{workshop}/publish', [TrainerWorkshopController::class, 'publish'])
+        ->name('trainer.workshops.publish');
+    Route::post('/trainer/workshops/{workshop}/package', [TrainerWorkshopController::class, 'savePackage'])
+        ->name('trainer.workshops.package.save');
+    Route::post('/trainer/workshops/{workshop}/package/materials', [TrainerWorkshopController::class, 'storePackageMaterial'])
+        ->name('trainer.workshops.package.materials.store');
+    Route::delete('/trainer/workshops/{workshop}/package/materials/{material}', [TrainerWorkshopController::class, 'destroyPackageMaterial'])
+        ->name('trainer.workshops.package.materials.destroy');
 
     // Trainer Courses Management
     Route::get('/trainer/courses', [CourseController::class, 'index'])->name('trainer.courses.index');

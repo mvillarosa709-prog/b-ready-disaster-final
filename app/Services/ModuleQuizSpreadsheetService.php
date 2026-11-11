@@ -33,7 +33,7 @@ class ModuleQuizSpreadsheetService
 
         try {
             $zip = new ZipArchive;
-            if ($zip->open($path, ZipArchive::OVERWRITE) !== true) {
+            if ($zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
                 throw new \RuntimeException('Unable to generate the quiz template workbook.');
             }
 
@@ -217,6 +217,7 @@ class ModuleQuizSpreadsheetService
     {
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             .'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+            .'<bookViews><workbookView activeTab="1"/></bookViews>'
             .'<sheets><sheet name="Instructions" sheetId="1" r:id="rId1"/><sheet name="Questions" sheetId="2" r:id="rId2"/></sheets>'
             .'</workbook>';
     }
@@ -235,9 +236,9 @@ class ModuleQuizSpreadsheetService
     {
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             .'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-            .'<fonts count="3"><font><sz val="11"/><name val="Aptos"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="12"/><name val="Aptos Display"/></font><font><b/><color rgb="FF12345B"/><sz val="16"/><name val="Aptos Display"/></font></fonts>'
-            .'<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF12345B"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEAF1F8"/><bgColor indexed="64"/></patternFill></fill></fills>'
-            .'<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD7E1EC"/></left><right style="thin"><color rgb="FFD7E1EC"/></right><top style="thin"><color rgb="FFD7E1EC"/></top><bottom style="thin"><color rgb="FFD7E1EC"/></bottom><diagonal/></border></borders>'
+            .'<fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="11"/><name val="Calibri"/></font><font><b/><color rgb="FF065F46"/><sz val="15"/><name val="Calibri"/></font></fonts>'
+            .'<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF059669"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFECFDF5"/><bgColor indexed="64"/></patternFill></fill></fills>'
+            .'<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFA7F3D0"/></left><right style="thin"><color rgb="FFA7F3D0"/></right><top style="thin"><color rgb="FFA7F3D0"/></top><bottom style="thin"><color rgb="FFA7F3D0"/></bottom><diagonal/></border></borders>'
             .'<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
             .'<cellXfs count="5"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs>'
             .'<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>'
@@ -265,7 +266,7 @@ class ModuleQuizSpreadsheetService
         $sheetRows = $this->renderRows($rows);
 
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-            .'<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0" showGridLines="0"/></sheetViews>'
+            .'<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0" showGridLines="1"/></sheetViews>'
             .'<cols><col min="1" max="1" width="115" customWidth="1"/></cols>'
             .'<sheetData>'.$sheetRows.'</sheetData>'
             .'<mergeCells count="3"><mergeCell ref="A1:H1"/><mergeCell ref="A2:H2"/><mergeCell ref="A14:H14"/></mergeCells>'
@@ -316,7 +317,7 @@ class ModuleQuizSpreadsheetService
         $sheetRows = $this->renderRows($rows);
 
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-            .'<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="4" topLeftCell="A5" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>'
+            .'<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView tabSelected="1" workbookViewId="0"><pane ySplit="4" topLeftCell="A5" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>'
             .'<cols><col min="1" max="1" width="20" customWidth="1"/><col min="2" max="2" width="58" customWidth="1"/><col min="3" max="6" width="30" customWidth="1"/><col min="7" max="7" width="20" customWidth="1"/><col min="8" max="8" width="34" customWidth="1"/><col min="9" max="9" width="10" customWidth="1"/></cols>'
             .'<sheetData>'.$sheetRows.'</sheetData><mergeCells count="2"><mergeCell ref="A1:I1"/><mergeCell ref="A2:I2"/></mergeCells>'
             .'<autoFilter ref="A4:I7"/><sheetFormatPr defaultRowHeight="36"/></worksheet>';

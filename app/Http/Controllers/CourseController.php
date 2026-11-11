@@ -44,11 +44,11 @@ class CourseController extends Controller
         $validated['trainer_id'] = auth()->id();
         $validated['status'] = 'draft';
 
-        Course::create($validated);
+        $course = Course::create($validated);
 
         return redirect()
-            ->route('trainer.courses.index')
-            ->with('success', 'Course created successfully.');
+            ->route('trainer.modules.create', $course->id)
+            ->with('success', 'Course created! Add your first module below.');
     }
 
     /**
@@ -57,7 +57,7 @@ class CourseController extends Controller
     public function show($id)
     {
         $course = Course::where('trainer_id', auth()->id())
-            ->with(['modules.materials', 'modules.quiz.questions.choices'])
+            ->with(['workshops', 'modules.materials', 'modules.quiz.questions.choices'])
             ->findOrFail($id);
 
         return view('trainer.courses.show', compact('course'));
