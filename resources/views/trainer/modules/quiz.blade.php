@@ -255,8 +255,7 @@
 
                     <div class="flex flex-wrap items-center gap-3">
                         <a href="{{ route('trainer.courses.show', $course->id) }}" class="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Cancel</a>
-                        <button type="submit" class="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Save quiz</button>
-                        <button type="submit" name="is_published" value="1" class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 shadow-sm shadow-emerald-600/30 transition">Save &amp; Publish Quiz</button>
+                        <button type="submit" class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 shadow-sm shadow-emerald-600/30 transition">Save quiz</button>
                     </div>
                 </section>
             </form>
