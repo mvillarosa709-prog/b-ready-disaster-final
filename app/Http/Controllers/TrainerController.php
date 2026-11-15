@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Assessment;
 use App\Models\AssessmentAttempt;
+use App\Models\Certification;
 use App\Models\Course;
+use App\Models\Workshop;
 
 class TrainerController extends Controller
 {
@@ -20,6 +22,23 @@ class TrainerController extends Controller
             ->with('modules')
             ->latest()
             ->get();
+
+        // Get workshops created by the logged-in trainer.
+        $workshops = Workshop::where('trainer_id', $trainerId)
+            ->with('course')
+            ->withCount('workshopTeachers')
+            ->latest('start_date')
+            ->take(5)
+            ->get();
+
+        $workshopCount = Workshop::where('trainer_id', $trainerId)->count();
+        $publishedWorkshopCount = Workshop::where('trainer_id', $trainerId)
+            ->where('status', 'published')
+            ->count();
+
+        $pendingCertificatesCount = Certification::where('approval_status', 'pending')
+            ->whereHas('workshop', fn ($query) => $query->where('trainer_id', $trainerId))
+            ->count();
 
         // Count total courses.
         $courseCount = $courses->count();
@@ -47,6 +66,10 @@ class TrainerController extends Controller
 
         return view('trainer.dashboard', compact(
             'courses',
+            'workshops',
+            'workshopCount',
+            'publishedWorkshopCount',
+            'pendingCertificatesCount',
             'courseCount',
             'moduleCount',
             'quizCount',

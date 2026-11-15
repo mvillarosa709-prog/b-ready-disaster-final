@@ -1,4 +1,5 @@
-<x-app-layout>
+<x-layouts.trainer>
+    <x-slot name="title">Create New Course — B-READY</x-slot>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -39,9 +40,8 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-slate-50/70 min-h-[calc(100vh-10rem)]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 
                 <!-- Main Form (2 cols) -->
                 <div class="lg:col-span-2 space-y-6">
@@ -219,17 +219,7 @@
                         </div>
 
                         <!-- Bottom Form Actions -->
-                        <div class="flex items-center justify-between gap-4 pt-2">
-                            <a
-                                href="{{ route('trainer.courses.index') }}"
-                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition shadow-xs"
-                            >
-                                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                </svg>
-                                Cancel & Back
-                            </a>
-
+                        <div class="flex items-center justify-end gap-4 pt-2">
                             <button
                                 type="submit"
                                 class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm shadow-emerald-600/30 transition transform active:scale-95"
@@ -275,6 +265,5 @@
                 </div>
 
             </div>
-        </div>
     </div>
-</x-app-layout>
+</x-layouts.trainer>

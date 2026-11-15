@@ -1,4 +1,5 @@
-<x-app-layout>
+<x-layouts.trainer>
+    <x-slot name="title">Add Module — B-READY</x-slot>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -37,21 +38,11 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-slate-50/70 min-h-[calc(100vh-10rem)]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
                 <!-- Main Form (2 cols) -->
                 <div class="lg:col-span-2 space-y-6">
-
-                    @if (session('success'))
-                        <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-900 shadow-sm flex items-center gap-3">
-                            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>{{ session('success') }}</span>
-                        </div>
-                    @endif
 
                     @if ($errors->any())
                         <div class="rounded-2xl bg-red-50 border border-red-200 p-4 shadow-xs">
@@ -287,6 +278,5 @@
                 </div>
 
             </div>
-        </div>
     </div>
-</x-app-layout>
+</x-layouts.trainer>

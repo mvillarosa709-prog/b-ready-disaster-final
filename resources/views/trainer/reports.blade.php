@@ -2,11 +2,11 @@
     <x-slot name="title">Trainer Monitoring & Reports — B-READY</x-slot>
 
     <!-- Header Banner -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-8 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
                         DRR Monitoring & Evaluation
                     </span>
                     <span class="text-xs text-slate-400">Complete Training-to-Classroom Lifecycle</span>
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         <section class="overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-xs">
             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-amber-100 bg-amber-50/70 px-6 py-4">
                 <div>

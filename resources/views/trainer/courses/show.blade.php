@@ -1,4 +1,5 @@
-<x-app-layout>
+<x-layouts.trainer>
+    <x-slot name="title">{{ $course->title }} — B-READY</x-slot>
     @php
         $canPublishCourse = $course->hasReadyModuleQuizzes();
         if ($course->status === 'published' || $canPublishCourse) {
@@ -111,17 +112,7 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-slate-50/70 min-h-[calc(100vh-10rem)]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-
-            @if (session('success'))
-                <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-900 shadow-sm flex items-center gap-3">
-                    <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{{ session('success') }}</span>
-                </div>
-            @endif
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
 
             @if ($errors->any())
                 <div class="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-900 shadow-sm">
@@ -410,11 +401,10 @@
                 </div>
 
                 <!-- Right Sidebar: Course Creation Steps -->
-                <div class="space-y-6 lg:sticky lg:top-6">
+                <div class="space-y-6 lg:sticky lg:top-24">
                     @include('trainer.courses._creation-steps', ['activeStep' => $activeCreationStep, 'course' => $course])
                 </div>
             </div>
 
-        </div>
     </div>
-</x-app-layout>
+</x-layouts.trainer>

@@ -2,11 +2,11 @@
     <x-slot name="title">Trainer Courses — B-READY</x-slot>
 
     <!-- Header Banner -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-8 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
                         Course Management
                     </span>
                 </div>
@@ -27,7 +27,7 @@
     </div>
 
     <!-- Courses Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
         @if ($courses->isNotEmpty())
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
                 <div class="overflow-x-auto">

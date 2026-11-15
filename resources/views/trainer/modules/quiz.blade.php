@@ -1,4 +1,5 @@
-<x-app-layout>
+<x-layouts.trainer>
+    <x-slot name="title">Module Quiz — B-READY</x-slot>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -45,9 +46,8 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-slate-50/70 min-h-[calc(100vh-10rem)]">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 <div class="lg:col-span-2 space-y-6">
 
             @if ($errors->any())
@@ -187,12 +187,6 @@
                                     <button type="button" class="remove-question text-xs font-semibold text-rose-600 hover:text-rose-800">Remove</button>
                                 </div>
 
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Question text</label>
-                                    <textarea name="questions[{{ $questionIndex }}][question_text]" rows="2" required
-                                        class="block w-full rounded-xl border-slate-300 bg-white shadow-xs text-sm focus:border-emerald-500 focus:ring-emerald-500/20">{{ $question['question_text'] ?? '' }}</textarea>
-                                </div>
-
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-700 mb-1">Question type</label>
@@ -208,6 +202,12 @@
                                         <input type="number" name="questions[{{ $questionIndex }}][points]" min="1" required value="{{ $question['points'] ?? 1 }}"
                                             class="block w-full rounded-xl border-slate-300 bg-white shadow-xs text-sm focus:border-emerald-500 focus:ring-emerald-500/20">
                                     </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Question text</label>
+                                    <textarea name="questions[{{ $questionIndex }}][question_text]" rows="2" required
+                                        class="block w-full rounded-xl border-slate-300 bg-white shadow-xs text-sm focus:border-emerald-500 focus:ring-emerald-500/20">{{ $question['question_text'] ?? '' }}</textarea>
                                 </div>
 
                                 <div data-question-type="multiple_choice" class="question-type-fields grid gap-3 sm:grid-cols-2">
@@ -266,10 +266,6 @@
                         <legend class="font-bold text-sm text-slate-900">Question</legend>
                         <button type="button" class="remove-question text-xs font-semibold text-rose-600 hover:text-rose-800">Remove</button>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Question text</label>
-                        <textarea name="questions[__QUESTION__][question_text]" rows="2" required class="block w-full rounded-xl border-slate-300 bg-white shadow-xs text-sm focus:border-emerald-500 focus:ring-emerald-500/20"></textarea>
-                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Question type</label>
@@ -283,6 +279,10 @@
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Points</label>
                             <input type="number" name="questions[__QUESTION__][points]" min="1" required value="1" class="block w-full rounded-xl border-slate-300 bg-white shadow-xs text-sm focus:border-emerald-500 focus:ring-emerald-500/20">
                         </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Question text</label>
+                        <textarea name="questions[__QUESTION__][question_text]" rows="2" required class="block w-full rounded-xl border-slate-300 bg-white shadow-xs text-sm focus:border-emerald-500 focus:ring-emerald-500/20"></textarea>
                     </div>
                     <div data-question-type="multiple_choice" class="question-type-fields grid gap-3 sm:grid-cols-2">
                         @foreach (range(0, 3) as $choiceIndex)
@@ -312,11 +312,10 @@
                 </div>
 
                 <!-- Right Sidebar: Course Creation Steps -->
-                <div class="space-y-6 lg:sticky lg:top-6">
+                <div class="space-y-6 lg:sticky lg:top-24">
                     @include('trainer.courses._creation-steps', ['activeStep' => 4, 'course' => $course])
                 </div>
             </div>
-        </div>
     </div>
 
     <script>
@@ -359,4 +358,4 @@
             });
         })();
     </script>
-</x-app-layout>
+</x-layouts.trainer>

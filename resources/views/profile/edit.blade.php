@@ -9,8 +9,8 @@
     <x-slot name="title">Account Settings &amp; Change Password — B-READY</x-slot>
 
     <!-- Header Banner -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-8 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
                     Account Security
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         <div class="p-6 sm:p-8 bg-white border border-slate-200/80 shadow-xs rounded-2xl">
             <div class="max-w-xl">
                 @include('profile.partials.update-password-form')

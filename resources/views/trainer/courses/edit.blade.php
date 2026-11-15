@@ -1,4 +1,5 @@
-<x-app-layout>
+<x-layouts.trainer>
+    <x-slot name="title">Edit Course — B-READY</x-slot>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -45,9 +46,8 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-slate-50/70 min-h-[calc(100vh-10rem)]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 
                 <!-- Main Form (2 cols) -->
                 <div class="lg:col-span-2 space-y-6">
@@ -259,6 +259,5 @@
                 </div>
 
             </div>
-        </div>
     </div>
-</x-app-layout>
+</x-layouts.trainer>

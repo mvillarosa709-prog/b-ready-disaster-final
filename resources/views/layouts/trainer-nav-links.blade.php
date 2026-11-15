@@ -17,17 +17,6 @@
     </a>
 </li>
 
-<!-- Trainer Workshops -->
-<li>
-    <a href="{{ route('trainer.workshops.index') }}"
-       class="group flex gap-x-3 rounded-xl p-2.5 text-sm font-semibold transition-colors {{ request()->routeIs('trainer.workshops.*') ? 'bg-emerald-600 text-white shadow-xs shadow-emerald-600/20' : 'text-slate-700 hover:bg-slate-100 hover:text-emerald-600' }}">
-        <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('trainer.workshops.*') ? 'text-white' : 'text-slate-400 group-hover:text-emerald-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z"/>
-        </svg>
-        Workshop Management
-    </a>
-</li>
-
 <!-- Courses & Modules -->
 <li>
     <a href="{{ route('trainer.courses.index') }}" 
@@ -36,6 +25,17 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
         </svg>
         Course Management
+    </a>
+</li>
+
+<!-- Trainer Workshops -->
+<li>
+    <a href="{{ route('trainer.workshops.index') }}"
+       class="group flex gap-x-3 rounded-xl p-2.5 text-sm font-semibold transition-colors {{ request()->routeIs('trainer.workshops.*') ? 'bg-emerald-600 text-white shadow-xs shadow-emerald-600/20' : 'text-slate-700 hover:bg-slate-100 hover:text-emerald-600' }}">
+        <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('trainer.workshops.*') ? 'text-white' : 'text-slate-400 group-hover:text-emerald-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z"/>
+        </svg>
+        Workshop Management
     </a>
 </li>
 

@@ -83,8 +83,7 @@
                 </div>
 
                 <!-- Navigation List -->
-                <nav class="flex flex-1 flex-col">
-                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Trainer Navigation</div>
+                <nav class="flex flex-1 flex-col pt-2">
                     <ul role="list" class="flex flex-1 flex-col gap-y-7">
                         <li>
                             <ul role="list" class="-mx-2 space-y-1.5">
@@ -125,23 +124,50 @@
         </aside>
 
         <!-- Main Content Container -->
-        <div class="flex flex-1 flex-col lg:pl-72">
-            <!-- Top Mobile Bar -->
-            <div class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-200/80 bg-white/80 backdrop-blur-md px-4 sm:px-6 lg:hidden">
-                <button type="button" class="-m-2.5 p-2.5 text-slate-700" @click="sidebarOpen = true">
-                    <span class="sr-only">Open sidebar</span>
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                    </svg>
-                </button>
-                <div class="flex-1 text-sm font-semibold leading-6 text-slate-900">B-READY Trainer Portal</div>
-            </div>
+        <div class="flex flex-1 flex-col lg:pl-72 min-w-0">
+            <!-- Top Navigation Bar (Mobile & Desktop) -->
+            <header class="sticky top-0 z-30 flex h-16 lg:h-20 shrink-0 items-center justify-between gap-x-4 border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-3">
+                    <button type="button" class="-m-2.5 p-2.5 text-slate-700 lg:hidden" @click="sidebarOpen = true">
+                        <span class="sr-only">Open sidebar</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-sm font-bold text-slate-900">B-READY Trainer Workspace</span>
+                        <span class="hidden sm:inline-block text-slate-300">•</span>
+                        <span class="hidden sm:inline-block text-xs font-medium text-slate-500">{{ now()->format('F j, Y') }}</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                        Accredited Facilitator
+                    </span>
+                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-100 transition text-xs font-semibold text-slate-700">
+                        <span class="h-6 w-6 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-[11px]">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </span>
+                        <span class="hidden sm:inline truncate max-w-[140px]">{{ auth()->user()->name }}</span>
+                    </a>
+                </div>
+            </header>
 
             <!-- Page Content -->
             <main class="flex-1 pb-16">
+                @isset($header)
+                    <div class="bg-white border-b border-slate-200/80">
+                        <div class="w-full px-4 py-7 sm:px-6 lg:px-8">
+                            {{ $header }}
+                        </div>
+                    </div>
+                @endisset
+
                 <!-- Notifications / Flash messages -->
                 @if (session('success'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
                         <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between shadow-xs">
                             <div class="flex items-center gap-3">
                                 <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -154,7 +180,7 @@
                 @endif
 
                 @if (session('error'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
                         <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 flex items-center justify-between shadow-xs">
                             <div class="flex items-center gap-3">
                                 <svg class="w-5 h-5 text-red-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">

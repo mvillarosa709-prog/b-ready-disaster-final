@@ -2,8 +2,8 @@
     <x-slot name="title">Edit Workshop — B-READY</x-slot>
 
     <!-- Header Banner -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <!-- Clean Breadcrumbs -->
                 <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
@@ -49,7 +49,7 @@
     </div>
 
     <!-- Workshop Content Layout -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
         <form method="POST" action="{{ route('trainer.workshops.update', $workshop) }}">
             @include('trainer.workshops._form', ['workshop' => $workshop])
         </form>

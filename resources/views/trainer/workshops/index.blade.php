@@ -1,10 +1,10 @@
 <x-layouts.trainer>
     <x-slot name="title">Workshop Management — B-READY</x-slot>
 
-    <div class="border-b border-slate-200 bg-white px-4 py-8 sm:px-6 lg:px-8">
-        <div class="mx-auto flex max-w-7xl flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div class="border-b border-slate-200/80 bg-white">
+        <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-                <span class="rounded-md border border-emerald-200 bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800">Trainer Portal</span>
+                <span class="rounded-md border border-emerald-200 bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">Trainer Portal</span>
                 <h1 class="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Workshop Management</h1>
                 <p class="mt-1 text-sm text-slate-500">Schedule workshops for your courses and publish them once the course content is ready.</p>
             </div>
@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="mx-auto mt-8 max-w-7xl space-y-4 px-4 sm:px-6 lg:px-8">
+    <div class="w-full mt-6 space-y-4 px-4 sm:px-6 lg:px-8">
         @if (session('success'))
             <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ session('success') }}</div>
         @endif

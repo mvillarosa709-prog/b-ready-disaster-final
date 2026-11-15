@@ -2,8 +2,8 @@
     <x-slot name="title">Certificate Review &amp; Issuance — B-READY</x-slot>
 
     <!-- Header Banner -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
                     <a href="{{ route('trainer.reports') }}" class="hover:text-emerald-600 transition font-medium">
@@ -42,16 +42,7 @@
     </div>
 
     <!-- Content Area -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{ tab: '{{ $pendingCertificates->isNotEmpty() ? 'pending' : 'approved' }}' }">
-
-        @if (session('success'))
-            <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900 flex items-center gap-3 shadow-xs">
-                <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="font-medium">{{ session('success') }}</span>
-            </div>
-        @endif
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6" x-data="{ tab: '{{ $pendingCertificates->isNotEmpty() ? 'pending' : 'approved' }}' }">
 
         @if (session('info'))
             <div class="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm text-blue-900 flex items-center gap-3 shadow-xs">

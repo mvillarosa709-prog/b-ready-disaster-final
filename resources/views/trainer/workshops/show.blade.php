@@ -2,8 +2,8 @@
     <x-slot name="title">{{ $workshop->title }} — B-READY</x-slot>
 
     <!-- Header Banner -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
                     <a href="{{ route('trainer.workshops.index') }}" class="hover:text-emerald-600 transition font-medium">
@@ -73,7 +73,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
 
         @if ($errors->any())
             <div class="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900 shadow-sm">
