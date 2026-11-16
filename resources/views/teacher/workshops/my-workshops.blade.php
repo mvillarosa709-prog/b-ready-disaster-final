@@ -1,9 +1,9 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">My Workshops — B-READY</x-slot>
 
-    <!-- Header Banner (Matches Trainer Side) -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-8 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <!-- Header Banner (Full Width) -->
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
@@ -18,12 +18,6 @@
                 </p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-                <a href="{{ route('teacher.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 shadow-xs transition">
-                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                    Back to Dashboard
-                </a>
                 <a href="{{ route('teacher.workshops.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm transition">
                     + Browse More Workshops
                 </a>
@@ -31,7 +25,7 @@
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6" x-data="{ activeTab: 'active' }">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6" x-data="{ activeTab: 'active' }">
 
         <!-- Tab Navigation Bar -->
         <div class="flex items-center justify-between border-b border-slate-200">
@@ -66,7 +60,7 @@
                     </a>
                 </div>
             @else
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @foreach ($activeWorkshops as $item)
                         <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between hover:border-emerald-200 transition-all">
                             <div>
@@ -145,7 +139,7 @@
                     </p>
                 </div>
             @else
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @foreach ($completedWorkshops as $item)
                         <div class="bg-white rounded-2xl border border-emerald-200/80 p-6 shadow-xs flex flex-col justify-between hover:shadow-md transition-all">
                             <div>

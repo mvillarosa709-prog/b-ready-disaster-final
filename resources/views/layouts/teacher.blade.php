@@ -136,24 +136,33 @@
 
         <!-- Main Layout Area -->
         <div class="flex flex-1 flex-col lg:pl-72 min-w-0">
-            <!-- Sticky Top Header with Persistent Find Workshops -->
-            <header class="sticky top-0 z-30 grid h-16 shrink-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 border-b border-slate-200/80 bg-white/90 px-4 shadow-xs backdrop-blur-md sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)] lg:px-8">
-                <!-- Hamburger Button (Mobile) -->
-                <button type="button" class="-m-2.5 p-2.5 text-slate-700 lg:hidden" @click="sidebarOpen = true">
-                    <span class="sr-only">Open sidebar</span>
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                    </svg>
-                </button>
-
-                <!-- Centered Workshop Discovery Action -->
-                <div class="col-start-2 flex w-full items-center justify-center lg:col-start-2">
-                    <a href="{{ route('teacher.workshops.index') }}"
-                       class="inline-flex h-10 w-full max-w-sm items-center justify-center gap-2 rounded-lg border border-emerald-600 bg-white px-3 text-xs font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-50 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-                        <svg class="h-4 w-4 shrink-0 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            <!-- Top Navigation Bar (Mobile & Desktop) -->
+            <header class="sticky top-0 z-30 flex h-16 lg:h-20 shrink-0 items-center justify-between gap-x-4 border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-3">
+                    <!-- Hamburger Button (Mobile) -->
+                    <button type="button" class="-m-2.5 p-2.5 text-slate-700 lg:hidden" @click="sidebarOpen = true">
+                        <span class="sr-only">Open sidebar</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                         </svg>
-                        <span>Find Workshops</span>
+                    </button>
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-sm font-bold text-slate-900">B-READY Teacher Workspace</span>
+                        <span class="hidden sm:inline-block text-slate-300">•</span>
+                        <span class="hidden sm:inline-block text-xs font-medium text-slate-500">{{ now()->format('F j, Y') }}</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                        Accredited Educator
+                    </span>
+                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-100 transition text-xs font-semibold text-slate-700">
+                        <span class="h-6 w-6 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-[11px]">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </span>
+                        <span class="hidden sm:inline truncate max-w-[140px]">{{ auth()->user()->name }}</span>
                     </a>
                 </div>
             </header>
@@ -162,7 +171,7 @@
             <main class="flex-1 pb-16">
                 <!-- Flash Alerts -->
                 @if (session('success'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
                         <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-3 shadow-xs" role="alert">
                             <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -173,7 +182,7 @@
                 @endif
 
                 @if (session('warning'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
                         <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 flex items-center gap-3 shadow-xs" role="alert">
                             <svg class="w-5 h-5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
@@ -184,7 +193,7 @@
                 @endif
 
                 @if (session('error'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
                         <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center gap-3 shadow-xs" role="alert">
                             <svg class="w-5 h-5 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -195,7 +204,7 @@
                 @endif
 
                 @if (session('info'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6">
                         <div class="p-4 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 flex items-center gap-3 shadow-xs" role="alert">
                             <svg class="w-5 h-5 text-sky-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>

@@ -1,9 +1,9 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Assessment Results — {{ $workshop->title }}</x-slot>
 
-    <!-- Header Banner (Matches Trainer Side) -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Header Banner (Full Width) -->
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-6 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Quiz Results</h1>
                 <p class="text-xs text-slate-500 mt-1">{{ $workshop->title }}</p>
@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         @php
             $isPassed = $attempt->result === 'passed';
             $passingScore = $attempt->assessment->passing_score;

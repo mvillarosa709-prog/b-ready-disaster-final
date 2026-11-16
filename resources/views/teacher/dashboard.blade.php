@@ -1,9 +1,9 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Teacher Dashboard Overview</x-slot>
 
-    <!-- Header Banner (Matches Trainer Side) -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-8 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <!-- Header Banner (Full Width) -->
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
@@ -29,8 +29,8 @@
         </div>
     </div>
 
-    <!-- Quick Stats Grid (Clean, Matches Trainer Dashboard) -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+    <!-- Quick Stats Grid -->
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <!-- Enrolled Workshops -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-emerald-200 transition">

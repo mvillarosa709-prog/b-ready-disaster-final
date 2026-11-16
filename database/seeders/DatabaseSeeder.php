@@ -21,6 +21,8 @@ use App\Models\WorkshopModule;
 use App\Models\WorkshopTeacher;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,6 +31,44 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Reset existing course/workshop/progress data while keeping user accounts intact
+        Schema::disableForeignKeyConstraints();
+        StudentResult::truncate();
+        ClassroomImplementation::truncate();
+        ClassroomMaterial::truncate();
+        ClassroomPackage::truncate();
+        Certification::truncate();
+        AssessmentAttempt::truncate();
+        Choice::truncate();
+        Question::truncate();
+        Assessment::truncate();
+        ModuleProgress::truncate();
+        WorkshopTeacher::truncate();
+        WorkshopModule::truncate();
+        Workshop::truncate();
+        Material::truncate();
+        Module::truncate();
+        Course::truncate();
+        Schema::enableForeignKeyConstraints();
+
+        // Ensure downloadable sample MP4 and PDF files exist in storage/app/public
+        Storage::disk('public')->makeDirectory('materials');
+        Storage::disk('public')->makeDirectory('classroom_packages');
+        $mp4Bytes = hex2bin('00000018667479706d703432000000006d70343269736f6d000000086d646174');
+        Storage::disk('public')->put('materials/earthquake_drill_demo.mp4', $mp4Bytes);
+        Storage::disk('public')->put('materials/typhoon_early_warning_briefing.mp4', $mp4Bytes);
+        Storage::disk('public')->put('materials/fire_extinguisher_pass_demo.mp4', $mp4Bytes);
+
+        $pdfContent = "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R>>endobj\nxref\n0 4\n0000000000 65535 f \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n9\n%%EOF";
+        Storage::disk('public')->put('materials/hazard_mapping_checklist.pdf', $pdfContent);
+        Storage::disk('public')->put('materials/evacuation_manual.pdf', $pdfContent);
+        Storage::disk('public')->put('materials/reunification_log.pdf', $pdfContent);
+        Storage::disk('public')->put('classroom_packages/student_guide.pdf', $pdfContent);
+        Storage::disk('public')->put('classroom_packages/teacher_protocol.pdf', $pdfContent);
+        Storage::disk('public')->put('classroom_packages/worksheet.pdf', $pdfContent);
+        Storage::disk('public')->put('classroom_packages/answer_key.pdf', $pdfContent);
+        Storage::disk('public')->put('classroom_packages/family_gobag.pdf', $pdfContent);
+
         // 1. Create Demo Teacher & Trainer
         $teacher = User::updateOrCreate(
             ['email' => 'teacher@example.com'],
@@ -98,13 +138,23 @@ class DatabaseSeeder extends Seeder
             'module_id' => $mod1->id,
             'title' => 'Classroom Hazard Mapping Checklist (PDF)',
             'type' => 'pdf',
+            'file_path' => 'materials/hazard_mapping_checklist.pdf',
             'description' => 'Checklist for identifying unstable furniture, hanging fixtures, and blocked exit passageways.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod1->id,
+            'title' => 'Seismic Hazard Walk-Through Demonstration Video (MP4)',
+            'type' => 'video',
+            'file_path' => 'materials/earthquake_drill_demo.mp4',
+            'description' => 'Downloadable MP4 video demonstrating how to inspect classrooms for seismic falling hazards.',
         ]);
 
         Material::create([
             'module_id' => $mod1->id,
             'title' => 'Seismic Hazards in Modern School Architecture (Slides)',
             'type' => 'presentation',
+            'file_path' => 'materials/hazard_mapping_checklist.pdf',
             'description' => 'Visual presentation outlining building structural resilience and danger zones.',
         ]);
 
@@ -122,15 +172,24 @@ class DatabaseSeeder extends Seeder
             'module_id' => $mod2->id,
             'title' => 'Standard Evacuation Procedure Manual (PDF)',
             'type' => 'pdf',
+            'file_path' => 'materials/evacuation_manual.pdf',
             'description' => 'Standard operational guidelines for school-wide earthquake and fire evacuations.',
         ]);
 
         Material::create([
             'module_id' => $mod2->id,
-            'title' => 'School Evacuation Drill Demonstration Video',
+            'title' => 'School Evacuation Drill Demonstration Video (MP4)',
             'type' => 'video',
-            'external_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            'description' => 'Step-by-step video demonstration of sound signals, evacuation pacing, and triage staging.',
+            'file_path' => 'materials/earthquake_drill_demo.mp4',
+            'description' => 'Step-by-step downloadable MP4 video demonstration of sound signals, evacuation pacing, and triage staging.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod2->id,
+            'title' => 'Incident Command System & Assembly Zone Layout (Slides)',
+            'type' => 'presentation',
+            'file_path' => 'materials/evacuation_manual.pdf',
+            'description' => 'Visual presentation on organizing school incident command roles and assembly zone headcounts.',
         ]);
 
         $mod3 = Module::create([
@@ -147,7 +206,24 @@ class DatabaseSeeder extends Seeder
             'module_id' => $mod3->id,
             'title' => 'Student Emergency Tag & Parent Reunification Log (PDF)',
             'type' => 'pdf',
+            'file_path' => 'materials/reunification_log.pdf',
             'description' => 'Standardized verification document for releasing students safely to authorized guardians.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod3->id,
+            'title' => 'Post-Disaster Psychological First Aid & Reunification Briefing (MP4)',
+            'type' => 'video',
+            'file_path' => 'materials/earthquake_drill_demo.mp4',
+            'description' => 'Downloadable MP4 video demonstrating post-evacuation student care and parent release verification.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod3->id,
+            'title' => 'Emergency Family Reunification & Triage Presentation (Slides)',
+            'type' => 'presentation',
+            'file_path' => 'materials/reunification_log.pdf',
+            'description' => 'Slide deck covering post-disaster triage zones and guardian release verification steps.',
         ]);
 
         // Workshop 1 (Active/In Progress Workshop for Demo Teacher)
@@ -166,8 +242,6 @@ class DatabaseSeeder extends Seeder
         WorkshopModule::create(['workshop_id' => $workshop1->id, 'module_id' => $mod1->id, 'sequence' => 1]);
         WorkshopModule::create(['workshop_id' => $workshop1->id, 'module_id' => $mod2->id, 'sequence' => 2]);
         WorkshopModule::create(['workshop_id' => $workshop1->id, 'module_id' => $mod3->id, 'sequence' => 3]);
-
-        // Workshop 1 has no pre-enrollment: teachers start by enrolling, then begin at Module 1
 
         // Assessment for Workshop 1
         $assessment1 = Assessment::create([
@@ -301,6 +375,98 @@ class DatabaseSeeder extends Seeder
             'is_required' => true,
         ]);
 
+        Material::create([
+            'module_id' => $mod2_1->id,
+            'title' => 'PAGASA Tropical Cyclone & Flood Early Warning Guide (PDF)',
+            'type' => 'pdf',
+            'file_path' => 'materials/hazard_mapping_checklist.pdf',
+            'description' => 'Official reference manual on interpreting rainfall advisories and campus flood evacuation triggers.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod2_1->id,
+            'title' => 'Typhoon & Storm Surge Early Warning Protocol Video (MP4)',
+            'type' => 'video',
+            'file_path' => 'materials/typhoon_early_warning_briefing.mp4',
+            'description' => 'Downloadable MP4 training video on flood gauge monitoring and safeguarding school records.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod2_1->id,
+            'title' => 'Hydrometeorological Hazard Signals & Advisories (Slides)',
+            'type' => 'presentation',
+            'file_path' => 'materials/hazard_mapping_checklist.pdf',
+            'description' => 'Visual slide presentation on Tropical Cyclone Wind Signals and color-coded rainfall warnings.',
+        ]);
+
+        $mod2_2 = Module::create([
+            'course_id' => $course2->id,
+            'title' => 'Flood Evacuation Procedures & Elevated Staging Management',
+            'description' => 'Executing vertical evacuation to upper floors, securing vital school records, and managing flood shelter zones.',
+            'learning_objectives' => "Lead vertical evacuation to designated high-ground classrooms.\nSecure electrical main switches and school learning equipment before floodwaters rise.",
+            'estimated_duration' => 45,
+            'sequence' => 2,
+            'is_required' => true,
+        ]);
+
+        Material::create([
+            'module_id' => $mod2_2->id,
+            'title' => 'Campus Flood Evacuation & High-Ground Staging Manual (PDF)',
+            'type' => 'pdf',
+            'file_path' => 'materials/evacuation_manual.pdf',
+            'description' => 'Step-by-step protocol for moving learners to upper-story safe zones during flash floods.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod2_2->id,
+            'title' => 'Flood Vertical Evacuation & Rescue Coordination Video (MP4)',
+            'type' => 'video',
+            'file_path' => 'materials/typhoon_early_warning_briefing.mp4',
+            'description' => 'Downloadable MP4 video demonstrating safe student movement and LGU rescue coordination.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod2_2->id,
+            'title' => 'Flood Risk Mapping & School Contingency Planning (Slides)',
+            'type' => 'presentation',
+            'file_path' => 'materials/evacuation_manual.pdf',
+            'description' => 'Presentation slides on identifying low-lying campus zones and emergency supply staging.',
+        ]);
+
+        $mod2_3 = Module::create([
+            'course_id' => $course2->id,
+            'title' => 'Post-Typhoon Campus Recovery, Sanitation & Safe Re-Entry',
+            'description' => 'Inspecting classrooms after flood subsidence, preventing waterborne illnesses, and coordinating safe class resumption.',
+            'learning_objectives' => "Conduct post-flood classroom safety and electrical checks.\nPrevent leptospirosis and waterborne hazards prior to student re-entry.",
+            'estimated_duration' => 40,
+            'sequence' => 3,
+            'is_required' => true,
+        ]);
+
+        Material::create([
+            'module_id' => $mod2_3->id,
+            'title' => 'Post-Flood School Sanitation & Re-Entry Checklist (PDF)',
+            'type' => 'pdf',
+            'file_path' => 'materials/reunification_log.pdf',
+            'description' => 'Inspection checklist for structural safety, clean water supply, and mud/debris clearance.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod2_3->id,
+            'title' => 'Post-Typhoon Recovery & Safe Classroom Re-Entry Video (MP4)',
+            'type' => 'video',
+            'file_path' => 'materials/typhoon_early_warning_briefing.mp4',
+            'description' => 'Downloadable MP4 guide on post-typhoon school recovery and student health protection.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod2_3->id,
+            'title' => 'Post-Disaster Rapid Damage Assessment Guide (Slides)',
+            'type' => 'presentation',
+            'file_path' => 'materials/reunification_log.pdf',
+            'description' => 'Slide presentation on reporting school facility damages to DepEd DRRM coordinators.',
+        ]);
+
         $workshop2 = Workshop::create([
             'course_id' => $course2->id,
             'trainer_id' => $trainer->id,
@@ -314,6 +480,8 @@ class DatabaseSeeder extends Seeder
 
         // Workshop 2 Modules sequence
         WorkshopModule::create(['workshop_id' => $workshop2->id, 'module_id' => $mod2_1->id, 'sequence' => 1]);
+        WorkshopModule::create(['workshop_id' => $workshop2->id, 'module_id' => $mod2_2->id, 'sequence' => 2]);
+        WorkshopModule::create(['workshop_id' => $workshop2->id, 'module_id' => $mod2_3->id, 'sequence' => 3]);
 
         // Historical completion & certification attributed to historical teacher
         WorkshopTeacher::create([
@@ -450,6 +618,30 @@ class DatabaseSeeder extends Seeder
             'is_required' => true,
         ]);
 
+        Material::create([
+            'module_id' => $mod3_1->id,
+            'title' => 'School Laboratory Chemical Safety & SDS Handbook (PDF)',
+            'type' => 'pdf',
+            'file_path' => 'materials/hazard_mapping_checklist.pdf',
+            'description' => 'Safety Data Sheet (SDS) quick reference and chemical spill neutralization checklist.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod3_1->id,
+            'title' => 'Laboratory Hazardous Spill Containment Demonstration (MP4)',
+            'type' => 'video',
+            'file_path' => 'materials/fire_extinguisher_pass_demo.mp4',
+            'description' => 'Downloadable MP4 video walkthrough of emergency eyewash stations and chemical spill kits.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod3_1->id,
+            'title' => 'Chemical Storage & Lab Hazard Symbols (Slides)',
+            'type' => 'presentation',
+            'file_path' => 'materials/hazard_mapping_checklist.pdf',
+            'description' => 'Slide presentation on chemical compatibility, GHS pictograms, and ventilation safety.',
+        ]);
+
         $mod3_2 = Module::create([
             'course_id' => $course3->id,
             'title' => 'Fire Extinguisher P.A.S.S. Method & Suppression Drills',
@@ -458,6 +650,64 @@ class DatabaseSeeder extends Seeder
             'estimated_duration' => 45,
             'sequence' => 2,
             'is_required' => true,
+        ]);
+
+        Material::create([
+            'module_id' => $mod3_2->id,
+            'title' => 'Fire Extinguisher Classifications & P.A.S.S. Guide (PDF)',
+            'type' => 'pdf',
+            'file_path' => 'materials/evacuation_manual.pdf',
+            'description' => 'Illustrated guide for selecting and operating Class A, B, and C fire extinguishers.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod3_2->id,
+            'title' => 'Fire Extinguisher P.A.S.S. Technique Live Drill Video (MP4)',
+            'type' => 'video',
+            'file_path' => 'materials/fire_extinguisher_pass_demo.mp4',
+            'description' => 'Downloadable MP4 demonstration of the Pull-Aim-Squeeze-Sweep fire suppression protocol.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod3_2->id,
+            'title' => 'Fire Classes & Suppression Equipment Overview (Slides)',
+            'type' => 'presentation',
+            'file_path' => 'materials/evacuation_manual.pdf',
+            'description' => 'Visual slides comparing water, CO2, and dry chemical extinguishers for school facilities.',
+        ]);
+
+        $mod3_3 = Module::create([
+            'course_id' => $course3->id,
+            'title' => 'Campus Electrical Fire Audits & Smoke Evacuation Drills',
+            'description' => 'Preventing electrical overload fires in classrooms and leading low-crawl smoke evacuation procedures.',
+            'learning_objectives' => "Identify overloaded classroom outlets and faulty wiring.\nGuide students safely through smoke-filled corridors to fire assembly points.",
+            'estimated_duration' => 40,
+            'sequence' => 3,
+            'is_required' => true,
+        ]);
+
+        Material::create([
+            'module_id' => $mod3_3->id,
+            'title' => 'Classroom Electrical Safety & Fire Exit Audit Checklist (PDF)',
+            'type' => 'pdf',
+            'file_path' => 'materials/reunification_log.pdf',
+            'description' => 'Monthly inspection checklist for classroom circuit breakers, extension cords, and fire alarms.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod3_3->id,
+            'title' => 'Smoke Corridor Evacuation & Fire Assembly Drill Video (MP4)',
+            'type' => 'video',
+            'file_path' => 'materials/fire_extinguisher_pass_demo.mp4',
+            'description' => 'Downloadable MP4 video demonstrating low-crawl smoke escape and BFP coordination.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod3_3->id,
+            'title' => 'School Fire Alarm Signals & BFP Emergency Coordination (Slides)',
+            'type' => 'presentation',
+            'file_path' => 'materials/reunification_log.pdf',
+            'description' => 'Presentation slides on school fire brigade roles and Bureau of Fire Protection (BFP) handoff.',
         ]);
 
         $workshop3 = Workshop::create([
@@ -473,6 +723,35 @@ class DatabaseSeeder extends Seeder
 
         WorkshopModule::create(['workshop_id' => $workshop3->id, 'module_id' => $mod3_1->id, 'sequence' => 1]);
         WorkshopModule::create(['workshop_id' => $workshop3->id, 'module_id' => $mod3_2->id, 'sequence' => 2]);
+        WorkshopModule::create(['workshop_id' => $workshop3->id, 'module_id' => $mod3_3->id, 'sequence' => 3]);
+
+        $package3 = ClassroomPackage::create([
+            'workshop_id' => $workshop3->id,
+            'trainer_id' => $trainer->id,
+            'title' => 'School Fire Safety & Lab Hazard Classroom Toolkit',
+            'description' => 'Complete classroom teaching package with fire exit mapping worksheets, P.A.S.S. drill rubrics, and student fire safety guides.',
+            'is_published' => true,
+        ]);
+
+        ClassroomMaterial::create([
+            'classroom_package_id' => $package3->id,
+            'title' => 'Student Fire Safety & Smoke Escape Manual (PDF)',
+            'material_type' => 'student_manual',
+            'file_path' => 'classroom_packages/student_guide.pdf',
+            'original_filename' => 'Student_Fire_Safety_Manual.pdf',
+            'description' => 'Student handbook on fire prevention, stop-drop-roll, and smoke evacuation.',
+            'sequence' => 1,
+        ]);
+
+        ClassroomMaterial::create([
+            'classroom_package_id' => $package3->id,
+            'title' => 'Teacher Fire Drill Facilitation & P.A.S.S. Rubric',
+            'material_type' => 'teacher_guide',
+            'file_path' => 'classroom_packages/teacher_protocol.pdf',
+            'original_filename' => 'Fire_Drill_Teacher_Guide.pdf',
+            'description' => 'Step-by-step teacher guide for conducting classroom fire drills.',
+            'sequence' => 2,
+        ]);
 
         foreach (Module::with('course')->get() as $module) {
             $quiz = Assessment::create([

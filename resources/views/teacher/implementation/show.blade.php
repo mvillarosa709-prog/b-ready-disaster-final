@@ -1,9 +1,9 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">Implementation Analytics — {{ $implementation->workshop->title }}</x-slot>
 
-    <!-- Header Banner (Matches Trainer Side) -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Header Banner (Full Width) -->
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-6 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
                     <a href="{{ route('teacher.implementations.index') }}" class="hover:text-emerald-600 transition font-medium">
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
 
         <!-- Implementation Overview Header Card -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">

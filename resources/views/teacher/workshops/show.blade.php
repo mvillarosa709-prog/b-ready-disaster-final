@@ -1,21 +1,21 @@
 <x-dynamic-component component="layouts.teacher">
     <x-slot name="title">{{ $workshop->title }} — B-READY</x-slot>
 
-    <!-- Header Banner (Matches Trainer Side) -->
-    <div class="bg-white border-b border-slate-200/80 px-4 py-6 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Header Banner (Full Width) -->
+    <div class="bg-white border-b border-slate-200/80">
+        <div class="w-full px-4 py-6 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
                     <a href="{{ route('teacher.workshops.index') }}" class="hover:text-emerald-600 transition font-medium">
                         Workshops
                     </a>
                     <span>/</span>
-                    <span class="text-slate-800 font-semibold truncate max-w-xs">{{ $workshop->title }}</span>
+                    <span class="text-slate-800 font-semibold truncate max-w-md">{{ $workshop->title }}</span>
                 </nav>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Workshop Overview</h1>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Workshop Overview</h1>
             </div>
             <div>
-                <a href="{{ route('teacher.workshops.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-xs">
+                <a href="{{ route('teacher.workshops.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-xs">
                     <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
@@ -25,12 +25,12 @@
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+    <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
 
         <!-- Top Workshop Header Card -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div class="max-w-3xl">
+                <div class="flex-1">
                     <div class="flex items-center gap-2">
                         <span class="inline-block text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-md px-2.5 py-1">
                             {{ $workshop->course->title ?? 'DRR Training Course' }}

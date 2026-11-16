@@ -242,7 +242,13 @@ class LearningController extends Controller
         }
 
         if ($material->file_path && Storage::disk('public')->exists($material->file_path)) {
-            return Storage::disk('public')->download($material->file_path, $material->title);
+            $ext = pathinfo($material->file_path, PATHINFO_EXTENSION);
+            $downloadName = trim(preg_replace('/[^A-Za-z0-9_\-\. ]/', '', $material->title)) ?: 'training-material';
+            if ($ext && ! str_ends_with(strtolower($downloadName), '.' . strtolower($ext))) {
+                $downloadName .= '.' . $ext;
+            }
+
+            return Storage::disk('public')->download($material->file_path, $downloadName);
         }
 
         return back()->with(
