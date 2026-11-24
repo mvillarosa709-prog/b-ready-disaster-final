@@ -69,14 +69,17 @@ class DatabaseSeeder extends Seeder
         Storage::disk('public')->put('classroom_packages/answer_key.pdf', $pdfContent);
         Storage::disk('public')->put('classroom_packages/family_gobag.pdf', $pdfContent);
 
-        // 1. Create Demo Teacher & Trainer
+        // 1. Create Demo Teacher & Trainer (Required for existing automated test suite compatibility)
         $teacher = User::updateOrCreate(
             ['email' => 'teacher@example.com'],
             [
                 'name' => 'Maria Santos',
                 'password' => Hash::make('password'),
                 'role' => 'teacher',
+                'is_active' => true,
+                'permissions' => User::defaultPermissionsForRole('teacher'),
                 'email_verified_at' => now(),
+                'must_change_password' => false,
             ]
         );
 
@@ -86,7 +89,50 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Engr. Roberto Cruz',
                 'password' => Hash::make('password'),
                 'role' => 'trainer',
+                'is_active' => true,
+                'permissions' => User::defaultPermissionsForRole('trainer'),
                 'email_verified_at' => now(),
+                'must_change_password' => false,
+            ]
+        );
+
+        // 2. Primary System Accounts (Super Admin, Master Trainer, Lead Teacher)
+        $superAdmin = User::updateOrCreate(
+            ['email' => 'adminbready@gmail.com'],
+            [
+                'name' => 'B-READY Super Administrator',
+                'password' => Hash::make('adminbready123!'),
+                'role' => 'admin',
+                'is_active' => true,
+                'permissions' => array_keys(User::allAvailablePermissions()),
+                'email_verified_at' => now(),
+                'must_change_password' => false,
+            ]
+        );
+
+        $primaryTrainer = User::updateOrCreate(
+            ['email' => 'trainerbready@gmail.com'],
+            [
+                'name' => 'B-READY Master Trainer',
+                'password' => Hash::make('trainerbready123!'),
+                'role' => 'trainer',
+                'is_active' => true,
+                'permissions' => User::defaultPermissionsForRole('trainer'),
+                'email_verified_at' => now(),
+                'must_change_password' => false,
+            ]
+        );
+
+        $primaryTeacher = User::updateOrCreate(
+            ['email' => 'teacherbready@gmail.com'],
+            [
+                'name' => 'B-READY Teacher Lead',
+                'password' => Hash::make('teacherbready123!'),
+                'role' => 'teacher',
+                'is_active' => true,
+                'permissions' => User::defaultPermissionsForRole('teacher'),
+                'email_verified_at' => now(),
+                'must_change_password' => false,
             ]
         );
 
@@ -797,6 +843,17 @@ class DatabaseSeeder extends Seeder
                 'choice_text' => 'Wait until the situation ends before reporting a safety concern.',
                 'is_correct' => false,
                 'sequence' => 4,
+            ]);
+        }
+
+        // Enroll teacherbready@gmail.com in Workshop 1
+        if (isset($primaryTeacher) && isset($workshop1)) {
+            WorkshopTeacher::firstOrCreate([
+                'workshop_id' => $workshop1->id,
+                'teacher_id' => $primaryTeacher->id,
+            ], [
+                'status' => 'enrolled',
+                'joined_at' => now()->subDays(2),
             ]);
         }
     }

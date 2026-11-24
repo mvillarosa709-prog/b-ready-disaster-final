@@ -2,14 +2,14 @@
     <div class="mb-6 text-center">
         <h1 class="text-xl font-bold text-gray-900">{{ __('Welcome back') }}</h1>
         <p class="mt-1 text-sm text-gray-600">
-            {{ __('Sign in with your teacher or trainer account to continue.') }}
+            {{ __('Sign in with your Super Admin, Trainer, or Teacher credentials to continue.') }}
         </p>
     </div>
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" id="login-form">
         @csrf
 
         <!-- Email Address -->
@@ -39,44 +39,77 @@
             </label>
         </div>
 
-        <div class="flex items-center justify-between mt-4">
+        <div class="flex items-center justify-between mt-5">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500" href="{{ route('password.request') }}">
+                <a class="underline text-xs text-gray-500 hover:text-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500" href="{{ route('password.request') }}">
                     {{ __('Forgot your password?') }}
                 </a>
+            @else
+                <div></div>
             @endif
 
-            <div class="flex items-center gap-3">
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500" href="{{ route('register') }}">
-                    {{ __('Register') }}
-                </a>
-
-                <x-primary-button class="bg-emerald-600 hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-800 focus:ring-emerald-500">
-                    {{ __('Log in') }}
-                </x-primary-button>
-            </div>
+            <x-primary-button class="bg-emerald-600 hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-800 focus:ring-emerald-500 px-6 py-2.5">
+                {{ __('Log in') }}
+            </x-primary-button>
         </div>
     </form>
 
-    <!-- Google Sign-in Option at the bottom -->
-    <div class="mt-6">
-        <div class="relative my-5">
-            <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-slate-200"></div>
-            </div>
-            <div class="relative flex justify-center text-xs uppercase">
-                <span class="bg-white px-3 text-slate-400 font-medium">Or</span>
-            </div>
-        </div>
+    <!-- Quick Credentials Helper -->
+    <div class="mt-7 pt-5 border-t border-slate-200">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2.5 text-center">
+            Demo Portal Credentials
+        </p>
+        <div class="space-y-2">
+            <button type="button"
+                    onclick="fillCredentials('adminbready@gmail.com', 'adminbready123!')"
+                    class="w-full text-left p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-emerald-50 hover:border-emerald-300 transition flex items-center justify-between group">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-bold rounded bg-indigo-100 text-indigo-700">SUPER ADMIN</span>
+                        <span class="text-xs font-semibold text-slate-800">adminbready@gmail.com</span>
+                    </div>
+                    <span class="text-[11px] text-slate-500">Pass: adminbready123!</span>
+                </div>
+                <span class="text-xs font-semibold text-emerald-600 group-hover:translate-x-0.5 transition">&rarr;</span>
+            </button>
 
-        <a href="{{ route('auth.google') }}" class="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-slate-300 rounded-lg bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition shadow-xs">
-            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-            </svg>
-            <span>Sign in with Google</span>
-        </a>
+            <button type="button"
+                    onclick="fillCredentials('trainerbready@gmail.com', 'trainerbready123!')"
+                    class="w-full text-left p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-emerald-50 hover:border-emerald-300 transition flex items-center justify-between group">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-bold rounded bg-emerald-100 text-emerald-800">TRAINER</span>
+                        <span class="text-xs font-semibold text-slate-800">trainerbready@gmail.com</span>
+                    </div>
+                    <span class="text-[11px] text-slate-500">Pass: trainerbready123!</span>
+                </div>
+                <span class="text-xs font-semibold text-emerald-600 group-hover:translate-x-0.5 transition">&rarr;</span>
+            </button>
+
+            <button type="button"
+                    onclick="fillCredentials('teacherbready@gmail.com', 'teacherbready123!')"
+                    class="w-full text-left p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-emerald-50 hover:border-emerald-300 transition flex items-center justify-between group">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-bold rounded bg-sky-100 text-sky-800">TEACHER</span>
+                        <span class="text-xs font-semibold text-slate-800">teacherbready@gmail.com</span>
+                    </div>
+                    <span class="text-[11px] text-slate-500">Pass: teacherbready123!</span>
+                </div>
+                <span class="text-xs font-semibold text-emerald-600 group-hover:translate-x-0.5 transition">&rarr;</span>
+            </button>
+        </div>
     </div>
+
+    <script>
+        function fillCredentials(email, pass) {
+            const emailInput = document.getElementById('email');
+            const passInput = document.getElementById('password');
+            if (emailInput && passInput) {
+                emailInput.value = email;
+                passInput.value = pass;
+                emailInput.focus();
+            }
+        }
+    </script>
 </x-guest-layout>

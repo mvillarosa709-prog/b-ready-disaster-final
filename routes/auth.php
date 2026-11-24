@@ -19,10 +19,11 @@ Route::middleware('guest')->group(function () {
     Route::post('auth/google/select', [GoogleAuthController::class, 'select'])
         ->name('auth.google.select');
 
-    Route::get('register', [RegisteredUserController::class, 'create'])
+    // Public self-registration is disabled; new accounts are provisioned by the Super Admin
+    Route::get('register', fn () => redirect()->route('login'))
         ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('register', fn () => redirect()->route('login'));
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

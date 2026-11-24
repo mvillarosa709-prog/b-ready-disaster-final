@@ -28,9 +28,23 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $destination = $request->user()->role === 'trainer'
-            ? route('trainer.dashboard', absolute: false)
-            : route('teacher.dashboard', absolute: false);
+        $user = $request->user();
+
+        if (! ($user->is_active ?? true)) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'This account has been deactivated by the administrator.',
+            ]);
+        }
+
+        $destination = match ($user->role) {
+            'admin' => route('admin.dashboard', absolute: false),
+            'trainer' => route('trainer.dashboard', absolute: false),
+            default => route('teacher.dashboard', absolute: false),
+        };
 
         return redirect()->intended($destination);
     }

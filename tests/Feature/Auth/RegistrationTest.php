@@ -1,20 +1,20 @@
 <?php
 
-test('registration screen can be rendered', function () {
+test('registration screen redirects to login because self-registration is disabled', function () {
     $response = $this->get('/register');
 
-    $response->assertStatus(200);
+    $response->assertRedirect('/login');
 });
 
-test('new users can register', function () {
+test('new user self-registration attempts redirect to login', function () {
     $response = $this->post('/register', [
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'name' => 'Self Registering User',
+        'email' => 'selfreg@example.com',
+        'password' => 'password123!',
+        'password_confirmation' => 'password123!',
         'role' => 'teacher',
     ]);
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect('/login');
+    $this->assertGuest();
 });

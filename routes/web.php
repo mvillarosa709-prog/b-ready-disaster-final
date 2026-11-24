@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\CourseOversightController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\WorkshopOversightController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MaterialController;
@@ -27,18 +33,18 @@ Route::get('/', function () {
     }
 
     return match (auth()->user()->role) {
+        'admin' => redirect()->route('admin.dashboard'),
         'trainer' => redirect()->route('trainer.dashboard'),
-        'admin' => redirect()->route('trainer.certificates.pending'),
         default => redirect()->route('teacher.dashboard'),
     };
 });
 
 Route::get('/dashboard', function () {
+    if (auth()->user()->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
     if (auth()->user()->role === 'trainer') {
         return redirect()->route('trainer.dashboard');
-    }
-    if (auth()->user()->role === 'admin') {
-        return redirect()->route('trainer.certificates.pending');
     }
 
     return redirect()->route('teacher.dashboard');
@@ -176,6 +182,25 @@ Route::middleware(['auth', 'trainer.password'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // User & Role Access Management
+    Route::resource('users', AdminUserController::class)->except(['show']);
+    Route::patch('users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
+
+    // Permissions Matrix
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
+
+    // Platform Oversight
+    Route::get('/workshops', [WorkshopOversightController::class, 'index'])->name('workshops.index');
+    Route::get('/workshops/{workshop}', [WorkshopOversightController::class, 'show'])->name('workshops.show');
+    Route::get('/courses', [CourseOversightController::class, 'index'])->name('courses.index');
+    Route::get('/certificates', [CertificateApprovalController::class, 'index'])->name('certificates.index');
+    Route::post('/certificates/{certification}/approve', [CertificateApprovalController::class, 'approve'])->name('certificates.approve');
+    Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
 });
 
 require __DIR__.'/auth.php';

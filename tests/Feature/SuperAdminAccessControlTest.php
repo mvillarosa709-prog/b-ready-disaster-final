@@ -1,0 +1,164 @@
+<?php
+
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+beforeEach(function () {
+    $this->seed();
+});
+
+test('public registration is disabled and redirects to login', function () {
+    $response = $this->get('/register');
+    $response->assertRedirect('/login');
+
+    $postResponse = $this->post('/register', [
+        'name' => 'Stranger',
+        'email' => 'stranger@example.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ]);
+    $postResponse->assertRedirect('/login');
+});
+
+test('login page displays clean login form and does not show public register link', function () {
+    $response = $this->get('/login');
+    $response->assertOk();
+    $response->assertSee('Log in');
+    $response->assertDontSee('href="http://localhost/register"', false);
+    $response->assertSee('adminbready@gmail.com');
+    $response->assertSee('trainerbready@gmail.com');
+    $response->assertSee('teacherbready@gmail.com');
+});
+
+test('super admin can log in with new credentials and is directed to admin dashboard', function () {
+    $admin = User::where('email', 'adminbready@gmail.com')->firstOrFail();
+    expect($admin->role)->toBe('admin');
+    expect($admin->isAdmin())->toBeTrue();
+    expect($admin->hasPermission('workshops.manage'))->toBeTrue();
+    expect($admin->hasPermission('users.manage'))->toBeTrue();
+
+    $response = $this->post('/login', [
+        'email' => 'adminbready@gmail.com',
+        'password' => 'adminbready123!',
+    ]);
+
+    $response->assertRedirect(route('admin.dashboard', absolute: false));
+    $this->assertAuthenticatedAs($admin);
+
+    $dashboardResponse = $this->actingAs($admin)->get('/admin/dashboard');
+    $dashboardResponse->assertOk();
+    $dashboardResponse->assertSee('SUPER ADMIN CONTROL CONSOLE');
+    $dashboardResponse->assertSee('System Administration Overview');
+});
+
+test('trainer can log in with new credentials and is directed to trainer dashboard', function () {
+    $trainer = User::where('email', 'trainerbready@gmail.com')->firstOrFail();
+    expect($trainer->role)->toBe('trainer');
+    expect($trainer->hasPermission('workshops.manage'))->toBeTrue();
+    expect($trainer->hasPermission('courses.manage'))->toBeTrue();
+
+    $response = $this->post('/login', [
+        'email' => 'trainerbready@gmail.com',
+        'password' => 'trainerbready123!',
+    ]);
+
+    $response->assertRedirect(route('trainer.dashboard', absolute: false));
+    $this->assertAuthenticatedAs($trainer);
+});
+
+test('teacher can log in with new credentials and is directed to teacher dashboard', function () {
+    $teacher = User::where('email', 'teacherbready@gmail.com')->firstOrFail();
+    expect($teacher->role)->toBe('teacher');
+    expect($teacher->hasPermission('packages.access'))->toBeTrue();
+
+    $response = $this->post('/login', [
+        'email' => 'teacherbready@gmail.com',
+        'password' => 'teacherbready123!',
+    ]);
+
+    $response->assertRedirect(route('teacher.dashboard', absolute: false));
+    $this->assertAuthenticatedAs($teacher);
+});
+
+test('regular users cannot access admin portal', function () {
+    $trainer = User::where('email', 'trainerbready@gmail.com')->firstOrFail();
+    $teacher = User::where('email', 'teacherbready@gmail.com')->firstOrFail();
+
+    $this->actingAs($trainer)->get(route('admin.dashboard'))->assertForbidden();
+    $this->actingAs($trainer)->get(route('admin.users.index'))->assertForbidden();
+
+    $this->actingAs($teacher)->get(route('admin.dashboard'))->assertForbidden();
+    $this->actingAs($teacher)->get(route('admin.users.index'))->assertForbidden();
+});
+
+test('super admin can manage users, assign roles, and grant permissions', function () {
+    $admin = User::where('email', 'adminbready@gmail.com')->firstOrFail();
+
+    // 1. Visit users list
+    $this->actingAs($admin)->get(route('admin.users.index'))
+        ->assertOk()
+        ->assertSee('System User Directory')
+        ->assertSee('adminbready@gmail.com');
+
+    // 2. Create a new user with specific permissions
+    $postResponse = $this->actingAs($admin)->post(route('admin.users.store'), [
+        'name' => 'Custom Trainer',
+        'email' => 'custom.trainer@example.com',
+        'password' => 'SecretPassword123!',
+        'role' => 'trainer',
+        'is_active' => '1',
+        'permissions' => ['workshops.manage', 'reports.view'],
+    ]);
+
+    $postResponse->assertRedirect(route('admin.users.index'));
+
+    $createdUser = User::where('email', 'custom.trainer@example.com')->firstOrFail();
+    expect($createdUser->role)->toBe('trainer');
+    expect($createdUser->hasPermission('workshops.manage'))->toBeTrue();
+    expect($createdUser->hasPermission('reports.view'))->toBeTrue();
+    expect($createdUser->hasPermission('courses.manage'))->toBeFalse(); // Not granted in custom permissions
+
+    // 3. Edit user permissions
+    $updateResponse = $this->actingAs($admin)->put(route('admin.users.update', $createdUser), [
+        'name' => 'Custom Trainer Updated',
+        'email' => 'custom.trainer@example.com',
+        'role' => 'trainer',
+        'is_active' => '1',
+        'permissions' => ['workshops.manage', 'courses.manage', 'reports.view'],
+    ]);
+
+    $updateResponse->assertRedirect(route('admin.users.index'));
+    $createdUser->refresh();
+    expect($createdUser->hasPermission('courses.manage'))->toBeTrue();
+
+    // 4. Toggle account status
+    $this->actingAs($admin)->patch(route('admin.users.toggle-status', $createdUser))->assertRedirect();
+    $createdUser->refresh();
+    expect($createdUser->is_active)->toBeFalse();
+
+    // 5. Delete user
+    $this->actingAs($admin)->delete(route('admin.users.destroy', $createdUser))
+        ->assertRedirect(route('admin.users.index'));
+
+    expect(User::where('email', 'custom.trainer@example.com')->exists())->toBeFalse();
+});
+
+test('super admin can view permissions matrix and platform oversight pages', function () {
+    $admin = User::where('email', 'adminbready@gmail.com')->firstOrFail();
+
+    $this->actingAs($admin)->get(route('admin.permissions.index'))
+        ->assertOk()
+        ->assertSee('Permissions');
+
+    $this->actingAs($admin)->get(route('admin.workshops.index'))
+        ->assertOk()
+        ->assertSee('Workshops');
+
+    $this->actingAs($admin)->get(route('admin.courses.index'))
+        ->assertOk()
+        ->assertSee('Courses');
+
+    $this->actingAs($admin)->get(route('admin.reports.index'))
+        ->assertOk()
+        ->assertSee('Analytics');
+});
