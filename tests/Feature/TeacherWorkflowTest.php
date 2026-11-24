@@ -28,7 +28,7 @@ test('teacher can access dashboard', function () {
     $response->assertOk();
     $response->assertSee('Welcome back');
     $response->assertSee('NCR Regional Teachers Earthquake Preparedness');
-    $response->assertSee('Find Workshops');
+    $response->assertSee('Browse Workshops');
     $response->assertSee('b-ready-logo.png');
     $response->assertDontSee('Signed in as');
 });

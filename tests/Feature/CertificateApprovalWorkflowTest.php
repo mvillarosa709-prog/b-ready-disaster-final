@@ -32,7 +32,7 @@ test('trainers and admins can review and approve pending certificates', function
     $this->actingAs($trainer)
         ->post(route('trainer.certificates.approve', $certificate))
         ->assertRedirect()
-        ->assertSessionHas('success', 'Certificate approved and signed.');
+        ->assertSessionHas('success', 'Certificate approved and digitally signed.');
 
     $this->assertDatabaseHas('certifications', [
         'id' => $certificate->id,
