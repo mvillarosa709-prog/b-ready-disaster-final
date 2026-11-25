@@ -206,9 +206,18 @@ class AssessmentEvaluationService
                             'badge_name' => 'DRR Certified Educator',
                             'certificate_file' => null,
                             'certified_at' => now(),
-                            'status' => 'pending',
+                            'approved_at' => now(),
+                            'approved_by' => $workshop->trainer_id,
+                            'status' => 'approved',
                         ]);
                         $certificateCreated = true;
+                    } else {
+                        // Automatically award and activate certificate without waiting for trainer manual approval
+                        $certification->update([
+                            'status' => 'approved',
+                            'approved_at' => $certification->approved_at ?? now(),
+                            'approved_by' => $certification->approved_by ?? $workshop->trainer_id,
+                        ]);
                     }
 
                     WorkshopTeacher::where('workshop_id', $workshop->id)
@@ -232,7 +241,7 @@ class AssessmentEvaluationService
             ];
         });
 
-        if ($certificateCreated && $result['certification']) {
+        if ($certificateCreated && $result['certification'] && $result['certification']->status === 'pending') {
             $recipients = User::whereIn('role', ['trainer', 'admin'])->get();
             Notification::send(
                 $recipients,

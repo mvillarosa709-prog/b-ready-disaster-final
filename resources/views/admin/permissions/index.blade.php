@@ -6,7 +6,7 @@
         <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                         SECURITY & ACCESS GOVERNANCE
                     </span>
                     <span class="text-xs text-slate-500">• {{ count($permissions) }} Configurable Capabilities</span>
@@ -16,7 +16,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route('admin.users.create') }}" 
-                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm shadow-indigo-600/30 transition">
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/30 transition">
                     Add User with Custom Access
                 </a>
             </div>
@@ -24,6 +24,81 @@
     </div>
 
     <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+        <!-- Live Examples: Teacher Role vs Trainer Role -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 inline-block mb-1">
+                    Concrete Role Scenarios
+                </span>
+                <h2 class="text-base font-extrabold text-slate-900">Halimbawa ng Role Permissions: Isang Trainer at Isang Teacher</h2>
+                <p class="text-xs text-slate-500">Narito ang malinaw na paghahambing ng dalawang account sa B-READY platform:</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                <!-- Example 1: Trainer -->
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50/30 p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <span class="h-8 w-8 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">TR</span>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900">1. DRR Trainer (Tagapagsanay)</h3>
+                                <p class="text-[11px] text-slate-500 font-mono">Halimbawa: trainerbready@gmail.com</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">DRR Trainer</span>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-white p-3 rounded-lg border border-emerald-100">
+                            <p class="font-bold text-emerald-950 flex items-center gap-1.5 mb-1">
+                                <span class="text-emerald-600 font-bold">&#10003;</span> Saklaw ng Trabaho (Capabilities):
+                            </p>
+                            <ul class="space-y-1 text-[11px] text-slate-600 pl-4 list-disc">
+                                <li><strong>Course Authoring:</strong> Gumawa ng modules, mag-upload ng mga video at manual na checklist.</li>
+                                <li><strong>Quiz Builder:</strong> Magdagdag ng questions at sagot na kailangang maipasa ng mga guro.</li>
+                                <li><strong>Workshop Cohorts:</strong> Magtakda ng petsa, bilang ng kalahok, at mag-publish ng workshop.</li>
+                                <li><strong>Reports:</strong> Makikita ang progreso ng bawat kalahok at resulta ng mga pagsusulit.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200/80 text-[11px] text-slate-500">
+                            <strong class="text-slate-700">Certificate Status:</strong> Ang sertipiko ay hindi na kailangang manu-manong aprubahan ng trainer; direkta itong naipagkakaloob sa guro sa sandaling maipasa ang theory exam.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example 2: Teacher -->
+                <div class="rounded-xl border border-sky-200 bg-sky-50/30 p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <span class="h-8 w-8 rounded-lg bg-sky-600 text-white font-bold flex items-center justify-center text-xs">TC</span>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900">2. DRR Educator (Guro)</h3>
+                                <p class="text-[11px] text-slate-500 font-mono">Halimbawa: teacherbready@gmail.com</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800">Teacher</span>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-white p-3 rounded-lg border border-sky-100">
+                            <p class="font-bold text-sky-950 flex items-center gap-1.5 mb-1">
+                                <span class="text-sky-600 font-bold">&#10003;</span> Saklaw ng Trabaho (Capabilities):
+                            </p>
+                            <ul class="space-y-1 text-[11px] text-slate-600 pl-4 list-disc">
+                                <li><strong>Learner Portal:</strong> Mag-enroll sa workshops, magbasa ng aralin, at kumuha ng module quiz.</li>
+                                <li><strong>Automatic Certificate:</strong> Pagkapasa sa pagsusulit (&ge;75%), agarang nalilikha (auto-generated) ang opisyal na sertipiko!</li>
+                                <li><strong>Classroom Packages:</strong> Pagka-certified, may access nang mag-download ng teaching kits at student drill guides.</li>
+                                <li><strong>Classroom Drills:</strong> Mag-record ng aktwal na earthquake/fire drill na isinagawa sa sariling klase.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200/80 text-[11px] text-slate-500">
+                            <strong class="text-slate-700">Access Boundaries:</strong> Hindi maaaring magbago ng quiz questions o magbura ng workshop content na pagmamay-ari ng trainer o admin.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Matrix Card -->
         <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div class="p-5 border-b border-slate-100">
@@ -38,7 +113,7 @@
                             <th class="py-3.5 px-4">Module / Capability</th>
                             <th class="py-3.5 px-4">System Key</th>
                             <th class="py-3.5 px-4 text-center">
-                                <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold">Super Admin</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-900 text-emerald-400 font-bold">Super Admin</span>
                             </th>
                             <th class="py-3.5 px-4 text-center">
                                 <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">DRR Trainer</span>
@@ -135,7 +210,7 @@
                                 <td class="py-3.5 px-4">
                                     <div class="flex flex-wrap gap-1 max-w-md">
                                         @foreach ($u->permissions ?? [] as $permKey)
-                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                 {{ $permissions[$permKey]['label'] ?? $permKey }}
                                             </span>
                                         @endforeach

@@ -56,7 +56,7 @@
             <!-- Descriptive Text -->
             <p class="text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
                 @if ($isPassed)
-                    Congratulations! You have passed the assessment. Your certificate is awaiting DRR Trainer verification and signature.
+                    Congratulations! You have successfully completed the requirements and passed the assessment. Your official Certificate of Completion has been automatically generated and is ready to view and download.
                 @else
                     You did not meet the {{ $passingScore }}% passing requirement on Attempt #{{ $attempt->attempt_number }}. Your answers and the answer key are available only to your trainer.
                 @endif

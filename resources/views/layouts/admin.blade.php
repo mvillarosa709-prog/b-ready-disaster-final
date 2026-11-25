@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Super Admin Console' }} — B-READY Disaster Preparedness</title>
+    <title>{{ $title ?? 'Super Admin Portal' }} — B-READY Disaster Preparedness</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -45,21 +45,18 @@
                         </button>
                     </div>
 
-                    <!-- Mobile Sidebar Component -->
+                    <!-- Sidebar component for mobile -->
                     <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-900 px-6 pb-4">
-                        <div class="flex h-20 shrink-0 items-center justify-between border-b border-slate-800">
-                            <div class="flex items-center gap-3">
-                                <x-application-logo class="h-12 w-16 shrink-0" />
-                                <div>
-                                    <span class="block text-xs font-bold text-indigo-400 uppercase tracking-wider">Super Admin</span>
-                                    <span class="block text-[11px] text-slate-400">Control Console</span>
-                                </div>
+                        <div class="flex h-16 shrink-0 items-center gap-3">
+                            <x-application-logo class="h-12 w-16 shrink-0" />
+                            <div>
+                                <span class="block text-xs text-emerald-400 font-medium">Super Admin Portal</span>
                             </div>
                         </div>
                         <nav class="flex flex-1 flex-col">
                             <ul role="list" class="flex flex-1 flex-col gap-y-7">
                                 <li>
-                                    <ul role="list" class="-mx-2 space-y-1.5">
+                                    <ul role="list" class="-mx-2 space-y-1">
                                         @include('layouts.admin-nav-links')
                                     </ul>
                                 </li>
@@ -70,7 +67,7 @@
             </div>
         </div>
 
-        <!-- Static Desktop Sidebar -->
+        <!-- Static Desktop Sidebar (Identical structure to Teacher and Trainer) -->
         <aside class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col border-r border-slate-200/80 bg-white">
             <div class="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4">
                 <!-- Branding -->
@@ -78,55 +75,71 @@
                     <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
                         <x-application-logo class="h-14 w-[4.75rem] shrink-0" />
                         <div class="min-w-0">
-                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
-                                <span class="h-1.5 w-1.5 rounded-full bg-indigo-600"></span> Super Admin
+                            <span class="flex items-center gap-1.5 text-xs text-emerald-600 font-semibold uppercase tracking-wider">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Super Admin Portal
                             </span>
-                            <span class="block text-[11px] font-semibold text-slate-500 mt-0.5">Control Center</span>
                         </div>
                     </a>
                 </div>
 
                 <!-- Navigation List -->
-                <nav class="flex flex-1 flex-col pt-2">
+                <nav class="flex flex-1 flex-col">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Navigation</div>
                     <ul role="list" class="flex flex-1 flex-col gap-y-7">
                         <li>
                             <ul role="list" class="-mx-2 space-y-1.5">
                                 @include('layouts.admin-nav-links')
                             </ul>
                         </li>
+
+                        <!-- Quick Info Card -->
+                        <li class="mt-auto">
+                            <div class="rounded-xl bg-gradient-to-br from-emerald-50 to-slate-100 p-4 border border-emerald-100/60">
+                                <div class="flex items-center gap-2 text-emerald-900 font-semibold text-xs tracking-wide uppercase">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
+                                    System Authority
+                                </div>
+                                <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                                    Manage platform users, designate module capabilities, and oversee educational DRR operations.
+                                </p>
+                            </div>
+                        </li>
+
+                        <!-- User Profile Card -->
+                        <li class="border-t border-slate-100 pt-3">
+                            <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-emerald-300 transition">
+                                <a href="{{ route('profile.edit') }}" title="Profile &amp; Change Password" class="flex items-center gap-3 min-w-0 flex-1 group">
+                                    <div class="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm border border-emerald-200 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition">
+                                        {{ substr(auth()->user()->name, 0, 1) }}
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <div class="text-sm font-semibold text-slate-800 truncate group-hover:text-emerald-700 transition">{{ auth()->user()->name }}</div>
+                                        <div class="text-xs text-slate-500 capitalize">Super Admin • Account</div>
+                                    </div>
+                                </a>
+                                <form method="POST" action="{{ route('logout') }}" class="shrink-0">
+                                    @csrf
+                                    <button type="submit" title="Sign out" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
                     </ul>
                 </nav>
-
-                <!-- Sidebar Footer User Card -->
-                <div class="pt-4 border-t border-slate-100">
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="h-8 w-8 rounded-lg bg-indigo-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-xs">
-                                SA
-                            </span>
-                            <div class="min-w-0">
-                                <p class="text-xs font-bold text-slate-800 truncate">{{ auth()->user()->name }}</p>
-                                <p class="text-[11px] text-slate-500 truncate">{{ auth()->user()->email }}</p>
-                            </div>
-                        </div>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" title="Log Out" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
-                </div>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
+        <!-- Main Layout Area -->
         <div class="flex flex-1 flex-col lg:pl-72 min-w-0">
-            <!-- Top Navigation Bar -->
+            <!-- Top Navigation Bar (Mobile & Desktop) -->
             <header class="sticky top-0 z-30 flex h-16 lg:h-20 shrink-0 items-center justify-between gap-x-4 border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-3">
+                    <!-- Hamburger Button (Mobile) -->
                     <button type="button" class="-m-2.5 p-2.5 text-slate-700 lg:hidden" @click="sidebarOpen = true">
                         <span class="sr-only">Open sidebar</span>
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -134,19 +147,19 @@
                         </svg>
                     </button>
                     <div class="flex items-center gap-2.5">
-                        <span class="text-sm font-bold text-slate-900">B-READY Super Administrator Workspace</span>
+                        <span class="text-sm font-bold text-slate-900">B-READY Super Admin Workspace</span>
                         <span class="hidden sm:inline-block text-slate-300">•</span>
                         <span class="hidden sm:inline-block text-xs font-medium text-slate-500">{{ now()->format('F j, Y') }}</span>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/80">
-                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
-                        Full System Authority
+                    <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                        Super Administrator
                     </span>
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-100 transition text-xs font-semibold text-slate-700">
-                        <span class="h-6 w-6 rounded-lg bg-indigo-600 text-white font-bold flex items-center justify-center text-[11px]">
+                        <span class="h-6 w-6 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-[11px]">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </span>
                         <span class="hidden sm:inline truncate max-w-[140px]">{{ auth()->user()->name }}</span>

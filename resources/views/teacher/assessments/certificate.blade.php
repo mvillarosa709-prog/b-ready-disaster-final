@@ -111,10 +111,10 @@
             <div class="text-center sm:text-left space-y-1">
                 @if ($certification->status === 'approved')
                     <div class="h-10 border-b border-slate-400 max-w-[200px] mx-auto sm:mx-0 flex items-end justify-center sm:justify-start pb-1">
-                        <span class="font-serif italic text-base text-emerald-900 font-semibold">{{ $certification->approver?->name ?? 'DRR Trainer' }}</span>
+                        <span class="font-serif italic text-base text-emerald-900 font-semibold">{{ $certification->approver?->name ?? ($workshop->trainer?->name ?? 'DRR Master Trainer') }}</span>
                     </div>
-                    <div class="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Digitally signed by {{ $certification->approver?->name ?? 'DRR Trainer' }}</div>
-                    <div class="text-[10px] text-slate-400">Approved {{ $certification->approved_at?->format('F d, Y') }}</div>
+                    <div class="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Digitally signed by {{ $certification->approver?->name ?? ($workshop->trainer?->name ?? 'DRR Master Trainer') }}</div>
+                    <div class="text-[10px] text-slate-400">Approved {{ $certification->certified_at?->format('F d, Y') ?? now()->format('F d, Y') }}</div>
                 @else
                     <div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-semibold leading-relaxed text-amber-900 sm:max-w-[240px]">
                         Naghihintay pa ng beripikasyon at lagda mula sa DRR Trainer.

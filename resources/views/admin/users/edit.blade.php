@@ -11,7 +11,7 @@
                 <div class="flex items-center gap-2.5">
                     <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Edit User Account & Permissions</h1>
                     <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold 
-                        {{ $user->role === 'admin' ? 'bg-indigo-100 text-indigo-700' : ($user->role === 'trainer' ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800') }}">
+                        {{ $user->role === 'admin' ? 'bg-slate-900 text-emerald-400' : ($user->role === 'trainer' ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800') }}">
                         {{ ucfirst($user->role) }}
                     </span>
                 </div>
@@ -44,20 +44,20 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Full Name *</label>
                         <input type="text" name="name" value="{{ old('name', $user->name) }}" required 
-                               class="w-full text-xs rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20">
+                               class="w-full text-xs rounded-xl border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Email Address *</label>
                         <input type="email" name="email" value="{{ old('email', $user->email) }}" required 
-                               class="w-full text-xs rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20">
+                               class="w-full text-xs rounded-xl border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Change Password (leave blank to keep current)</label>
                         <input type="password" name="password" 
                                placeholder="Enter new password (min. 8 chars)"
-                               class="w-full text-xs rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20">
+                               class="w-full text-xs rounded-xl border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20">
                     </div>
 
                     <div>
@@ -66,7 +66,7 @@
                             <input type="checkbox" name="is_active" value="1" 
                                    @checked(old('is_active', $user->is_active ?? true))
                                    @disabled($user->id === auth()->id())
-                                   class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                   class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
                             <span class="text-xs font-semibold text-slate-700">Account is Active</span>
                         </label>
                         @if ($user->id === auth()->id())
@@ -87,9 +87,9 @@
                             <input type="radio" name="role" value="teacher" 
                                    @checked(old('role', $user->role) === 'teacher')
                                    onchange="handleRoleChange('teacher')"
-                                   class="text-indigo-600 focus:ring-indigo-500">
+                                   class="text-emerald-600 focus:ring-emerald-500">
                         </div>
-                        <p class="text-[11px] text-slate-500 mt-2">Sequential learning, classroom packages, student drills.</p>
+                        <p class="text-[11px] text-slate-500 mt-2">Sequential learning, classroom packages, student drills, auto certificate.</p>
                     </label>
 
                     <label class="relative flex flex-col p-4 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer hover:bg-slate-50 transition">
@@ -98,18 +98,18 @@
                             <input type="radio" name="role" value="trainer" 
                                    @checked(old('role', $user->role) === 'trainer')
                                    onchange="handleRoleChange('trainer')"
-                                   class="text-indigo-600 focus:ring-indigo-500">
+                                   class="text-emerald-600 focus:ring-emerald-500">
                         </div>
-                        <p class="text-[11px] text-slate-500 mt-2">Workshop cohorts, courses, quizzes, digital signatures.</p>
+                        <p class="text-[11px] text-slate-500 mt-2">Workshop cohorts, courses, quizzes, and learner progress tracking.</p>
                     </label>
 
                     <label class="relative flex flex-col p-4 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer hover:bg-slate-50 transition">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-indigo-700">Super Administrator</span>
+                            <span class="text-xs font-bold text-slate-900">Super Administrator</span>
                             <input type="radio" name="role" value="admin" 
                                    @checked(old('role', $user->role) === 'admin')
                                    onchange="handleRoleChange('admin')"
-                                   class="text-indigo-600 focus:ring-indigo-500">
+                                   class="text-emerald-600 focus:ring-emerald-500">
                         </div>
                         <p class="text-[11px] text-slate-500 mt-2">Full system authority, roles, and security governance.</p>
                     </label>
@@ -124,7 +124,7 @@
                         <p class="text-xs text-slate-500">Explicitly grant or revoke access to individual platform components.</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button type="button" onclick="selectAllPermissions()" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800">
+                        <button type="button" onclick="selectAllPermissions()" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-800">
                             Select All
                         </button>
                         <span class="text-slate-300">•</span>
@@ -140,7 +140,7 @@
                             <input type="checkbox" name="permissions[]" value="{{ $key }}" id="perm_{{ $loop->index }}"
                                    data-perm-key="{{ $key }}"
                                    @checked(in_array($key, old('permissions', $userEffectivePermissions)))
-                                   class="perm-checkbox mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                   class="perm-checkbox mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
                             <label for="perm_{{ $loop->index }}" class="cursor-pointer flex-1">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-bold text-slate-900">{{ $perm['label'] }}</span>
@@ -158,7 +158,7 @@
                 <a href="{{ route('admin.users.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
                     Cancel
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm shadow-indigo-600/30 transition">
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/30 transition">
                     Save Changes & Permissions
                 </button>
             </div>

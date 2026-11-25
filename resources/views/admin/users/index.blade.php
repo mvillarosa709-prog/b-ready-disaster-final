@@ -6,7 +6,7 @@
         <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                         ACCESS CONTROL & ROLES
                     </span>
                     <span class="text-xs text-slate-500">• Manage {{ $stats['total'] }} Accounts</span>
@@ -16,7 +16,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route('admin.users.create') }}" 
-                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm shadow-indigo-600/30 transition">
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/30 transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
@@ -29,27 +29,27 @@
     <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         <!-- Stats Pill Counters -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <a href="{{ route('admin.users.index') }}" class="p-3.5 rounded-xl border {{ !request('role') && !request('status') ? 'bg-indigo-50/70 border-indigo-200 ring-1 ring-indigo-200' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
+            <a href="{{ route('admin.users.index') }}" class="p-3.5 rounded-xl border {{ !request('role') && !request('status') ? 'bg-emerald-50/70 border-emerald-300 ring-1 ring-emerald-300' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
                 <span class="text-[11px] font-bold text-slate-500 uppercase">All Users</span>
                 <p class="text-xl font-black text-slate-900 mt-1">{{ $stats['total'] }}</p>
             </a>
-            <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="p-3.5 rounded-xl border {{ request('role') === 'admin' ? 'bg-indigo-50/70 border-indigo-200 ring-1 ring-indigo-200' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
-                <span class="text-[11px] font-bold text-indigo-700 uppercase">Super Admins</span>
-                <p class="text-xl font-black text-indigo-900 mt-1">{{ $stats['admins'] }}</p>
+            <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="p-3.5 rounded-xl border {{ request('role') === 'admin' ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
+                <span class="text-[11px] font-bold {{ request('role') === 'admin' ? 'text-emerald-400' : 'text-slate-700' }} uppercase">Super Admins</span>
+                <p class="text-xl font-black {{ request('role') === 'admin' ? 'text-white' : 'text-slate-900' }} mt-1">{{ $stats['admins'] }}</p>
             </a>
-            <a href="{{ route('admin.users.index', ['role' => 'trainer']) }}" class="p-3.5 rounded-xl border {{ request('role') === 'trainer' ? 'bg-emerald-50/70 border-emerald-200 ring-1 ring-emerald-200' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
+            <a href="{{ route('admin.users.index', ['role' => 'trainer']) }}" class="p-3.5 rounded-xl border {{ request('role') === 'trainer' ? 'bg-emerald-50/70 border-emerald-300 ring-1 ring-emerald-300' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
                 <span class="text-[11px] font-bold text-emerald-700 uppercase">Trainers</span>
                 <p class="text-xl font-black text-emerald-900 mt-1">{{ $stats['trainers'] }}</p>
             </a>
-            <a href="{{ route('admin.users.index', ['role' => 'teacher']) }}" class="p-3.5 rounded-xl border {{ request('role') === 'teacher' ? 'bg-sky-50/70 border-sky-200 ring-1 ring-sky-200' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
+            <a href="{{ route('admin.users.index', ['role' => 'teacher']) }}" class="p-3.5 rounded-xl border {{ request('role') === 'teacher' ? 'bg-sky-50/70 border-sky-300 ring-1 ring-sky-300' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
                 <span class="text-[11px] font-bold text-sky-700 uppercase">Teachers</span>
                 <p class="text-xl font-black text-sky-900 mt-1">{{ $stats['teachers'] }}</p>
             </a>
-            <a href="{{ route('admin.users.index', ['status' => 'active']) }}" class="p-3.5 rounded-xl border {{ request('status') === 'active' ? 'bg-emerald-50/70 border-emerald-200 ring-1 ring-emerald-200' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
+            <a href="{{ route('admin.users.index', ['status' => 'active']) }}" class="p-3.5 rounded-xl border {{ request('status') === 'active' ? 'bg-emerald-50/70 border-emerald-300 ring-1 ring-emerald-300' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
                 <span class="text-[11px] font-bold text-slate-500 uppercase">Active</span>
                 <p class="text-xl font-black text-emerald-600 mt-1">{{ $stats['active'] }}</p>
             </a>
-            <a href="{{ route('admin.users.index', ['status' => 'inactive']) }}" class="p-3.5 rounded-xl border {{ request('status') === 'inactive' ? 'bg-rose-50/70 border-rose-200 ring-1 ring-rose-200' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
+            <a href="{{ route('admin.users.index', ['status' => 'inactive']) }}" class="p-3.5 rounded-xl border {{ request('status') === 'inactive' ? 'bg-rose-50/70 border-rose-300 ring-1 ring-rose-300' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">
                 <span class="text-[11px] font-bold text-slate-500 uppercase">Deactivated</span>
                 <p class="text-xl font-black text-rose-600 mt-1">{{ $stats['inactive'] }}</p>
             </a>
@@ -66,17 +66,17 @@
                     </div>
                     <input type="text" name="search" value="{{ request('search') }}" 
                            placeholder="Search by user name or email address..." 
-                           class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500/20">
+                           class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white focus:border-emerald-500 focus:ring-emerald-500/20">
                 </div>
 
-                <select name="role" class="text-xs rounded-xl border-slate-200 bg-slate-50/70 py-2 px-3 focus:border-indigo-500 focus:ring-indigo-500/20">
+                <select name="role" class="text-xs rounded-xl border-slate-200 bg-slate-50/70 py-2 px-3 focus:border-emerald-500 focus:ring-emerald-500/20">
                     <option value="">All Roles</option>
                     <option value="admin" @selected(request('role') === 'admin')>Super Admin</option>
                     <option value="trainer" @selected(request('role') === 'trainer')>DRR Trainer</option>
                     <option value="teacher" @selected(request('role') === 'teacher')>Teacher</option>
                 </select>
 
-                <select name="status" class="text-xs rounded-xl border-slate-200 bg-slate-50/70 py-2 px-3 focus:border-indigo-500 focus:ring-indigo-500/20">
+                <select name="status" class="text-xs rounded-xl border-slate-200 bg-slate-50/70 py-2 px-3 focus:border-emerald-500 focus:ring-emerald-500/20">
                     <option value="">All Statuses</option>
                     <option value="active" @selected(request('status') === 'active')>Active</option>
                     <option value="inactive" @selected(request('status') === 'inactive')>Deactivated</option>
@@ -114,7 +114,7 @@
                                 <td class="py-3.5 px-4">
                                     <div class="flex items-center gap-3">
                                         <span class="h-8 w-8 rounded-xl font-bold flex items-center justify-center text-xs shrink-0 
-                                            {{ $user->role === 'admin' ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : ($user->role === 'trainer' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-sky-100 text-sky-700 border border-sky-200') }}">
+                                            {{ $user->role === 'admin' ? 'bg-slate-900 text-emerald-400' : ($user->role === 'trainer' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-sky-100 text-sky-700 border border-sky-200') }}">
                                             {{ strtoupper(substr($user->name, 0, 1)) }}
                                         </span>
                                         <div class="min-w-0">
@@ -125,7 +125,7 @@
                                 </td>
                                 <td class="py-3.5 px-4">
                                     @if ($user->role === 'admin')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-900 text-emerald-400">
                                             Super Admin
                                         </span>
                                     @elseif ($user->role === 'trainer')
@@ -144,7 +144,7 @@
                                     @endphp
                                     <div class="flex items-center gap-1.5 flex-wrap max-w-xs">
                                         @if ($user->role === 'admin')
-                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-50 text-emerald-800 border border-emerald-200">
                                                 ALL MODULES GRANTED
                                             </span>
                                         @else

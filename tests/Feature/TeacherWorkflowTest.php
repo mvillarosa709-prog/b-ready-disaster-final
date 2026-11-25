@@ -142,7 +142,7 @@ test('teacher completing module 1 unlocks module 2', function () {
     $response->assertSee('Evacuation Drills');
 });
 
-test('assessment service evaluates score and creates a pending certificate on passing', function () {
+test('assessment service evaluates score and automatically generates approved certificate on passing', function () {
     Notification::fake();
     User::factory()->create([
         'role' => 'admin',
@@ -197,17 +197,13 @@ test('assessment service evaluates score and creates a pending certificate on pa
     expect($result['percentage'])->toBeGreaterThanOrEqual(80.00);
     expect($result['certification'])->not->toBeNull();
     expect($result['certification']->certificate_number)->toStartWith('BRD-');
-    expect($result['certification']->status)->toBe('pending');
+    expect($result['certification']->status)->toBe('approved');
 
     $this->assertDatabaseHas('certifications', [
         'teacher_id' => $teacher->id,
         'workshop_id' => $workshop->id,
-        'status' => 'pending',
+        'status' => 'approved',
     ]);
-    Notification::assertSentTo(
-        User::whereIn('role', ['trainer', 'admin'])->get(),
-        CertificatePendingApproval::class
-    );
 });
 
 test('classroom package is locked for uncertified teacher and accessible for certified teacher', function () {

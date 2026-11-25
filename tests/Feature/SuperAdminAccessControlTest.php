@@ -162,3 +162,51 @@ test('super admin can view permissions matrix and platform oversight pages', fun
         ->assertOk()
         ->assertSee('Analytics');
 });
+
+test('teacher completing workshop assessment automatically receives approved certificate without trainer approval', function () {
+    $teacher = \App\Models\User::where('email', 'teacherbready@gmail.com')->firstOrFail();
+    $workshop = \App\Models\Workshop::where('title', 'like', '%Earthquake%')->firstOrFail();
+    $assessment = $workshop->assessment;
+
+    foreach ($workshop->ordered_modules->where('is_required', true) as $module) {
+        if ((int) $module->id === (int) $assessment->module_id) {
+            continue;
+        }
+
+        \App\Models\ModuleProgress::updateOrCreate(
+            [
+                'workshop_id' => $workshop->id,
+                'module_id' => $module->id,
+                'teacher_id' => $teacher->id,
+            ],
+            [
+                'user_id' => $teacher->id,
+                'progress' => 100,
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]
+        );
+    }
+
+    $answers = [];
+    foreach ($assessment->questions as $question) {
+        $correctChoice = $question->choices->firstWhere('is_correct', true);
+        $answers[$question->id] = $correctChoice ? $correctChoice->id : null;
+    }
+
+    $service = app(\App\Services\AssessmentEvaluationService::class);
+    $result = $service->evaluateAttempt($teacher, $assessment, $answers);
+
+    expect($result['passed'])->toBeTrue();
+    expect($result['certification'])->not->toBeNull();
+    // Certificate is automatically approved without needing trainer permission
+    expect($result['certification']->status)->toBe('approved');
+    expect($result['certification']->approved_at)->not->toBeNull();
+
+    // Teacher can immediately view and download the certificate
+    $this->actingAs($teacher)
+        ->get(route('teacher.assessments.certificate', $workshop))
+        ->assertOk()
+        ->assertSee('Approved & Signed')
+        ->assertDontSee('Naghihintay pa ng beripikasyon');
+});
