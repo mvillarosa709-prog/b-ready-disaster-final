@@ -5,13 +5,7 @@
     <div class="bg-white border-b border-slate-200/80">
         <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                        DRR Teacher Portal
-                    </span>
-                    <span class="text-xs text-slate-400">Accredited Educator</span>
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                     Welcome back, {{ auth()->user()->name }}!
                 </h1>
                 <p class="text-slate-500 text-sm mt-1">
@@ -39,7 +33,7 @@
                 </div>
                 <div class="mt-4 flex items-baseline gap-2">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalEnrolled ?? 0 }}</span>
-                    <span class="text-xs text-emerald-600 font-semibold">{{ $totalInProgress ?? 0 }} In Progress</span>
+                    <span class="text-xs text-emerald-600 font-semibold">Registered courses</span>
                 </div>
             </div>
 
@@ -61,7 +55,7 @@
                 </div>
                 <div class="mt-4 flex items-baseline gap-2">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalCertifications ?? 0 }}</span>
-                    <span class="text-xs text-amber-600 font-semibold">{{ $totalCompleted ?? 0 }} Completed</span>
+                    <span class="text-xs text-amber-600 font-semibold">Earned credentials</span>
                 </div>
             </div>
 

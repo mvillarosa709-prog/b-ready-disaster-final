@@ -37,9 +37,10 @@ class ClassroomPackagePolicy
             return false;
         }
 
-        return Certification::where('teacher_id', $user->id)
+        return Certification::where(function ($q) use ($user) {
+            $q->where('teacher_id', $user->id)->orWhere('user_id', $user->id);
+        })
             ->where('workshop_id', $package->workshop_id)
-            ->where('status', 'approved')
             ->exists();
     }
 

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Assessment;
+use App\Models\AssessmentAnswer;
 use App\Models\AssessmentAttempt;
 use App\Models\Certification;
 use App\Models\Choice;
@@ -38,6 +39,7 @@ class DatabaseSeeder extends Seeder
         ClassroomMaterial::truncate();
         ClassroomPackage::truncate();
         Certification::truncate();
+        AssessmentAnswer::truncate();
         AssessmentAttempt::truncate();
         Choice::truncate();
         Question::truncate();
@@ -289,10 +291,10 @@ class DatabaseSeeder extends Seeder
         WorkshopModule::create(['workshop_id' => $workshop1->id, 'module_id' => $mod2->id, 'sequence' => 2]);
         WorkshopModule::create(['workshop_id' => $workshop1->id, 'module_id' => $mod3->id, 'sequence' => 3]);
 
-        // Assessment for Workshop 1
+        // Assessment for Workshop 1 (Final Examination)
         $assessment1 = Assessment::create([
             'workshop_id' => $workshop1->id,
-            'module_id' => $mod3->id,
+            'module_id' => null,
             'trainer_id' => $trainer->id,
             'title' => 'Final Examination: Earthquake Readiness & School Evacuation Facilitation',
             'description' => 'Evaluation of disaster response principles, teacher leadership during emergency conditions, and drill execution.',
@@ -551,15 +553,39 @@ class DatabaseSeeder extends Seeder
 
         $assessment2 = Assessment::create([
             'workshop_id' => $workshop2->id,
-            'module_id' => $mod2_1->id,
+            'module_id' => null,
             'trainer_id' => $trainer->id,
-            'title' => 'Typhoon Preparedness Competency Exam',
+            'title' => 'Final Examination: Typhoon Preparedness Competency Exam',
             'description' => 'Accreditation examination on hydrometeorological risk management.',
-            'passing_score' => 70,
+            'passing_score' => 75,
             'time_limit' => 25,
             'max_attempts' => 3,
             'is_published' => true,
         ]);
+
+        $q2_1 = Question::create([
+            'assessment_id' => $assessment2->id,
+            'question_text' => 'What is the primary action a school DRRM team should take when a Red Rainfall Warning or high Tropical Cyclone Wind Signal is issued?',
+            'question_type' => 'multiple_choice',
+            'points' => 25,
+            'sequence' => 1,
+        ]);
+        Choice::create(['question_id' => $q2_1->id, 'choice_text' => 'Activate flood evacuation protocols, move learners and records to elevated safe zones, and coordinate with LGU authorities.', 'is_correct' => true, 'sequence' => 1]);
+        Choice::create(['question_id' => $q2_1->id, 'choice_text' => 'Continue outdoor physical education classes in low-lying grounds.', 'is_correct' => false, 'sequence' => 2]);
+        Choice::create(['question_id' => $q2_1->id, 'choice_text' => 'Keep electrical main switches on in flooded ground-floor rooms.', 'is_correct' => false, 'sequence' => 3]);
+        Choice::create(['question_id' => $q2_1->id, 'choice_text' => 'Ignore official PAGASA advisories.', 'is_correct' => false, 'sequence' => 4]);
+
+        $q2_2 = Question::create([
+            'assessment_id' => $assessment2->id,
+            'question_text' => 'Before allowing students to re-enter classrooms after floodwaters subside, what must be verified first?',
+            'question_type' => 'multiple_choice',
+            'points' => 25,
+            'sequence' => 2,
+        ]);
+        Choice::create(['question_id' => $q2_2->id, 'choice_text' => 'Structural stability, electrical system safety, and sanitation/disinfection against waterborne hazards.', 'is_correct' => true, 'sequence' => 1]);
+        Choice::create(['question_id' => $q2_2->id, 'choice_text' => 'Only whether the chalkboard is dry.', 'is_correct' => false, 'sequence' => 2]);
+        Choice::create(['question_id' => $q2_2->id, 'choice_text' => 'Whether students brought extra textbooks.', 'is_correct' => false, 'sequence' => 3]);
+        Choice::create(['question_id' => $q2_2->id, 'choice_text' => 'No inspection is required prior to class resumption.', 'is_correct' => false, 'sequence' => 4]);
 
         $attempt2 = AssessmentAttempt::create([
             'assessment_id' => $assessment2->id,
@@ -770,6 +796,42 @@ class DatabaseSeeder extends Seeder
         WorkshopModule::create(['workshop_id' => $workshop3->id, 'module_id' => $mod3_1->id, 'sequence' => 1]);
         WorkshopModule::create(['workshop_id' => $workshop3->id, 'module_id' => $mod3_2->id, 'sequence' => 2]);
         WorkshopModule::create(['workshop_id' => $workshop3->id, 'module_id' => $mod3_3->id, 'sequence' => 3]);
+
+        $assessment3 = Assessment::create([
+            'workshop_id' => $workshop3->id,
+            'module_id' => null,
+            'trainer_id' => $trainer->id,
+            'title' => 'Final Examination: Fire Prevention & Laboratory Safety Masterclass',
+            'description' => 'Comprehensive final examination covering chemical hazard containment, P.A.S.S. fire extinguisher operation, and smoke evacuation protocols.',
+            'passing_score' => 75,
+            'time_limit' => 30,
+            'max_attempts' => 3,
+            'is_published' => true,
+        ]);
+
+        $q3_1 = Question::create([
+            'assessment_id' => $assessment3->id,
+            'question_text' => 'What does the P.A.S.S. acronym stand for when operating a portable fire extinguisher?',
+            'question_type' => 'multiple_choice',
+            'points' => 25,
+            'sequence' => 1,
+        ]);
+        Choice::create(['question_id' => $q3_1->id, 'choice_text' => 'Pull the pin, Aim at the base of the fire, Squeeze the lever, Sweep side to side.', 'is_correct' => true, 'sequence' => 1]);
+        Choice::create(['question_id' => $q3_1->id, 'choice_text' => 'Push the nozzle, Alert the class, Spray upward, Stop immediately.', 'is_correct' => false, 'sequence' => 2]);
+        Choice::create(['question_id' => $q3_1->id, 'choice_text' => 'Point at the smoke, Activate alarm, Shake canister, Stand back.', 'is_correct' => false, 'sequence' => 3]);
+        Choice::create(['question_id' => $q3_1->id, 'choice_text' => 'Pour water, Assess damage, Shut windows, Sprint outside.', 'is_correct' => false, 'sequence' => 4]);
+
+        $q3_2 = Question::create([
+            'assessment_id' => $assessment3->id,
+            'question_text' => 'When evacuating students through a smoke-filled corridor during a school fire emergency, what is the safest procedure?',
+            'question_type' => 'multiple_choice',
+            'points' => 25,
+            'sequence' => 2,
+        ]);
+        Choice::create(['question_id' => $q3_2->id, 'choice_text' => 'Instruct students to stay low (crawl beneath the smoke layer), cover nose and mouth, and follow the primary or secondary fire exit route to the assembly point.', 'is_correct' => true, 'sequence' => 1]);
+        Choice::create(['question_id' => $q3_2->id, 'choice_text' => 'Have students run upright through thick smoke and use the building elevator.', 'is_correct' => false, 'sequence' => 2]);
+        Choice::create(['question_id' => $q3_2->id, 'choice_text' => 'Open hot doors immediately without checking the handle temperature.', 'is_correct' => false, 'sequence' => 3]);
+        Choice::create(['question_id' => $q3_2->id, 'choice_text' => 'Return to the chemistry laboratory to gather notebooks.', 'is_correct' => false, 'sequence' => 4]);
 
         $package3 = ClassroomPackage::create([
             'workshop_id' => $workshop3->id,

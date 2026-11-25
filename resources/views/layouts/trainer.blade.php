@@ -107,22 +107,19 @@
                         </svg>
                     </button>
                     <div class="flex items-center gap-2.5">
-                        <span class="text-sm font-bold text-slate-900">B-READY Trainer Workspace</span>
-                        <span class="hidden sm:inline-block text-slate-300">•</span>
-                        <span class="hidden sm:inline-block text-xs font-medium text-slate-500">{{ now()->format('F j, Y') }}</span>
+                        <span class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">B-READY Trainer Workspace</span>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                        Accredited Facilitator
-                    </span>
-                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-100 transition text-xs font-semibold text-slate-700">
-                        <span class="h-6 w-6 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-[11px]">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                        </span>
-                        <span class="hidden sm:inline truncate max-w-[140px]">{{ auth()->user()->name }}</span>
+                    <a href="{{ route('profile.edit') }}" title="{{ ucwords(auth()->user()->name) }} — Profile &amp; Account Settings" class="group inline-flex items-center gap-2.5 px-4 py-2 rounded-xl border border-slate-200/90 bg-slate-50/80 hover:bg-emerald-50/80 hover:border-emerald-300 transition text-sm sm:text-base font-bold text-slate-800 hover:text-emerald-800 max-w-fit cursor-pointer shadow-2xs">
+                        <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <span class="capitalize whitespace-nowrap">{{ ucwords(auth()->user()->name) }}</span>
+                        <svg class="w-4 h-4 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </a>
                 </div>
             </header>

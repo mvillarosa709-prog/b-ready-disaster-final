@@ -46,7 +46,6 @@ class EnsureTeacherCertified
                 $q->where('teacher_id', $user->id)->orWhere('user_id', $user->id);
             })
                 ->where('workshop_id', $workshopId)
-                ->where('status', 'approved')
                 ->exists();
 
             if (! $isCertified) {

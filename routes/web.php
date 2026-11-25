@@ -162,6 +162,8 @@ Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->name
 
     // Assessments & Certification
     Route::post('/workshops/{workshop}/modules/{module}/assessment', [AssessmentController::class, 'submitModule'])->name('learning.module.assessment.submit');
+    Route::get('/workshops/{workshop}/final-exam', [AssessmentController::class, 'showFinalExam'])->name('assessments.final');
+    Route::post('/workshops/{workshop}/final-exam', [AssessmentController::class, 'submitFinalExam'])->name('assessments.final.submit');
     Route::get('/workshops/{workshop}/assessment/attempts/{attempt}', [AssessmentController::class, 'result'])->name('assessments.result');
     Route::get('/workshops/{workshop}/certificate', [AssessmentController::class, 'certificate'])->name('assessments.certificate');
 

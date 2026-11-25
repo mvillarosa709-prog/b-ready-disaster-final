@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Models\Assessment;
 use App\Models\AssessmentAttempt;
 use App\Models\Certification;
+use App\Models\Choice;
 use App\Models\Course;
 use App\Models\Module;
 use App\Models\ModuleProgress;
+use App\Models\Question;
 use App\Models\Workshop;
 use App\Models\WorkshopTeacher;
 use Illuminate\Http\RedirectResponse;
@@ -211,23 +214,89 @@ class WorkshopController extends Controller
         }
 
         $assessment = $workshop->assessment;
+        if (! $assessment) {
+            $assessment = Assessment::create([
+                'workshop_id' => $workshop->id,
+                'module_id' => null,
+                'trainer_id' => $workshop->trainer_id,
+                'title' => 'Final Examination: ' . $workshop->title,
+                'description' => 'Comprehensive final competency examination covering all modules in ' . $workshop->title . '. Pass this exam to unlock your certification and the Workshop Repository.',
+                'passing_score' => 75,
+                'time_limit' => 30,
+                'max_attempts' => 3,
+                'is_published' => true,
+            ]);
+
+            $q1 = Question::create([
+                'assessment_id' => $assessment->id,
+                'question_text' => 'During a school emergency covered in "' . $workshop->title . '", what is the teacher\'s primary responsibility before and during evacuation?',
+                'question_type' => 'multiple_choice',
+                'points' => 25,
+                'sequence' => 1,
+            ]);
+            Choice::create(['question_id' => $q1->id, 'choice_text' => 'Execute standardized protective actions, maintain calm command of learners, and guide them along verified safe exit routes.', 'is_correct' => true, 'sequence' => 1]);
+            Choice::create(['question_id' => $q1->id, 'choice_text' => 'Allow students to leave the campus unassisted without headcount verification.', 'is_correct' => false, 'sequence' => 2]);
+            Choice::create(['question_id' => $q1->id, 'choice_text' => 'Wait for external media before initiating classroom safety procedures.', 'is_correct' => false, 'sequence' => 3]);
+            Choice::create(['question_id' => $q1->id, 'choice_text' => 'Lock all emergency exits to prevent movement.', 'is_correct' => false, 'sequence' => 4]);
+
+            $q2 = Question::create([
+                'assessment_id' => $assessment->id,
+                'question_text' => 'Why is a pre-incident classroom hazard audit essential for Disaster Risk Reduction and Management (DRRM)?',
+                'question_type' => 'multiple_choice',
+                'points' => 25,
+                'sequence' => 2,
+            ]);
+            Choice::create(['question_id' => $q2->id, 'choice_text' => 'It identifies and mitigates non-structural, chemical, electrical, or flood hazards before an emergency occurs.', 'is_correct' => true, 'sequence' => 1]);
+            Choice::create(['question_id' => $q2->id, 'choice_text' => 'It replaces the need for conducting school-wide evacuation drills.', 'is_correct' => false, 'sequence' => 2]);
+            Choice::create(['question_id' => $q2->id, 'choice_text' => 'It is only used for decorating classroom walls.', 'is_correct' => false, 'sequence' => 3]);
+            Choice::create(['question_id' => $q2->id, 'choice_text' => 'It eliminates the need for emergency go-bags and first-aid kits.', 'is_correct' => false, 'sequence' => 4]);
+
+            $q3 = Question::create([
+                'assessment_id' => $assessment->id,
+                'question_text' => 'Upon arriving at the designated safe assembly zone, what must the teacher immediately perform?',
+                'question_type' => 'multiple_choice',
+                'points' => 25,
+                'sequence' => 3,
+            ]);
+            Choice::create(['question_id' => $q3->id, 'choice_text' => 'Conduct a complete student headcount/buddy-check and report status to the School Incident Commander.', 'is_correct' => true, 'sequence' => 1]);
+            Choice::create(['question_id' => $q3->id, 'choice_text' => 'Send students back inside the building to collect personal belongings.', 'is_correct' => false, 'sequence' => 2]);
+            Choice::create(['question_id' => $q3->id, 'choice_text' => 'Dismiss students immediately without guardian verification.', 'is_correct' => false, 'sequence' => 3]);
+            Choice::create(['question_id' => $q3->id, 'choice_text' => 'Leave the assembly area unattended.', 'is_correct' => false, 'sequence' => 4]);
+
+            $q4 = Question::create([
+                'assessment_id' => $assessment->id,
+                'question_text' => 'How should a certified teacher utilize the unlocked Workshop Repository & Classroom Teaching Kit after passing this exam?',
+                'question_type' => 'multiple_choice',
+                'points' => 25,
+                'sequence' => 4,
+            ]);
+            Choice::create(['question_id' => $q4->id, 'choice_text' => 'Download the teacher guides, student manuals, and worksheets to conduct classroom DRR sessions and log student assessment results.', 'is_correct' => true, 'sequence' => 1]);
+            Choice::create(['question_id' => $q4->id, 'choice_text' => 'Keep the teaching materials archived without sharing safety protocols with learners.', 'is_correct' => false, 'sequence' => 2]);
+            Choice::create(['question_id' => $q4->id, 'choice_text' => 'Skip classroom drills and only post the certificate online.', 'is_correct' => false, 'sequence' => 3]);
+            Choice::create(['question_id' => $q4->id, 'choice_text' => 'Modify emergency warning signals without consulting school DRRM authorities.', 'is_correct' => false, 'sequence' => 4]);
+        }
+
         $attemptCount = 0;
         $latestAttempt = null;
         $certification = null;
 
-        if ($isEnrolled && $assessment) {
-            $attemptCount = AssessmentAttempt::where('assessment_id', $assessment->id)
-                ->where(function ($q) use ($teacher) {
-                    $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-                })
-                ->count();
+        if ($isEnrolled) {
+            if ($assessment) {
+                $attemptCount = AssessmentAttempt::where('assessment_id', $assessment->id)
+                    ->where('workshop_id', $workshop->id)
+                    ->where(function ($q) use ($teacher) {
+                        $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+                    })
+                    ->count();
 
-            $latestAttempt = AssessmentAttempt::where('assessment_id', $assessment->id)
-                ->where(function ($q) use ($teacher) {
-                    $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-                })
-                ->latest('id')
-                ->first();
+                $latestAttempt = AssessmentAttempt::where('assessment_id', $assessment->id)
+                    ->where('workshop_id', $workshop->id)
+                    ->where(function ($q) use ($teacher) {
+                        $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
+                    })
+                    ->latest('id')
+                    ->first();
+            }
 
             $certification = Certification::where(function ($q) use ($teacher) {
                 $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
@@ -237,7 +306,7 @@ class WorkshopController extends Controller
         }
 
         $package = $workshop->classroomPackage;
-        $isPackageUnlocked = $certification?->status === 'approved';
+        $isPackageUnlocked = $certification !== null;
 
         $firstModule = $modules->sortBy('sequence')->first();
         $firstUnlockedItem = $modulesWithAccess->first(fn ($item) => $item->is_unlocked && ! $item->is_completed)

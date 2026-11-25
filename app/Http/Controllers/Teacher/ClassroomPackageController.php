@@ -30,7 +30,6 @@ class ClassroomPackageController extends Controller
         $certificationsByWorkshop = Certification::where(function ($q) use ($teacher) {
             $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
         })
-            ->where('status', 'approved')
             ->get()
             ->keyBy('workshop_id');
 
@@ -62,7 +61,6 @@ class ClassroomPackageController extends Controller
             $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
         })
             ->where('workshop_id', $package->workshop_id)
-            ->where('status', 'approved')
             ->first();
 
         // Categorize materials by type (teacher_guide, student_manual, worksheet, etc.)
