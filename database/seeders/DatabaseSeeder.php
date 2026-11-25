@@ -100,7 +100,7 @@ class DatabaseSeeder extends Seeder
         $superAdmin = User::updateOrCreate(
             ['email' => 'adminbready@gmail.com'],
             [
-                'name' => 'B-READY Super Administrator',
+                'name' => 'Administrator',
                 'password' => Hash::make('adminbready123!'),
                 'role' => 'admin',
                 'is_active' => true,
@@ -113,7 +113,7 @@ class DatabaseSeeder extends Seeder
         $primaryTrainer = User::updateOrCreate(
             ['email' => 'trainerbready@gmail.com'],
             [
-                'name' => 'B-READY Master Trainer',
+                'name' => 'Master Trainer',
                 'password' => Hash::make('trainerbready123!'),
                 'role' => 'trainer',
                 'is_active' => true,
@@ -126,7 +126,7 @@ class DatabaseSeeder extends Seeder
         $primaryTeacher = User::updateOrCreate(
             ['email' => 'teacherbready@gmail.com'],
             [
-                'name' => 'B-READY Teacher Lead',
+                'name' => 'Educator Lead',
                 'password' => Hash::make('teacherbready123!'),
                 'role' => 'teacher',
                 'is_active' => true,

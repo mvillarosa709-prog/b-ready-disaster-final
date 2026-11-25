@@ -83,8 +83,7 @@
                 </div>
 
                 <!-- Navigation List -->
-                <nav class="flex flex-1 flex-col">
-                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Navigation</div>
+                <nav class="flex flex-1 flex-col pt-2">
                     <ul role="list" class="flex flex-1 flex-col gap-y-7">
                         <li>
                             <ul role="list" class="-mx-2 space-y-1.5">
@@ -92,31 +91,16 @@
                             </ul>
                         </li>
 
-                        <!-- Quick Info Card -->
-                        <li class="mt-auto">
-                            <div class="rounded-xl bg-gradient-to-br from-emerald-50 to-slate-100 p-4 border border-emerald-100/60">
-                                <div class="flex items-center gap-2 text-emerald-900 font-semibold text-xs tracking-wide uppercase">
-                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                    </svg>
-                                    System Authority
-                                </div>
-                                <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                                    Manage platform users, designate module capabilities, and oversee educational DRR operations.
-                                </p>
-                            </div>
-                        </li>
-
                         <!-- User Profile Card -->
-                        <li class="border-t border-slate-100 pt-3">
+                        <li class="mt-auto border-t border-slate-100 pt-3">
                             <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-emerald-300 transition">
-                                <a href="{{ route('profile.edit') }}" title="Profile &amp; Change Password" class="flex items-center gap-3 min-w-0 flex-1 group">
+                                <a href="{{ route('profile.edit') }}" title="Profile &amp; Settings" class="flex items-center gap-3 min-w-0 flex-1 group">
                                     <div class="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm border border-emerald-200 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition">
-                                        {{ substr(auth()->user()->name, 0, 1) }}
+                                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                     </div>
-                                    <div class="overflow-hidden">
+                                    <div class="overflow-hidden min-w-0">
                                         <div class="text-sm font-semibold text-slate-800 truncate group-hover:text-emerald-700 transition">{{ auth()->user()->name }}</div>
-                                        <div class="text-xs text-slate-500 capitalize">Super Admin • Account</div>
+                                        <div class="text-xs text-slate-500 truncate">{{ auth()->user()->email }}</div>
                                     </div>
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}" class="shrink-0">
@@ -147,7 +131,7 @@
                         </svg>
                     </button>
                     <div class="flex items-center gap-2.5">
-                        <span class="text-sm font-bold text-slate-900">B-READY Super Admin Workspace</span>
+                        <span class="text-sm font-bold text-slate-900">Super Admin Workspace</span>
                         <span class="hidden sm:inline-block text-slate-300">•</span>
                         <span class="hidden sm:inline-block text-xs font-medium text-slate-500">{{ now()->format('F j, Y') }}</span>
                     </div>
@@ -162,7 +146,7 @@
                         <span class="h-6 w-6 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-[11px]">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </span>
-                        <span class="hidden sm:inline truncate max-w-[140px]">{{ auth()->user()->name }}</span>
+                        <span class="hidden sm:inline truncate max-w-[160px]">{{ auth()->user()->name }}</span>
                     </a>
                 </div>
             </header>

@@ -20,14 +20,13 @@ test('public registration is disabled and redirects to login', function () {
     $postResponse->assertRedirect('/login');
 });
 
-test('login page displays clean login form and does not show public register link', function () {
+test('login page displays clean login form and does not show public register link or hardcoded demo credentials', function () {
     $response = $this->get('/login');
     $response->assertOk();
     $response->assertSee('Log in');
     $response->assertDontSee('href="http://localhost/register"', false);
-    $response->assertSee('adminbready@gmail.com');
-    $response->assertSee('trainerbready@gmail.com');
-    $response->assertSee('teacherbready@gmail.com');
+    $response->assertDontSee('Demo Portal Credentials');
+    $response->assertDontSee('adminbready@gmail.com');
 });
 
 test('super admin can log in with new credentials and is directed to admin dashboard', function () {
