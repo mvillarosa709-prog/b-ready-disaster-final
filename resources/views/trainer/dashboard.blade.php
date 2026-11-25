@@ -297,7 +297,7 @@
                         </li>
                         <li class="flex items-start gap-2.5">
                             <span class="h-5 w-5 rounded-full bg-emerald-600 text-white font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">4</span>
-                            <span><strong>Monitor &amp; Certify:</strong> Approve certificates and track classroom student drills.</span>
+                            <span><strong>Monitor &amp; Track:</strong> Review auto-generated teacher certifications and monitor classroom student drills.</span>
                         </li>
                     </ol>
                 </div>

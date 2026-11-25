@@ -322,7 +322,7 @@
                         5
                     </span>
                     <h5 class="font-semibold text-slate-700">Certificate Issuance</h5>
-                    <p class="text-xs text-slate-400 mt-0.5">Approve &amp; sign teacher certificates</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Direct system generation upon 75%+ passing score</p>
                 </li>
             </ol>
         </div>

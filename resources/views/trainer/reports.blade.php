@@ -27,36 +27,6 @@
     </div>
 
     <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
-        <section class="overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-xs">
-            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-amber-100 bg-amber-50/70 px-6 py-4">
-                <div>
-                    <h2 class="font-bold text-slate-900">Certificates awaiting approval</h2>
-                    <p class="mt-0.5 text-xs text-slate-600">Review and sign certificates earned by teachers.</p>
-                </div>
-                <a href="{{ route('trainer.certificates.pending') }}" class="rounded-lg bg-amber-600 px-3 py-2 text-xs font-bold text-white hover:bg-amber-700">
-                    Review all ({{ $pendingCertificates->count() }})
-                </a>
-            </div>
-            @if ($pendingCertificates->isEmpty())
-                <p class="px-6 py-5 text-sm text-slate-500">There are no pending certificates.</p>
-            @else
-                <div class="divide-y divide-slate-100">
-                    @foreach ($pendingCertificates->take(5) as $certificate)
-                        <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-3 text-sm">
-                            <div>
-                                <span class="font-semibold text-slate-900">{{ $certificate->teacher->name }}</span>
-                                <span class="text-slate-500"> — {{ $certificate->workshop->title }}</span>
-                            </div>
-                            <form method="POST" action="{{ route('trainer.certificates.approve', $certificate) }}">
-                                @csrf
-                                <button type="submit" class="text-xs font-bold text-emerald-700 hover:text-emerald-900">Approve &amp; Sign</button>
-                            </form>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
-        </section>
-
         <!-- 4 Key Metrics Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <!-- Total Enrolled / Takers -->
