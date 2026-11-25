@@ -1,8 +1,14 @@
 @php
-    $portalLayout = in_array(auth()->user()->role, ['trainer', 'admin'], true) ? 'layouts.trainer' : 'layouts.teacher';
-    $backRoute = auth()->user()->role === 'trainer'
-        ? route('trainer.dashboard')
-        : (auth()->user()->role === 'admin' ? route('trainer.certificates.pending') : route('teacher.dashboard'));
+    if (auth()->user()->role === 'admin') {
+        $portalLayout = 'layouts.admin';
+        $backRoute = route('admin.dashboard');
+    } elseif (auth()->user()->role === 'trainer') {
+        $portalLayout = 'layouts.trainer';
+        $backRoute = route('trainer.dashboard');
+    } else {
+        $portalLayout = 'layouts.teacher';
+        $backRoute = route('teacher.dashboard');
+    }
 @endphp
 
 <x-dynamic-component :component="$portalLayout">

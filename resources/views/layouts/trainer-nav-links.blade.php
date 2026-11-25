@@ -1,11 +1,3 @@
-@if (auth()->user()->role === 'admin')
-    <li>
-        <a href="{{ route('trainer.certificates.pending') }}"
-           class="group flex gap-x-3 rounded-xl p-2.5 text-sm font-semibold transition-colors {{ request()->routeIs('trainer.certificates.*') ? 'bg-emerald-600 text-white' : 'text-slate-700 hover:bg-slate-100 hover:text-emerald-600' }}">
-            Certificate Approvals
-        </a>
-    </li>
-@else
 <!-- Trainer Dashboard -->
 <li>
     <a href="{{ route('trainer.dashboard') }}" 
@@ -49,4 +41,3 @@
         Monitoring & Reports
     </a>
 </li>
-@endif

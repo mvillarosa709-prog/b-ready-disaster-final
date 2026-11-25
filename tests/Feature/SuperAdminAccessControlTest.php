@@ -162,6 +162,17 @@ test('super admin can view permissions matrix and platform oversight pages', fun
         ->assertSee('Analytics');
 });
 
+test('super admin visiting profile page retains super admin portal layout and navigation', function () {
+    $admin = User::where('email', 'adminbready@gmail.com')->firstOrFail();
+
+    $response = $this->actingAs($admin)->get(route('profile.edit'));
+    $response->assertOk();
+    $response->assertSee('Super Admin Portal');
+    $response->assertSee('Super Admin Workspace');
+    $response->assertSeeText('Users & Roles');
+    $response->assertDontSee('B-READY Trainer Workspace');
+});
+
 test('teacher completing workshop assessment automatically receives approved certificate without trainer approval', function () {
     $teacher = \App\Models\User::where('email', 'teacherbready@gmail.com')->firstOrFail();
     $workshop = \App\Models\Workshop::where('title', 'like', '%Earthquake%')->firstOrFail();
