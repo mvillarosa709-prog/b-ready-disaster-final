@@ -22,7 +22,6 @@
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
                         Account Security
                     </span>
-                    <span class="text-xs font-medium text-slate-400">Personal Settings</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
                     Profile &amp; Change Password
@@ -31,17 +30,6 @@
                     Manage your account details, email address, password credentials, and active login session.
                 </p>
             </div>
-            <div class="flex flex-wrap items-center gap-3 shrink-0">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-600 text-white text-sm font-semibold hover:bg-rose-700 shadow-sm transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
-                        Log Out
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
 
@@ -49,12 +37,9 @@
         <!-- Top Account Summary & Session Bar -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center gap-4">
-                <div class="h-14 w-14 rounded-2xl bg-emerald-600 text-white font-extrabold text-xl flex items-center justify-center shadow-xs shrink-0">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                </div>
                 <div>
                     <div class="flex flex-wrap items-center gap-2.5">
-                        <h2 class="text-lg font-bold text-slate-900">{{ $user->name }}</h2>
+                        <h2 class="text-lg font-bold text-slate-900 capitalize">{{ ucwords($user->name) }}</h2>
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                             <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
                             {{ $user->role === 'trainer' ? 'DRR Expert Facilitator' : ucfirst($user->role) }}

@@ -143,14 +143,18 @@ class AssessmentEvaluationService
 
             // Save individual candidate answer entries
             foreach ($answersData as $answer) {
-                AssessmentAnswer::create([
-                    'attempt_id' => $attempt->id,
-                    'question_id' => $answer['question_id'],
-                    'choice_id' => $answer['choice_id'],
-                    'answer_text' => $answer['answer_text'],
-                    'is_correct' => $answer['is_correct'],
-                    'points_earned' => $answer['points_earned'],
-                ]);
+                AssessmentAnswer::updateOrCreate(
+                    [
+                        'attempt_id' => $attempt->id,
+                        'question_id' => $answer['question_id'],
+                    ],
+                    [
+                        'choice_id' => $answer['choice_id'],
+                        'answer_text' => $answer['answer_text'],
+                        'is_correct' => $answer['is_correct'],
+                        'points_earned' => $answer['points_earned'],
+                    ]
+                );
             }
 
             $certification = null;
@@ -158,34 +162,9 @@ class AssessmentEvaluationService
             if ($passed) {
                 $shouldIssueCertification = true;
 
+                // Module quizzes only unlock the next module; final certification is issued when passing the workshop Final Exam (module_id === null)
                 if ($assessment->module_id) {
-                    $requiredModuleIds = $workshop->ordered_modules
-                        ->where('is_required', true)
-                        ->pluck('id')
-                        ->map(fn ($id) => (int) $id)
-                        ->all();
-
-                    $moduleIndex = array_search((int) $assessment->module_id, $requiredModuleIds, true);
-                    $isLastRequiredModule = $moduleIndex !== false
-                        && $moduleIndex === count($requiredModuleIds) - 1;
-
-                    $otherRequiredModuleIds = array_values(array_diff(
-                        $requiredModuleIds,
-                        [(int) $assessment->module_id]
-                    ));
-
-                    $completedRequiredModuleCount = $otherRequiredModuleIds !== []
-                        ? ModuleProgress::where('workshop_id', $workshop->id)
-                            ->where(function ($query) use ($teacher) {
-                                $query->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
-                            })
-                            ->whereIn('module_id', $otherRequiredModuleIds)
-                            ->where('status', 'completed')
-                            ->count()
-                        : 0;
-
-                    $shouldIssueCertification = $isLastRequiredModule
-                        && $completedRequiredModuleCount === count($otherRequiredModuleIds);
+                    $shouldIssueCertification = false;
                 }
 
                 if ($shouldIssueCertification) {
@@ -206,17 +185,16 @@ class AssessmentEvaluationService
                             'badge_name' => 'DRR Certified Teacher',
                             'certificate_file' => null,
                             'certified_at' => now(),
-                            'approved_at' => now(),
-                            'approved_by' => $workshop->trainer_id,
                             'status' => 'approved',
+                            'approved_by' => $workshop->trainer_id ?? $assessment->trainer_id,
+                            'approved_at' => now(),
                         ]);
                         $certificateCreated = true;
-                    } else {
-                        // Automatically award and activate certificate without waiting for trainer manual approval
+                    } elseif ($certification->status !== 'approved') {
                         $certification->update([
                             'status' => 'approved',
-                            'approved_at' => $certification->approved_at ?? now(),
-                            'approved_by' => $certification->approved_by ?? $workshop->trainer_id,
+                            'approved_by' => $workshop->trainer_id ?? $assessment->trainer_id,
+                            'approved_at' => now(),
                         ]);
                     }
 

@@ -25,10 +25,10 @@ class LearningController extends Controller
     public function show(Request $request, Workshop $workshop, Module $module): View|RedirectResponse
     {
         $teacher = $request->user();
-        $assessment = $workshop->assessments()
-            ->where('module_id', $module->id)
-            ->first()
-            ?? $module->quiz;
+        $assessment = $module->quiz
+            ?? $workshop->assessments()
+                ->where('module_id', $module->id)
+                ->first();
 
         // Must enroll first to take the course and access modules
         $isEnrolled = WorkshopTeacher::where('workshop_id', $workshop->id)

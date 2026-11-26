@@ -56,7 +56,7 @@
             <!-- Descriptive Text -->
             <p class="text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
                 @if ($isPassed)
-                    Congratulations! You have successfully completed the requirements and passed the assessment. Your official Certificate of Completion has been automatically generated and is ready to view and download.
+                    Congratulations! You have passed the Final Examination. Your Certificate and the Workshop Repository are now unlocked!
                 @else
                     You did not meet the {{ $passingScore }}% passing requirement on Attempt #{{ $attempt->attempt_number }}. Your answers and the answer key are available only to your trainer.
                 @endif
@@ -73,7 +73,7 @@
                         View Official Certificate
                     </a>
 
-                    @if ($workshop->classroomPackage && $certification?->status === 'approved')
+                    @if ($workshop->classroomPackage && $certification)
                         <a href="{{ route('teacher.packages.show', $workshop->classroomPackage) }}"
                            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
                             Open Workshop Repository &rarr;
@@ -83,13 +83,13 @@
                     @if ($attemptsLeft > 0)
                         @if ($attempt->assessment->module_id)
                             <a href="{{ route('teacher.learning.module', [$workshop, $attempt->assessment->module_id]) }}"
-                           class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
-                            Retake Quiz ({{ $attemptsLeft }} {{ Str::plural('attempt', $attemptsLeft) }} left)
+                               class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
+                                Retake Quiz ({{ $attemptsLeft }} {{ Str::plural('attempt', $attemptsLeft) }} left)
                             </a>
                         @else
-                            <a href="{{ route('teacher.workshops.show', $workshop) }}"
+                            <a href="{{ route('teacher.assessments.final', $workshop) }}"
                                class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 shadow-xs transition-colors">
-                                Return to Workshop Modules
+                                Retake Final Exam ({{ $attemptsLeft }} {{ Str::plural('attempt', $attemptsLeft) }} left)
                             </a>
                         @endif
                     @else

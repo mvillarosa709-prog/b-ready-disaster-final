@@ -85,7 +85,23 @@
 
                     <div class="mt-5">
                         @if ($isEnrolled)
-                            @if ($firstUnlockedModule)
+                            @if ($allRequiredCompleted && ! $certification)
+                                <a href="{{ route('teacher.assessments.final', $workshop) }}"
+                                   class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white shadow-xs transition-colors flex items-center justify-center gap-1.5">
+                                    <span>Take Final Examination</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                    </svg>
+                                </a>
+                            @elseif ($certification && $package)
+                                <a href="{{ route('teacher.packages.show', $package) }}"
+                                   class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white shadow-xs transition-colors flex items-center justify-center gap-1.5">
+                                    <span>Open Workshop Repository</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                    </svg>
+                                </a>
+                            @elseif ($firstUnlockedModule)
                                 <a href="{{ route('teacher.learning.module', [$workshop, $firstUnlockedModule]) }}"
                                    class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white shadow-xs transition-colors flex items-center justify-center gap-1.5">
                                     <span>{{ $firstUnlockedModule->sequence === 1 ? 'Start Course (Module 1)' : 'Continue to Module ' . $firstUnlockedModule->sequence }}</span>
@@ -243,43 +259,61 @@
 
             <!-- Right Col: Gating Blocks (Assessment & Classroom Packages) -->
             <div class="space-y-6">
-                <!-- 1. Inline Module Quiz Card -->
+                <!-- 1. Final Examination Card -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Module Quiz</span>
-                        @if ($certification?->status === 'approved')
+                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Final Examination</span>
+                        @if ($certification)
                             <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                                 Passed
                             </span>
-                        @else
+                        @elseif ($allRequiredCompleted)
                             <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                                In module
+                                Unlocked
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1 text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
+                                Locked
                             </span>
                         @endif
                     </div>
 
-                    <h4 class="mt-2 text-base font-bold text-slate-900">Quizzes are part of module content</h4>
+                    <h4 class="mt-2 text-base font-bold text-slate-900">
+                        {{ $assessment->title ?? 'Workshop Final Examination' }}
+                    </h4>
                     <p class="mt-1 text-xs text-slate-500 leading-relaxed">
-                        Complete each module's learning materials and pass its quiz to unlock the next module.
+                        Complete all sequential modules and their quizzes to unlock the Final Examination. Pass the Final Examination ({{ $assessment->passing_score ?? 75 }}% required) to unlock the Workshop Repository.
                     </p>
 
                     <div class="mt-4">
                         @if ($certification)
                             <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
-                                <div class="font-bold">{{ $certification->status === 'approved' ? 'You are certified!' : 'Certificate pending approval' }}</div>
+                                <div class="font-bold">Final Exam Passed &bull; Certified!</div>
                                 <div class="text-[11px] text-emerald-700 mt-0.5">Certificate #{{ $certification->certificate_number }}</div>
                             </div>
                             <a href="{{ route('teacher.assessments.certificate', $workshop) }}" target="_blank"
-                               class="mt-3 block w-full text-center py-2 px-4 rounded-xl {{ $certification->status === 'approved' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-slate-500 hover:bg-slate-600' }} text-white font-bold text-xs shadow-2xs transition-colors">
-                                {{ $certification->status === 'approved' ? 'View / Print Certificate' : 'View Certificate Status' }}
+                               class="mt-3 block w-full text-center py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-2xs transition-colors">
+                                View / Print Official Certificate
                             </a>
-                        @elseif ($assessment?->module_id)
-                            <a href="{{ route('teacher.learning.module', [$workshop, $assessment->module_id]) }}"
-                               class="block w-full text-center py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors">
-                                Go to Module {{ $assessment->module->sequence ?? '' }} Quiz &rarr;
+                        @elseif ($allRequiredCompleted)
+                            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 mb-3">
+                                <strong>Ready for Final Exam!</strong> All required modules are completed.
+                                @if ($latestAttempt)
+                                    <div class="mt-1 text-[11px]">Latest Score: {{ number_format($latestAttempt->percentage, 2) }}% ({{ ucfirst($latestAttempt->result) }})</div>
+                                @endif
+                            </div>
+                            <a href="{{ route('teacher.assessments.final', $workshop) }}"
+                               class="block w-full text-center py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors">
+                                {{ $latestAttempt ? 'Retake Final Examination' : 'Take Final Examination' }} &rarr;
                             </a>
                         @else
-                            <p class="text-xs text-slate-500">Start a module to access its learning materials and quiz.</p>
+                            <div class="p-3 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-600 mb-3">
+                                Complete all sequential modules on the left to unlock the Final Examination.
+                            </div>
+                            <button type="button" disabled
+                                    class="w-full py-2.5 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200">
+                                🔒 Complete All Modules First
+                            </button>
                         @endif
                     </div>
                 </div>

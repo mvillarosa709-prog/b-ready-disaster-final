@@ -742,9 +742,9 @@
                                     Next: Module {{ $nextModule->sequence }} &rarr;
                                 </a>
                             @else
-                                <a href="{{ route('teacher.workshops.show', $workshop) }}"
+                                <a href="{{ route('teacher.assessments.final', $workshop) }}"
                                    class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white px-5 py-2.5 transition-colors shadow-xs">
-                                    Workshop Overview
+                                    Proceed to Final Examination &rarr;
                                 </a>
                             @endif
                         @elseif ($assessment)

@@ -99,7 +99,7 @@ class Workshop extends Model
         return $this->hasOne(
             Assessment::class,
             'workshop_id'
-        )->latestOfMany();
+        )->whereNull('module_id')->latestOfMany();
     }
 
     public function assessments()

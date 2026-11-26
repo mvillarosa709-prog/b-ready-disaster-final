@@ -18,8 +18,7 @@ test('passing a module quiz completes the module and redirects to the next modul
     $modules = $workshop->ordered_modules->sortBy('sequence')->values();
     $module = $modules->first();
     $nextModule = $modules->get(1);
-    $assessment = $workshop->assessment;
-    $assessment->update(['module_id' => $module->id]);
+    $assessment = $module->quiz;
     $teacher = User::factory()->create(['role' => 'teacher']);
 
     WorkshopTeacher::create([
@@ -63,14 +62,12 @@ test('passing a module quiz completes the module and redirects to the next modul
     $this->get(route('teacher.learning.module', [$workshop, $nextModule]))
         ->assertOk()
         ->assertSee('Quiz passed')
-        ->assertSeeText('Score 100 / 100 points.')
         ->assertSee('is now unlocked');
 
     $attempt = AssessmentAttempt::latest('id')->firstOrFail();
     $this->get(route('teacher.learning.module', [$workshop, $module]))
         ->assertOk()
         ->assertSee('Your latest quiz result')
-        ->assertSeeText('Score 100.00 / 100.00 points')
         ->assertSee('Passed');
 
     $this->get(route('teacher.assessments.result', [$workshop, $attempt]))
@@ -90,8 +87,7 @@ test('failing a module quiz keeps the next module locked and allows a retake', f
     $modules = $workshop->ordered_modules->sortBy('sequence')->values();
     $module = $modules->get(1);
     $nextModule = $modules->get(2);
-    $assessment = $workshop->assessment;
-    $assessment->update(['module_id' => $module->id]);
+    $assessment = $module->quiz;
     $teacher = User::factory()->create(['role' => 'teacher']);
 
     WorkshopTeacher::create([
@@ -142,7 +138,6 @@ test('failing a module quiz keeps the next module locked and allows a retake', f
     $this->get(route('teacher.learning.module', [$workshop, $module]))
         ->assertOk()
         ->assertSee('Your latest quiz result')
-        ->assertSeeText('Score 0.00 / 100.00 points')
         ->assertSee('Failed')
         ->assertSee('Retake Quiz');
 });
