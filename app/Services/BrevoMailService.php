@@ -28,7 +28,20 @@ class BrevoMailService
             Log::warning('Brevo API delivery failed, falling back to SMTP: ' . $apiResult['message']);
         }
 
-        // 2. Otherwise send using configured Laravel Mailer (Brevo SMTP or log)
+        // 2. Validate SMTP credentials if using SMTP
+        $smtpPassword = config('mail.mailers.smtp.password');
+        $driver = config('mail.default');
+
+        if ($driver === 'smtp' && empty($smtpPassword)) {
+            Log::warning('Brevo delivery skipped: MAIL_PASSWORD and BREVO_API_KEY are empty in .env.');
+            return [
+                'success' => false,
+                'method' => 'unconfigured',
+                'message' => 'Kailangan ilagay ang iyong Brevo SMTP Key sa MAIL_PASSWORD o ang iyong Brevo API Key sa BREVO_API_KEY sa .env file.',
+            ];
+        }
+
+        // 3. Otherwise send using configured Laravel Mailer (Brevo SMTP or log)
         try {
             Mail::to($user->email)->send(
                 new UserInvitationMail($user, $plainPassword, $loginUrl)

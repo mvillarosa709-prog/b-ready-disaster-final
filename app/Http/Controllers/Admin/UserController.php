@@ -115,13 +115,7 @@ class UserController extends Controller
             ];
         }
 
-        $successMsg = "User account for '{$user->name}' was created successfully with role '{$user->role}'.";
-        if ($mailResult['success']) {
-            $successMsg .= " Login credentials and direct link were sent directly to {$user->email} via Brevo!";
-        }
-
-        return redirect()->route('admin.users.index')
-            ->with('success', $successMsg)
+        $redirect = redirect()->route('admin.users.index')
             ->with('new_user_provisioned', [
                 'name' => $user->name,
                 'email' => $user->email,
@@ -131,6 +125,12 @@ class UserController extends Controller
                 'mail_sent' => $mailResult['success'],
                 'mail_message' => $mailResult['message'],
             ]);
+
+        if ($mailResult['success']) {
+            return $redirect->with('success', "Nagawa ang account ni '{$user->name}' bilang {$user->role} at naipadala ang login link at credentials sa Gmail ({$user->email}) gamit ang Brevo!");
+        }
+
+        return $redirect->with('warning', "Nagawa ang account ni '{$user->name}', ngunit HINDI pa naipadala sa Gmail: {$mailResult['message']}");
     }
 
     /**
