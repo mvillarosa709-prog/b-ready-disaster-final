@@ -19,8 +19,8 @@ class BrevoMailService
     {
         $brevoApiKey = config('services.brevo.api_key', env('BREVO_API_KEY'));
 
-        // 1. If Brevo REST API Key is configured, prioritize sending via Brevo v3 API directly
-        if (! empty($brevoApiKey)) {
+        // 1. If Brevo REST API Key is configured (starts with xkeysib-), prioritize sending via Brevo v3 API directly
+        if (! empty($brevoApiKey) && str_starts_with($brevoApiKey, 'xkeysib-')) {
             $apiResult = $this->sendViaBrevoApi($user, $plainPassword, $loginUrl, $brevoApiKey);
             if ($apiResult['success']) {
                 return $apiResult;
@@ -82,7 +82,7 @@ class BrevoMailService
             $htmlContent = $mailable->render();
             $subject = $mailable->envelope()->subject;
 
-            $response = Http::withHeaders([
+            $response = Http::withoutVerifying()->withHeaders([
                 'api-key' => $apiKey,
                 'accept' => 'application/json',
                 'content-type' => 'application/json',
