@@ -94,11 +94,34 @@ class UserController extends Controller
             'is_active' => $request->boolean('is_active', true),
             'permissions' => $permissions,
             'email_verified_at' => now(),
-            'must_change_password' => false,
+            'must_change_password' => true,
         ]);
 
+        $mailSent = false;
+        $mailMessage = '';
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(
+                new \App\Mail\UserInvitationMail($user, $validated['password'], route('login'))
+            );
+            $mailSent = true;
+            $mailMessage = "Login credentials have been dispatched directly to {$user->email} via Gmail.";
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('User invitation email delivery error: ' . $e->getMessage());
+            $mailSent = false;
+            $mailMessage = "Note: Could not deliver email automatically to {$user->email}. Please share the credentials and login link below manually, or check Gmail SMTP configuration in .env.";
+        }
+
         return redirect()->route('admin.users.index')
-            ->with('success', "User account for '{$user->name}' was created successfully with role '{$user->role}'.");
+            ->with('success', "User account for '{$user->name}' was created successfully with role '{$user->role}'.")
+            ->with('new_user_provisioned', [
+                'name' => $user->name,
+                'email' => $user->email,
+                'password' => $validated['password'],
+                'role' => $user->role,
+                'login_url' => route('login'),
+                'mail_sent' => $mailSent,
+                'mail_message' => $mailMessage,
+            ]);
     }
 
     /**

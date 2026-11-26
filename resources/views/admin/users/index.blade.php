@@ -34,6 +34,68 @@
     </div>
 
     <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+        @if (session('new_user_provisioned'))
+            @php $newU = session('new_user_provisioned'); @endphp
+            <div class="p-6 rounded-2xl bg-emerald-50/90 border border-emerald-300 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="p-2.5 rounded-xl bg-emerald-600 text-white font-bold shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </span>
+                        <div>
+                            <h3 class="text-sm font-extrabold text-emerald-950">
+                                Bagong Account para kay {{ $newU['name'] }} ({{ ucfirst($newU['role']) }})
+                            </h3>
+                            <p class="text-xs text-emerald-800 mt-0.5">
+                                {{ $newU['mail_message'] }}
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" 
+                            onclick="copyCredentials('{{ $newU['email'] }}', '{{ $newU['password'] }}', '{{ $newU['login_url'] }}')"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span id="copy-btn-text">Kopyahin ang Login Link &amp; Details</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-xs">
+                    <div class="p-3 rounded-xl bg-white border border-emerald-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Login Email (Gmail)</span>
+                        <span class="font-bold text-slate-800 select-all">{{ $newU['email'] }}</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white border border-emerald-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Temporary Password</span>
+                        <span class="font-mono font-bold text-slate-800 select-all">{{ $newU['password'] }}</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white border border-emerald-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Direct Login URL</span>
+                        <a href="{{ $newU['login_url'] }}" target="_blank" class="font-semibold text-emerald-600 hover:underline truncate block">
+                            {{ $newU['login_url'] }} &nearr;
+                        </a>
+                    </div>
+                </div>
+
+                <p class="text-[11px] text-emerald-800 italic">
+                    Paalala: Kapag nag-sign in ang user gamit ang temporary password, awtomatiko silang hihingan ng system na magpalit ng kanilang bagong personal password.
+                </p>
+            </div>
+            <script>
+                function copyCredentials(email, pass, url) {
+                    const text = `B-READY Platform Login Credentials:\nRole: {{ ucfirst($newU['role']) }}\nEmail: ${email}\nTemporary Password: ${pass}\nLogin Link: ${url}\n\nPaalala: Palitan ang iyong password pagka-log in.`;
+                    navigator.clipboard.writeText(text).then(() => {
+                        const btn = document.getElementById('copy-btn-text');
+                        btn.innerText = 'Na-kopya na!';
+                        setTimeout(() => { btn.innerText = 'Kopyahin ang Login Link & Details'; }, 3000);
+                    });
+                }
+            </script>
+        @endif
+
         <!-- Stats Pill Counters -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             <a href="{{ route('admin.users.index') }}" class="p-3.5 rounded-xl border {{ !request('role') && !request('status') ? 'bg-emerald-50/70 border-emerald-300 ring-1 ring-emerald-300' : 'bg-white border-slate-200/80 hover:bg-slate-50' }} transition">

@@ -88,7 +88,7 @@
                 {{ $teacher->name }}
             </h2>
             <p class="text-xs font-semibold text-slate-500 pt-2 tracking-wide uppercase">
-                Accredited Educator / School Disaster Coordinator
+                Certified Teacher / School Disaster Coordinator
             </p>
         </div>
 

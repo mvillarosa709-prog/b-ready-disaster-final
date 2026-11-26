@@ -31,7 +31,7 @@ test('trainers can manage their workshops from the trainer portal', function () 
         ->post(route('trainer.workshops.store'), [
             'course_id' => $course->id,
             'title' => 'Earthquake Readiness Trainer Workshop',
-            'description' => 'A trainer-led workshop for local educators.',
+            'description' => 'A trainer-led workshop for local teachers.',
             'start_date' => $start->format('Y-m-d\TH:i'),
             'end_date' => $start->copy()->addDays(2)->format('Y-m-d\TH:i'),
             'registration_deadline' => $start->copy()->subDay()->format('Y-m-d\TH:i'),

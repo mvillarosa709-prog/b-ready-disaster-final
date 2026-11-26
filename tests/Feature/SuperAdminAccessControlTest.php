@@ -110,9 +110,11 @@ test('super admin can manage users, assign roles, and grant permissions', functi
     ]);
 
     $postResponse->assertRedirect(route('admin.users.index'));
+    $postResponse->assertSessionHas('new_user_provisioned');
 
     $createdUser = User::where('email', 'custom.trainer@example.com')->firstOrFail();
     expect($createdUser->role)->toBe('trainer');
+    expect($createdUser->must_change_password)->toBeTrue();
     expect($createdUser->hasPermission('workshops.manage'))->toBeTrue();
     expect($createdUser->hasPermission('reports.view'))->toBeTrue();
     expect($createdUser->hasPermission('courses.manage'))->toBeFalse(); // Not granted in custom permissions
@@ -219,4 +221,62 @@ test('teacher completing workshop assessment automatically receives approved cer
         ->assertOk()
         ->assertSee('Approved & Signed')
         ->assertDontSee('Naghihintay pa ng beripikasyon');
+});
+
+test('newly provisioned teacher receives email invitation and is required to change password upon first login', function () {
+    \Illuminate\Support\Facades\Mail::fake();
+
+    $admin = User::where('email', 'adminbready@gmail.com')->firstOrFail();
+
+    $response = $this->actingAs($admin)->post(route('admin.users.store'), [
+        'name' => 'Maria Clara',
+        'email' => 'mariaclara@gmail.com',
+        'password' => 'TempPassword123!',
+        'role' => 'teacher',
+        'is_active' => '1',
+    ]);
+
+    $response->assertRedirect(route('admin.users.index'));
+    $response->assertSessionHas('new_user_provisioned');
+
+    \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\UserInvitationMail::class, function ($mail) {
+        return $mail->hasTo('mariaclara@gmail.com') && $mail->plainPassword === 'TempPassword123!';
+    });
+
+    $newTeacher = User::where('email', 'mariaclara@gmail.com')->firstOrFail();
+    expect($newTeacher->must_change_password)->toBeTrue();
+
+    // Teacher logs in with temporary password
+    $this->post('/logout');
+    $loginResponse = $this->post('/login', [
+        'email' => 'mariaclara@gmail.com',
+        'password' => 'TempPassword123!',
+    ]);
+
+    $loginResponse->assertRedirect(route('teacher.dashboard', absolute: false));
+    $this->assertAuthenticatedAs($newTeacher);
+
+    // Visiting teacher dashboard redirects to change-password because must_change_password is true
+    $dashboardAttempt = $this->actingAs($newTeacher)->get(route('teacher.dashboard'));
+    $dashboardAttempt->assertRedirect(route('password.change'));
+
+    // Visiting change-password form renders correctly
+    $changeForm = $this->actingAs($newTeacher)->get(route('password.change'));
+    $changeForm->assertOk();
+    $changeForm->assertSee('Set your new password');
+
+    // Submit new permanent password
+    $updatePasswordResponse = $this->actingAs($newTeacher)->put(route('password.update'), [
+        'current_password' => 'TempPassword123!',
+        'password' => 'NewPermanentPassword99!',
+        'password_confirmation' => 'NewPermanentPassword99!',
+    ]);
+
+    $updatePasswordResponse->assertRedirect(route('teacher.dashboard'));
+    expect($newTeacher->fresh()->must_change_password)->toBeFalse();
+
+    // Now teacher can access their dashboard without redirect
+    $finalDashboard = $this->actingAs($newTeacher->fresh())->get(route('teacher.dashboard'));
+    $finalDashboard->assertOk();
+    $finalDashboard->assertSee('Welcome back, Maria Clara!');
 });

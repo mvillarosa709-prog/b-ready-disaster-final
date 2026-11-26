@@ -50,7 +50,15 @@ Route::get('/dashboard', function () {
     return redirect()->route('teacher.dashboard');
 })->middleware(['auth', 'trainer.password', 'verified'])->name('dashboard');
 
-Route::middleware(['auth', 'role:trainer'])->group(function () {
+Route::middleware(['auth'])->group(function () {
+    Route::get('/change-password', function () {
+        return view('auth.trainer-change-password');
+    })->name('password.change');
+
+    Route::put('/change-password', [PasswordController::class, 'update'])
+        ->name('password.forced.update');
+
+    // Backward-compatible alias for trainer routes
     Route::get('/trainer/change-password', function () {
         return view('auth.trainer-change-password');
     })->name('trainer.password.change');
@@ -140,7 +148,7 @@ Route::middleware(['auth', 'trainer.password', 'verified', 'role:trainer,admin']
         ->name('trainer.certificates.approve');
 });
 
-Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:teacher', 'trainer.password'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Personal Reports Dashboard (Aggregating Progress, Assessments, Certifications, Implementations)
@@ -184,7 +192,7 @@ Route::middleware(['auth', 'trainer.password'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin', 'trainer.password'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // User & Role Access Management

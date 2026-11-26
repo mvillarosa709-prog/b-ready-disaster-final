@@ -217,7 +217,7 @@ class TeacherPackageDemoSeeder extends Seeder
                 [
                     'assessment_attempt_id' => $attempt->id,
                     'certificate_number' => 'BRD-2026-T' . str_pad((string) $teacher->id, 3, '0', STR_PAD_LEFT) . 'DRR',
-                    'badge_name' => 'DRR Certified Educator',
+                    'badge_name' => 'DRR Certified Teacher',
                     'certified_at' => now()->subDays(4),
                     'status' => 'approved',
                     'approved_by' => $trainer->id,
@@ -303,7 +303,7 @@ class TeacherPackageDemoSeeder extends Seeder
         }
 
         $streamLines[] = '0 -20 Td';
-        $streamLines[] = '(' . $escape('Generated for certified DRR educators - RAFi B-READY Capstone.') . ') Tj';
+        $streamLines[] = '(' . $escape('Generated for certified DRR teachers - RAFi B-READY Capstone.') . ') Tj';
         $streamLines[] = 'ET';
 
         $stream = implode("\n", $streamLines) . "\n";

@@ -126,7 +126,7 @@ class DatabaseSeeder extends Seeder
         $primaryTeacher = User::updateOrCreate(
             ['email' => 'teacherbready@gmail.com'],
             [
-                'name' => 'Educator Lead',
+                'name' => 'Teacher Lead',
                 'password' => Hash::make('teacherbready123!'),
                 'role' => 'teacher',
                 'is_active' => true,
@@ -162,7 +162,7 @@ class DatabaseSeeder extends Seeder
         $course1 = Course::create([
             'trainer_id' => $trainer->id,
             'title' => 'School Earthquake & Fire Readiness Protocol',
-            'description' => 'Comprehensive disaster preparedness training equipping educators to plan, organize, and execute rapid school evacuation drills.',
+            'description' => 'Comprehensive disaster preparedness training equipping teachers to plan, organize, and execute rapid school evacuation drills.',
             'learning_objectives' => "1. Understand seismic hazard zones and structural vulnerabilities in school facilities.\n2. Master the 'Duck, Cover, and Hold' procedure for classroom settings.\n3. Formulate school incident command teams and post-evacuation headcount procedures.",
             'target_participants' => 'Elementary and High School Teachers, DRRM Focal Coordinators',
             'estimated_duration' => 6,
@@ -406,7 +406,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Hydrometeorological Hazard Mitigation & Typhoon Response',
             'description' => 'Critical protocols for early warning monitoring, flood risk mapping, and safeguarding educational records during extreme weather.',
             'learning_objectives' => "Interpret PAGASA tropical cyclone bulletin signals.\nEstablish contingency plans for low-lying and flood-prone campuses.",
-            'target_participants' => 'All Educators and School DRR Teams',
+            'target_participants' => 'All Teachers and School DRR Teams',
             'estimated_duration' => 5,
             'status' => 'published',
         ]);
@@ -579,7 +579,7 @@ class DatabaseSeeder extends Seeder
             'workshop_id' => $workshop2->id,
             'assessment_attempt_id' => $attempt2->id,
             'certificate_number' => 'BRD-2026-TF9284K',
-            'badge_name' => 'DRR Certified Educator',
+            'badge_name' => 'DRR Certified Teacher',
             'certified_at' => now()->subDays(15),
             'status' => 'approved',
             'approved_by' => $trainer->id,
@@ -647,7 +647,7 @@ class DatabaseSeeder extends Seeder
         $course3 = Course::create([
             'trainer_id' => $trainer->id,
             'title' => 'Campus Fire Prevention & Chemical Hazard Protocol',
-            'description' => 'Training for educators on chemistry lab safety, fire extinguisher operations, and electrical safety audits.',
+            'description' => 'Training for teachers on chemistry lab safety, fire extinguisher operations, and electrical safety audits.',
             'learning_objectives' => "Master the P.A.S.S. method for fire extinguisher discharge.\nAudit electrical and chemical hazards in school premises.",
             'target_participants' => 'Science Teachers, Lab Custodians, and DRR Focal Persons',
             'estimated_duration' => 4,

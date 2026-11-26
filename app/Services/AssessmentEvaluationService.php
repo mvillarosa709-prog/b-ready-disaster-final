@@ -203,7 +203,7 @@ class AssessmentEvaluationService
                             'workshop_id' => $workshop->id,
                             'assessment_attempt_id' => $attempt->id,
                             'certificate_number' => $certNumber,
-                            'badge_name' => 'DRR Certified Educator',
+                            'badge_name' => 'DRR Certified Teacher',
                             'certificate_file' => null,
                             'certified_at' => now(),
                             'approved_at' => now(),

@@ -103,7 +103,7 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Select Role in B-READY</label>
                     <select name="role" required class="w-full text-sm rounded-xl border-slate-300 focus:border-emerald-500 focus:ring-emerald-500/20 py-2 px-3">
-                        <option value="teacher">Teacher (Educator / School Staff)</option>
+                        <option value="teacher">Teacher (School Staff / Disaster Coordinator)</option>
                         <option value="trainer">DRR Trainer (Course / Workshop Creator)</option>
                     </select>
                     <p class="text-[11px] text-slate-500 mt-1">This sets whether you enter the Teacher portal or the Trainer management portal.</p>

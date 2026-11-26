@@ -21,13 +21,21 @@ class PasswordController extends Controller
         ]);
 
         $user = $request->user();
+        $wasForcedChange = (bool) $user->must_change_password;
         $user->password = Hash::make($validated['password']);
         $user->must_change_password = false;
         $user->save();
 
-        if ($user->role === 'trainer' && $request->routeIs('trainer.password.update')) {
-            return redirect()->route('trainer.dashboard')
-                ->with('status', 'password-updated');
+        if ($wasForcedChange || $request->routeIs('trainer.password.update')) {
+            $targetRoute = match ($user->role) {
+                'admin' => route('admin.dashboard'),
+                'trainer' => route('trainer.dashboard'),
+                default => route('teacher.dashboard'),
+            };
+
+            return redirect($targetRoute)
+                ->with('status', 'password-updated')
+                ->with('success', 'Your password has been updated successfully. Welcome to B-READY!');
         }
 
         return back()->with('status', 'password-updated');

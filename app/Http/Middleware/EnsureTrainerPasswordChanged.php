@@ -14,11 +14,12 @@ class EnsureTrainerPasswordChanged
 
         if (
             $user
-            && $user->role === 'trainer'
             && $user->must_change_password
-            && ! $request->routeIs('trainer.password.change', 'trainer.password.update', 'logout')
+            && ! $request->routeIs('password.change', 'password.update', 'password.forced.update', 'trainer.password.change', 'trainer.password.update', 'logout')
         ) {
-            return redirect()->route('trainer.password.change');
+            $redirectRoute = $user->role === 'trainer' ? 'trainer.password.change' : 'password.change';
+
+            return redirect()->route($redirectRoute);
         }
 
         return $next($request);

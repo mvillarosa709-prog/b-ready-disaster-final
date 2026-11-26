@@ -9,7 +9,7 @@
                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
                         DRR Teacher Portal
                     </span>
-                    <span class="text-xs text-slate-400">Accredited Educator</span>
+                    <span class="text-xs text-slate-400">Certified Teacher</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
                     Welcome back, {{ auth()->user()->name }}!

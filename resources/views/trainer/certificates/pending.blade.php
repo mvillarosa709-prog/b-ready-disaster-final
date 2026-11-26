@@ -24,7 +24,7 @@
                     @endif
                 </div>
                 <p class="text-sm text-slate-500 mt-1">
-                    Review qualifying teacher assessment results, issue digital signatures, and monitor certified educators.
+                    Review qualifying teacher assessment results, issue digital signatures, and monitor certified teachers.
                 </p>
             </div>
 
@@ -75,7 +75,7 @@
                 <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Qualified</span>
                 <div class="mt-3 flex items-baseline gap-2">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $pendingCertificates->count() + $approvedCertificates->count() }}</span>
-                    <span class="text-xs font-medium text-slate-500">Certified Educators</span>
+                    <span class="text-xs font-medium text-slate-500">Certified Teachers</span>
                 </div>
             </div>
         </div>
@@ -243,7 +243,7 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="font-semibold text-slate-800">{{ $certificate->workshop?->title ?? 'DRR Workshop' }}</div>
-                                            <div class="text-xs text-emerald-700 font-medium">{{ $certificate->badge_name ?? 'DRR Certified Educator' }}</div>
+                                            <div class="text-xs text-emerald-700 font-medium">{{ $certificate->badge_name ?? 'DRR Certified Teacher' }}</div>
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-mono text-xs font-medium">

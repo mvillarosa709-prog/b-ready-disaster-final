@@ -23,6 +23,8 @@ class User extends Authenticatable
         'id_number',
         'id_file_path',
         'verification_status',
+        'must_change_password',
+        'email_verified_at',
     ];
     
     /**

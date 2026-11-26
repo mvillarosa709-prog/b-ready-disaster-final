@@ -72,7 +72,7 @@
                                 <div class="mt-4 p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/70 text-xs space-y-1">
                                     <div class="flex items-center justify-between">
                                         <span class="text-emerald-700 font-medium">Earned Badge:</span>
-                                        <span class="font-bold text-emerald-900">{{ $cert->badge_name ?? 'DRR Certified Educator' }}</span>
+                                        <span class="font-bold text-emerald-900">{{ $cert->badge_name ?? 'DRR Certified Teacher' }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <span class="text-emerald-700 font-medium">Certificate No:</span>

@@ -110,7 +110,7 @@
                                 </a>
                             </h3>
                             <p class="mt-2 text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                                {{ $workshop->course->description ?? ($workshop->description ?? 'Disaster Risk Reduction and Management training for educators.') }}
+                                {{ $workshop->course->description ?? ($workshop->description ?? 'Disaster Risk Reduction and Management training for teachers.') }}
                             </p>
 
                             <!-- Included Modules Preview -->

@@ -12,7 +12,7 @@
                     <span class="text-xs text-slate-500">• {{ $workshops->total() }} Total Cohorts</span>
                 </div>
                 <h1 class="text-2xl font-extrabold text-slate-900 mt-1 tracking-tight">Platform Workshops Governance</h1>
-                <p class="text-sm text-slate-500 mt-1">Audit training cohorts, enrolled educators, and linked classroom packages across all trainers.</p>
+                <p class="text-sm text-slate-500 mt-1">Audit training cohorts, enrolled teachers, and linked classroom packages across all trainers.</p>
             </div>
         </div>
     </div>

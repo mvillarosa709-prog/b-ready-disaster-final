@@ -73,7 +73,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <label class="relative flex flex-col p-4 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer hover:bg-slate-50 transition">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-900">DRR Educator (Teacher)</span>
+                            <span class="text-xs font-bold text-slate-900">Teacher</span>
                             <input type="radio" name="role" value="teacher" @checked(old('role', 'teacher') === 'teacher') 
                                    onchange="handleRoleChange('teacher')"
                                    class="text-emerald-600 focus:ring-emerald-500">

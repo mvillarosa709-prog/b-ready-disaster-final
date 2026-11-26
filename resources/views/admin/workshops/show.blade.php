@@ -46,7 +46,7 @@
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex items-center justify-between">
                     <div>
-                        <h2 class="text-base font-bold text-slate-900">Enrolled Educators ({{ $workshop->teachers->count() }})</h2>
+                        <h2 class="text-base font-bold text-slate-900">Enrolled Teachers ({{ $workshop->teachers->count() }})</h2>
                         <p class="text-xs text-slate-500">Teachers actively attending or completed this training cohort.</p>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="border-b border-slate-100 bg-slate-50/70 text-slate-500 uppercase tracking-wider font-bold text-[10px]">
-                                <th class="py-3 px-4">Educator</th>
+                                <th class="py-3 px-4">Teacher</th>
                                 <th class="py-3 px-4">Enrolled At</th>
                                 <th class="py-3 px-4">Status</th>
                             </tr>

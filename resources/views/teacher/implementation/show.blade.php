@@ -50,7 +50,7 @@
 
             <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-600">
                 <div>
-                    <span class="text-slate-400 block">Lead Educator:</span>
+                    <span class="text-slate-400 block">Lead Teacher:</span>
                     <span class="font-bold text-slate-800">{{ $implementation->teacher->name }}</span>
                 </div>
                 <div>

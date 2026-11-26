@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="overflow-hidden">
                                         <div class="text-sm font-semibold text-slate-800 truncate group-hover:text-emerald-700 transition">{{ auth()->user()->name }}</div>
-                                        <div class="text-xs text-slate-500 capitalize">Educator • Account</div>
+                                        <div class="text-xs text-slate-500 capitalize">Teacher • Account</div>
                                     </div>
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}" class="shrink-0">
@@ -156,7 +156,7 @@
                 <div class="flex items-center gap-3">
                     <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
                         <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                        Accredited Educator
+                        Certified Teacher
                     </span>
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-100 transition text-xs font-semibold text-slate-700">
                         <span class="h-6 w-6 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-[11px]">
