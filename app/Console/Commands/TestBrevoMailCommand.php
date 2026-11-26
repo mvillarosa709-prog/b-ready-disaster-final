@@ -16,13 +16,21 @@ class TestBrevoMailCommand extends Command
         $recipientEmail = $this->argument('email') ?? config('mail.from.address', 'mvillarosa709@gmail.com');
         $this->info("Initiating Brevo test email to: {$recipientEmail}...");
 
-        $tempUser = new User([
-            'name' => 'Brevo Test User',
+        $existingUser = User::where('email', $recipientEmail)->first();
+        $tempUser = $existingUser ?? new User([
+            'name' => 'Teacher',
             'email' => $recipientEmail,
             'role' => 'teacher',
         ]);
 
-        $result = $brevoService->sendInvitation($tempUser, 'TestBreadyPass123!', url('/login'));
+        $password = 'teacherbready123!';
+        if ($existingUser) {
+            $existingUser->password = \Illuminate\Support\Facades\Hash::make($password);
+            $existingUser->must_change_password = true;
+            $existingUser->save();
+        }
+
+        $result = $brevoService->sendInvitation($tempUser, $password, url('/login'));
 
         if ($result['success']) {
             $this->info("✓ SUCCESS ({$result['method']}): {$result['message']}");
