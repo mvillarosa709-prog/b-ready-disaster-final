@@ -103,21 +103,40 @@
                 </div>
             </div>
 
-            <!-- Delivery & First Login Notice -->
-            <div class="bg-emerald-50/70 rounded-2xl border border-emerald-200 p-5 flex items-start gap-3.5">
-                <div class="p-2 rounded-xl bg-emerald-600 text-white shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Section 3: Portal Login Link & Email Dispatch -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+                <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
-                </div>
-                <div class="text-xs text-emerald-950 space-y-1">
-                    <div class="font-bold">Awtomatikong Pagpapadala sa Gmail (Brevo) at Mandatoryong Pagpalit ng Password</div>
-                    <p class="text-emerald-800 leading-relaxed">
-                        Pagka-pindot ng <strong>"Create User Account &amp; Send Invitation"</strong>, direktang ipapadala ang credentials at portal login link (<code>{{ route('login') }}</code>) sa Gmail address ng user. Sa unang pag-log in, awtomatiko silang hihingan ng system na magpalit ng kanilang bagong personal password.
-                    </p>
-                    <p class="text-[11px] text-emerald-700">
-                        Makikita mo rin pagkatapos ang isang copyable summary at direct button na puwede mong kopyahin o buksan sa Gmail Web.
-                    </p>
+                    <span>3. Portal Login Link &amp; Send to Gmail</span>
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Portal Login Link (Ibibigay sa User)</label>
+                        <div class="flex items-center gap-2">
+                            <input type="text" readonly value="{{ route('login') }}" 
+                                   class="w-full text-xs font-mono rounded-xl border-slate-200 bg-slate-50 text-slate-700 focus:outline-none">
+                            <button type="button" 
+                                    onclick="navigator.clipboard.writeText('{{ route('login') }}'); this.innerText='Copied!';"
+                                    class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold hover:bg-slate-100 shrink-0">
+                                Copy Link
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1">Dito mag-sa-sign in ang teacher o trainer gamit ang kanilang temporary credentials.</p>
+                    </div>
+
+                    <div class="flex flex-col justify-center">
+                        <label class="flex items-center gap-2.5 p-3 rounded-xl border border-emerald-200 bg-emerald-50/60 cursor-pointer">
+                            <input type="checkbox" name="send_gmail" value="1" checked
+                                   class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                            <div>
+                                <span class="text-xs font-bold text-emerald-950 block">Ipadala ang Login Link &amp; Credentials sa Gmail</span>
+                                <span class="text-[11px] text-emerald-800">Awtomatikong magpapadala ng email sa recipient via Brevo.</span>
+                            </div>
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -126,8 +145,11 @@
                 <a href="{{ route('admin.users.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
                     Cancel
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/30 transition">
-                    Create User Account &amp; Send Invitation
+                <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/30 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                    <span>Send to Gmail &amp; Create Account</span>
                 </button>
             </div>
         </form>

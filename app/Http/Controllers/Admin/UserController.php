@@ -101,14 +101,27 @@ class UserController extends Controller
             'must_change_password' => true,
         ]);
 
-        $mailResult = $this->brevoMailService->sendInvitation(
-            $user,
-            $validated['password'],
-            route('login')
-        );
+        if ($request->boolean('send_gmail', true)) {
+            $mailResult = $this->brevoMailService->sendInvitation(
+                $user,
+                $validated['password'],
+                route('login')
+            );
+        } else {
+            $mailResult = [
+                'success' => false,
+                'message' => 'Skipped email dispatch based on option.',
+                'method' => 'none',
+            ];
+        }
+
+        $successMsg = "User account for '{$user->name}' was created successfully with role '{$user->role}'.";
+        if ($mailResult['success']) {
+            $successMsg .= " Login credentials and direct link were sent directly to {$user->email} via Brevo!";
+        }
 
         return redirect()->route('admin.users.index')
-            ->with('success', "User account for '{$user->name}' was created successfully with role '{$user->role}'.")
+            ->with('success', $successMsg)
             ->with('new_user_provisioned', [
                 'name' => $user->name,
                 'email' => $user->email,
@@ -117,7 +130,6 @@ class UserController extends Controller
                 'login_url' => route('login'),
                 'mail_sent' => $mailResult['success'],
                 'mail_message' => $mailResult['message'],
-                'mail_method' => $mailResult['method'] ?? 'brevo',
             ]);
     }
 
