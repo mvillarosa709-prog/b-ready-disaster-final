@@ -148,8 +148,7 @@ test('super admin can view permissions matrix and platform oversight pages', fun
     $admin = User::where('email', 'adminbready@gmail.com')->firstOrFail();
 
     $this->actingAs($admin)->get(route('admin.permissions.index'))
-        ->assertOk()
-        ->assertSee('Permissions');
+        ->assertRedirect(route('admin.users.index'));
 
     $this->actingAs($admin)->get(route('admin.workshops.index'))
         ->assertOk()

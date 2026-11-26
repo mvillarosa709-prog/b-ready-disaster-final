@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\BrevoMailService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,6 +13,9 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
+    public function __construct(
+        protected BrevoMailService $brevoMailService
+    ) {}
     /**
      * Display a listing of all system users.
      */
@@ -97,19 +101,11 @@ class UserController extends Controller
             'must_change_password' => true,
         ]);
 
-        $mailSent = false;
-        $mailMessage = '';
-        try {
-            \Illuminate\Support\Facades\Mail::to($user->email)->send(
-                new \App\Mail\UserInvitationMail($user, $validated['password'], route('login'))
-            );
-            $mailSent = true;
-            $mailMessage = "Login credentials have been dispatched directly to {$user->email} via Gmail.";
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('User invitation email delivery error: ' . $e->getMessage());
-            $mailSent = false;
-            $mailMessage = "Note: Could not deliver email automatically to {$user->email}. Please share the credentials and login link below manually, or check Gmail SMTP configuration in .env.";
-        }
+        $mailResult = $this->brevoMailService->sendInvitation(
+            $user,
+            $validated['password'],
+            route('login')
+        );
 
         return redirect()->route('admin.users.index')
             ->with('success', "User account for '{$user->name}' was created successfully with role '{$user->role}'.")
@@ -119,8 +115,9 @@ class UserController extends Controller
                 'password' => $validated['password'],
                 'role' => $user->role,
                 'login_url' => route('login'),
-                'mail_sent' => $mailSent,
-                'mail_message' => $mailMessage,
+                'mail_sent' => $mailResult['success'],
+                'mail_message' => $mailResult['message'],
+                'mail_method' => $mailResult['method'] ?? 'brevo',
             ]);
     }
 

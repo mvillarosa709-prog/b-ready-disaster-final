@@ -103,78 +103,33 @@
                 </div>
             </div>
 
-            <!-- Permissions Checklist -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-5">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-3 gap-2">
-                    <div>
-                        <h2 class="text-base font-bold text-slate-900">3. Granular Module Permissions</h2>
-                        <p class="text-xs text-slate-500">Select which platform modules this account can access. Defaults adjust automatically by role.</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="selectAllPermissions()" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-800">
-                            Select All
-                        </button>
-                        <span class="text-slate-300">•</span>
-                        <button type="button" onclick="resetRoleDefaults()" class="text-[11px] font-bold text-slate-600 hover:text-slate-800">
-                            Reset to Role Defaults
-                        </button>
-                    </div>
+            <!-- Delivery & First Login Notice -->
+            <div class="bg-emerald-50/70 rounded-2xl border border-emerald-200 p-5 flex items-start gap-3.5">
+                <div class="p-2 rounded-xl bg-emerald-600 text-white shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    @foreach ($allPermissions as $key => $perm)
-                        <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/60 hover:bg-slate-50 transition flex items-start gap-3">
-                            <input type="checkbox" name="permissions[]" value="{{ $key }}" id="perm_{{ $loop->index }}"
-                                   data-perm-key="{{ $key }}"
-                                   @checked(in_array($key, old('permissions', $defaultTeacherPermissions)))
-                                   class="perm-checkbox mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
-                            <label for="perm_{{ $loop->index }}" class="cursor-pointer flex-1">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold text-slate-900">{{ $perm['label'] }}</span>
-                                    <span class="text-[10px] font-semibold text-slate-500 uppercase">{{ $perm['category'] }}</span>
-                                </div>
-                                <p class="text-[11px] text-slate-500 mt-0.5">{{ $perm['description'] }}</p>
-                            </label>
-                        </div>
-                    @endforeach
+                <div class="text-xs text-emerald-950 space-y-1">
+                    <div class="font-bold">Awtomatikong Pagpapadala sa Gmail (Brevo) at Mandatoryong Pagpalit ng Password</div>
+                    <p class="text-emerald-800 leading-relaxed">
+                        Pagka-pindot ng <strong>"Create User Account &amp; Send Invitation"</strong>, direktang ipapadala ang credentials at portal login link (<code>{{ route('login') }}</code>) sa Gmail address ng user. Sa unang pag-log in, awtomatiko silang hihingan ng system na magpalit ng kanilang bagong personal password.
+                    </p>
+                    <p class="text-[11px] text-emerald-700">
+                        Makikita mo rin pagkatapos ang isang copyable summary at direct button na puwede mong kopyahin o buksan sa Gmail Web.
+                    </p>
                 </div>
             </div>
 
             <!-- Submit Section -->
-            <div class="flex items-center justify-end gap-3 pt-4">
+            <div class="flex items-center justify-end gap-3 pt-2">
                 <a href="{{ route('admin.users.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
                     Cancel
                 </a>
                 <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/30 transition">
-                    Create User Account
+                    Create User Account &amp; Send Invitation
                 </button>
             </div>
         </form>
     </div>
-
-    <script>
-        const trainerDefaults = @json($defaultTrainerPermissions);
-        const teacherDefaults = @json($defaultTeacherPermissions);
-        const allPerms = @json(array_keys($allPermissions));
-
-        function handleRoleChange(role) {
-            const checkboxes = document.querySelectorAll('.perm-checkbox');
-            let targetDefaults = teacherDefaults;
-            if (role === 'trainer') targetDefaults = trainerDefaults;
-            if (role === 'admin') targetDefaults = allPerms;
-
-            checkboxes.forEach(cb => {
-                cb.checked = targetDefaults.includes(cb.dataset.permKey);
-            });
-        }
-
-        function selectAllPermissions() {
-            document.querySelectorAll('.perm-checkbox').forEach(cb => cb.checked = true);
-        }
-
-        function resetRoleDefaults() {
-            const checkedRole = document.querySelector('input[name="role"]:checked')?.value || 'teacher';
-            handleRoleChange(checkedRole);
-        }
-    </script>
 </x-layouts.admin>

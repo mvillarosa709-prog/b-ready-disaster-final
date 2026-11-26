@@ -12,16 +12,9 @@
                     <span class="text-xs text-slate-500">• Manage {{ $stats['total'] }} Accounts</span>
                 </div>
                 <h1 class="text-2xl font-extrabold text-slate-900 mt-1 tracking-tight">System User Directory</h1>
-                <p class="text-sm text-slate-500 mt-1">Assign roles (Super Admin, Trainer, Teacher) and configure exact module permissions for each user.</p>
+                <p class="text-sm text-slate-500 mt-1">Gumawa ng accounts para sa Teacher at Trainer, at ipadala ang credentials via Gmail / Brevo.</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('admin.permissions.index') }}" 
-                   class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition">
-                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <span>Permissions Matrix</span>
-                </a>
                 <a href="{{ route('admin.users.create') }}" 
                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/30 transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,8 +27,51 @@
     </div>
 
     <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+        <!-- Permanent Portal Login Link Bar -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-slate-50 border border-emerald-200/90 shadow-2xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+                <div class="p-2.5 rounded-xl bg-emerald-600 text-white shrink-0 shadow-xs">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h2 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Teacher &amp; Trainer Portal Login Link</h2>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                            Direct Link
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1 font-mono select-all truncate">
+                        {{ route('login') }}
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+                <button type="button" 
+                        onclick="copyTextToClipboard('{{ route('login') }}', this, 'Link Na-kopya!')"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 hover:text-emerald-700 text-xs font-bold shadow-2xs transition">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                    </svg>
+                    <span>Kopyahin ang Login Link</span>
+                </button>
+                <a href="{{ route('admin.users.create') }}" 
+                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/30 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                    <span>+ Mag-provision ng Bagong User</span>
+                </a>
+            </div>
+        </div>
+
         @if (session('new_user_provisioned'))
-            @php $newU = session('new_user_provisioned'); @endphp
+            @php 
+                $newU = session('new_user_provisioned'); 
+                $mailBody = "Magandang araw {$newU['name']}!\n\nNagawa na ang iyong opisyal na B-READY account bilang " . ucfirst($newU['role']) . ".\n\nNarito ang iyong login details:\n• Email: {$newU['email']}\n• Temporary Password: {$newU['password']}\n• Portal Login Link: {$newU['login_url']}\n\nPaalala: Sa unang pag-log in, hihilingan ka ng system na magtakda ng iyong bagong personal password bago ma-access ang dashboard.\n\nMaraming salamat,\nB-READY Disaster Preparedness";
+                $gmailComposeUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=" . urlencode($newU['email']) . "&su=" . urlencode("B-READY Platform - Your Login Credentials") . "&body=" . urlencode($mailBody);
+            @endphp
             <div class="p-6 rounded-2xl bg-emerald-50/90 border border-emerald-300 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div class="flex items-center gap-3">
@@ -45,22 +81,42 @@
                             </svg>
                         </span>
                         <div>
-                            <h3 class="text-sm font-extrabold text-emerald-950">
-                                Bagong Account para kay {{ $newU['name'] }} ({{ ucfirst($newU['role']) }})
-                            </h3>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-sm font-extrabold text-emerald-950">
+                                    Bagong Account para kay {{ $newU['name'] }} ({{ ucfirst($newU['role']) }})
+                                </h3>
+                                @if (!empty($newU['mail_sent']))
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-200 text-emerald-900">
+                                        Email Sent ({{ strtoupper($newU['mail_method'] ?? 'Brevo') }})
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900">
+                                        Manual Copy Ready
+                                    </span>
+                                @endif
+                            </div>
                             <p class="text-xs text-emerald-800 mt-0.5">
                                 {{ $newU['mail_message'] }}
                             </p>
                         </div>
                     </div>
-                    <button type="button" 
-                            onclick="copyCredentials('{{ $newU['email'] }}', '{{ $newU['password'] }}', '{{ $newU['login_url'] }}')"
-                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs shrink-0">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span id="copy-btn-text">Kopyahin ang Login Link &amp; Details</span>
-                    </button>
+                    <div class="flex items-center gap-2 shrink-0 flex-wrap">
+                        <a href="{{ $gmailComposeUrl }}" target="_blank"
+                           class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-emerald-300 hover:bg-emerald-50 text-emerald-800 text-xs font-bold transition shadow-2xs">
+                            <svg class="w-4 h-4 text-rose-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.272H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
+                            </svg>
+                            <span>Buksan sa Gmail Web &rarr;</span>
+                        </a>
+                        <button type="button" 
+                                onclick="copyCredentials('{{ $newU['email'] }}', '{{ $newU['password'] }}', '{{ $newU['login_url'] }}', '{{ ucfirst($newU['role']) }}')"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <span id="copy-btn-text">Kopyahin ang Login Link &amp; Details</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-xs">
@@ -84,16 +140,6 @@
                     Paalala: Kapag nag-sign in ang user gamit ang temporary password, awtomatiko silang hihingan ng system na magpalit ng kanilang bagong personal password.
                 </p>
             </div>
-            <script>
-                function copyCredentials(email, pass, url) {
-                    const text = `B-READY Platform Login Credentials:\nRole: {{ ucfirst($newU['role']) }}\nEmail: ${email}\nTemporary Password: ${pass}\nLogin Link: ${url}\n\nPaalala: Palitan ang iyong password pagka-log in.`;
-                    navigator.clipboard.writeText(text).then(() => {
-                        const btn = document.getElementById('copy-btn-text');
-                        btn.innerText = 'Na-kopya na!';
-                        setTimeout(() => { btn.innerText = 'Kopyahin ang Login Link & Details'; }, 3000);
-                    });
-                }
-            </script>
         @endif
 
         <!-- Stats Pill Counters -->
@@ -171,7 +217,7 @@
                         <tr class="border-b border-slate-100 bg-slate-50/70 text-slate-500 uppercase tracking-wider font-bold text-[10px]">
                             <th class="py-3.5 px-4">User</th>
                             <th class="py-3.5 px-4">Role</th>
-                            <th class="py-3.5 px-4">Effective Permissions</th>
+                            <th class="py-3.5 px-4">Portal Access &amp; Security</th>
                             <th class="py-3.5 px-4">Status</th>
                             <th class="py-3.5 px-4">Joined Date</th>
                             <th class="py-3.5 px-4 text-right">Actions</th>
@@ -208,28 +254,28 @@
                                     @endif
                                 </td>
                                 <td class="py-3.5 px-4">
-                                    @php
-                                        $perms = $user->getEffectivePermissions();
-                                    @endphp
-                                    <div class="flex items-center gap-1.5 flex-wrap max-w-xs">
-                                        @if ($user->role === 'admin')
-                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                                ALL MODULES GRANTED
-                                            </span>
-                                        @else
-                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                                                {{ count($perms) }} granted
-                                            </span>
-                                            @if ($user->hasPermission('workshops.manage'))
-                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-medium bg-emerald-50 text-emerald-700">Workshops</span>
+                                    <div class="flex flex-col gap-1.5">
+                                        <div>
+                                            @if ($user->must_change_password)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                                    First Login: Password Change Required
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70">
+                                                    Password Verified
+                                                </span>
                                             @endif
-                                            @if ($user->hasPermission('courses.manage'))
-                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-medium bg-emerald-50 text-emerald-700">Courses</span>
-                                            @endif
-                                            @if ($user->hasPermission('packages.access'))
-                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-medium bg-sky-50 text-sky-700">Packages</span>
-                                            @endif
-                                        @endif
+                                        </div>
+                                        <div>
+                                            <button type="button" 
+                                                    onclick="copyTextToClipboard('{{ route('login') }}', this, 'Na-kopya!')"
+                                                    class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 hover:text-emerald-900 hover:underline">
+                                                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                                </svg>
+                                                <span>Kopyahin ang Login Link</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="py-3.5 px-4">
@@ -292,4 +338,27 @@
             @endif
         </div>
     </div>
+
+    <script>
+        function copyTextToClipboard(text, element, successMsg = 'Na-kopya na!') {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHtml = element.innerHTML;
+                element.innerHTML = `<span class="text-emerald-700 font-bold">✓ ${successMsg}</span>`;
+                setTimeout(() => {
+                    element.innerHTML = originalHtml;
+                }, 2500);
+            });
+        }
+
+        function copyCredentials(email, pass, url, role) {
+            const text = `Magandang araw!\n\nNagawa na ang iyong opisyal na B-READY account bilang ${role}.\n\nNarito ang iyong login details:\n• Email: ${email}\n• Temporary Password: ${pass}\n• Portal Login Link: ${url}\n\nPaalala: Sa iyong unang pag-log in, hihilingan ka ng system na magtakda ng iyong bagong personal password bago ma-access ang dashboard.\n\nMaraming salamat,\nB-READY Disaster Preparedness`;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copy-btn-text');
+                if (btn) {
+                    btn.innerText = 'Na-kopya na ang Buong Mensahe!';
+                    setTimeout(() => { btn.innerText = 'Kopyahin ang Login Link & Details'; }, 3000);
+                }
+            });
+        }
+    </script>
 </x-layouts.admin>

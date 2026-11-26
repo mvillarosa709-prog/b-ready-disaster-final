@@ -116,78 +116,15 @@
                 </div>
             </div>
 
-            <!-- Granular Permissions -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-5">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-3 gap-2">
-                    <div>
-                        <h2 class="text-base font-bold text-slate-900">3. Module Permissions Override</h2>
-                        <p class="text-xs text-slate-500">Explicitly grant or revoke access to individual platform components.</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="selectAllPermissions()" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-800">
-                            Select All
-                        </button>
-                        <span class="text-slate-300">•</span>
-                        <button type="button" onclick="resetRoleDefaults()" class="text-[11px] font-bold text-slate-600 hover:text-slate-800">
-                            Reset to Role Defaults
-                        </button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    @foreach ($allPermissions as $key => $perm)
-                        <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/60 hover:bg-slate-50 transition flex items-start gap-3">
-                            <input type="checkbox" name="permissions[]" value="{{ $key }}" id="perm_{{ $loop->index }}"
-                                   data-perm-key="{{ $key }}"
-                                   @checked(in_array($key, old('permissions', $userEffectivePermissions)))
-                                   class="perm-checkbox mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
-                            <label for="perm_{{ $loop->index }}" class="cursor-pointer flex-1">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold text-slate-900">{{ $perm['label'] }}</span>
-                                    <span class="text-[10px] font-semibold text-slate-500 uppercase">{{ $perm['category'] }}</span>
-                                </div>
-                                <p class="text-[11px] text-slate-500 mt-0.5">{{ $perm['description'] }}</p>
-                            </label>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
             <!-- Submit Section -->
-            <div class="flex items-center justify-end gap-3 pt-4">
+            <div class="flex items-center justify-end gap-3 pt-2">
                 <a href="{{ route('admin.users.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
                     Cancel
                 </a>
                 <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/30 transition">
-                    Save Changes & Permissions
+                    Save Changes
                 </button>
             </div>
         </form>
     </div>
-
-    <script>
-        const trainerDefaults = @json(\App\Models\User::defaultPermissionsForRole('trainer'));
-        const teacherDefaults = @json(\App\Models\User::defaultPermissionsForRole('teacher'));
-        const allPerms = @json(array_keys($allPermissions));
-
-        function handleRoleChange(role) {
-            const checkboxes = document.querySelectorAll('.perm-checkbox');
-            let targetDefaults = teacherDefaults;
-            if (role === 'trainer') targetDefaults = trainerDefaults;
-            if (role === 'admin') targetDefaults = allPerms;
-
-            checkboxes.forEach(cb => {
-                cb.checked = targetDefaults.includes(cb.dataset.permKey);
-            });
-        }
-
-        function selectAllPermissions() {
-            document.querySelectorAll('.perm-checkbox').forEach(cb => cb.checked = true);
-        }
-
-        function resetRoleDefaults() {
-            const checkedRole = document.querySelector('input[name="role"]:checked')?.value || 'teacher';
-            handleRoleChange(checkedRole);
-        }
-    </script>
 </x-layouts.admin>
