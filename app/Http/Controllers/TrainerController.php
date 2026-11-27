@@ -36,7 +36,7 @@ class TrainerController extends Controller
             ->where('status', 'published')
             ->count();
 
-        $pendingCertificatesCount = Certification::where('approval_status', 'pending')
+        $pendingCertificatesCount = Certification::where('status', 'pending')
             ->whereHas('workshop', fn ($query) => $query->where('trainer_id', $trainerId))
             ->count();
 

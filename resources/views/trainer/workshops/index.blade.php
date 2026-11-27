@@ -4,8 +4,7 @@
     <div class="border-b border-slate-200/80 bg-white">
         <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-                <span class="rounded-md border border-emerald-200 bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">Trainer Portal</span>
-                <h1 class="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Workshop Management</h1>
+                <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Workshop Management</h1>
                 <p class="mt-1 text-sm text-slate-500">Schedule workshops for your courses and publish them once the course content is ready.</p>
             </div>
             <a href="{{ route('trainer.workshops.create') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
