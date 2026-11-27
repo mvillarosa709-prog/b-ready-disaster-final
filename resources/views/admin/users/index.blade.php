@@ -12,7 +12,7 @@
                     <span class="text-xs text-slate-500">• Manage {{ $stats['total'] }} Accounts</span>
                 </div>
                 <h1 class="text-2xl font-extrabold text-slate-900 mt-1 tracking-tight">System User Directory</h1>
-                <p class="text-sm text-slate-500 mt-1">Gumawa ng accounts para sa Teacher at Trainer, at ipadala ang credentials via Gmail / Brevo.</p>
+                <p class="text-sm text-slate-500 mt-1">Manage Teacher and Trainer accounts and send login credentials directly to their Gmail.</p>
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route('admin.users.create') }}" 

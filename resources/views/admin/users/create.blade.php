@@ -9,7 +9,7 @@
                     &larr; Back to User Directory
                 </a>
                 <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Provision New User Account</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Assign the primary role and designate specific functional permissions across B-READY modules.</p>
+                <p class="text-sm text-slate-500 mt-0.5">Assign the primary system role and dispatch portal credentials directly to the user's Gmail.</p>
             </div>
         </div>
     </div>
@@ -114,7 +114,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Portal Login Link (Ibibigay sa User)</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Portal Login Link (For User)</label>
                         <div class="flex items-center gap-2">
                             <input type="text" readonly value="{{ route('login') }}" 
                                    class="w-full text-xs font-mono rounded-xl border-slate-200 bg-slate-50 text-slate-700 focus:outline-none">
@@ -124,7 +124,7 @@
                                 Copy Link
                             </button>
                         </div>
-                        <p class="text-[11px] text-slate-500 mt-1">Dito mag-sa-sign in ang teacher o trainer gamit ang kanilang temporary credentials.</p>
+                        <p class="text-[11px] text-slate-500 mt-1">The user will use this link to sign in with their temporary credentials.</p>
                     </div>
 
                     <div class="flex flex-col justify-center">
@@ -132,8 +132,8 @@
                             <input type="checkbox" name="send_gmail" value="1" checked
                                    class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
                             <div>
-                                <span class="text-xs font-bold text-emerald-950 block">Ipadala ang Login Link &amp; Credentials sa Gmail</span>
-                                <span class="text-[11px] text-emerald-800">Awtomatikong magpapadala ng email sa recipient via Brevo.</span>
+                                <span class="text-xs font-bold text-emerald-950 block">Send Login Link &amp; Credentials to Gmail</span>
+                                <span class="text-[11px] text-emerald-800">Automatically send credentials and direct login link to the user's Gmail.</span>
                             </div>
                         </label>
                     </div>
@@ -149,7 +149,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                     </svg>
-                    <span>Send to Gmail &amp; Create Account</span>
+                    <span>Create User &amp; Send to Gmail</span>
                 </button>
             </div>
         </form>

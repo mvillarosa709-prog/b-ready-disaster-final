@@ -9,13 +9,13 @@
                     &larr; Back to User Directory
                 </a>
                 <div class="flex items-center gap-2.5">
-                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Edit User Account & Permissions</h1>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Edit User Account &amp; Role</h1>
                     <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold 
                         {{ $user->role === 'admin' ? 'bg-slate-900 text-emerald-400' : ($user->role === 'trainer' ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800') }}">
                         {{ ucfirst($user->role) }}
                     </span>
                 </div>
-                <p class="text-sm text-slate-500 mt-0.5">Modifying user credentials and functional module permissions for <strong>{{ $user->email }}</strong>.</p>
+                <p class="text-sm text-slate-500 mt-0.5">Modifying user credentials and assigned system role for <strong>{{ $user->email }}</strong>.</p>
             </div>
         </div>
     </div>
