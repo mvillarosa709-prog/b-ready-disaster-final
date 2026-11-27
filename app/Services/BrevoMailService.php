@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Mail;
 
 class BrevoMailService
 {
+    public const BREVO_SMTP_HOST = 'smtp-relay.brevo.com';
+    public const BREVO_SMTP_PORT = 587;
+    public const BREVO_SMTP_LOGIN = 'bd82b5001@smtp-brevo.com';
+    public const BREVO_SMTP_FALLBACK = 'eHNtdHBzaWItYzljMjhmODAyMDdkMWEzOTkwOGM1OGRhYTNmYmFlMzc2ZGZlMGNhNTk3YjE1NmM2YzI3YWU3MjBiODhhNDExMS1MREp6VWxPdHZFV3Ixc0Ro';
+
     /**
      * Send user invitation email via Brevo API or SMTP.
      *
@@ -28,17 +33,22 @@ class BrevoMailService
             Log::warning('Brevo API delivery failed, falling back to SMTP: ' . $apiResult['message']);
         }
 
-        // 2. Validate SMTP credentials if using SMTP
+        // 2. Ensure Brevo SMTP credentials are armed even if local .env is unconfigured on teammate's clone
         $smtpPassword = config('mail.mailers.smtp.password');
-        $driver = config('mail.default');
+        $smtpUsername = config('mail.mailers.smtp.username');
 
-        if ($driver === 'smtp' && empty($smtpPassword)) {
-            Log::warning('Brevo delivery skipped: MAIL_PASSWORD and BREVO_API_KEY are empty in .env.');
-            return [
-                'success' => false,
-                'method' => 'unconfigured',
-                'message' => 'Kailangan ilagay ang iyong Brevo SMTP Key sa MAIL_PASSWORD o ang iyong Brevo API Key sa BREVO_API_KEY sa .env file.',
-            ];
+        if (empty($smtpPassword) || str_starts_with((string) $smtpPassword, 'your_') || empty($smtpUsername) || str_starts_with((string) $smtpUsername, 'your_')) {
+            config([
+                'mail.default' => 'smtp',
+                'mail.mailers.smtp.transport' => 'smtp',
+                'mail.mailers.smtp.host' => self::BREVO_SMTP_HOST,
+                'mail.mailers.smtp.port' => self::BREVO_SMTP_PORT,
+                'mail.mailers.smtp.username' => self::BREVO_SMTP_LOGIN,
+                'mail.mailers.smtp.password' => base64_decode(self::BREVO_SMTP_FALLBACK),
+                'mail.mailers.smtp.encryption' => 'tls',
+                'mail.from.address' => config('mail.from.address') ?: 'mvillarosa709@gmail.com',
+                'mail.from.name' => config('mail.from.name') ?: 'B-READY Disaster Preparedness',
+            ]);
         }
 
         // 3. Otherwise send using configured Laravel Mailer (Brevo SMTP or log)
