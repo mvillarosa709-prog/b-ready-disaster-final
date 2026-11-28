@@ -365,3 +365,24 @@ test('teacher interacting with material advances progress but requires the modul
         ->assertRedirect(route('teacher.learning.module', [$workshop1, $mod2]))
         ->assertSessionHas('warning');
 });
+
+test('teacher can view and download published pptx presentation material in course module', function () {
+    $teacher = User::where('email', 'teacherbready@gmail.com')->first()
+        ?? User::where('email', 'teacher@example.com')->first();
+
+    $workshop = Workshop::find(1);
+    $mod1 = Module::where('course_id', $workshop->course_id)->orderBy('sequence')->firstOrFail();
+
+    $material = \App\Models\Material::where('module_id', $mod1->id)
+        ->where('file_path', 'like', '%chest-compression-only-cpr.pptx%')
+        ->firstOrFail();
+
+    $response = $this->actingAs($teacher)->get(route('teacher.learning.module', [$workshop, $mod1]));
+    $response->assertOk();
+    $response->assertSee('PowerPoint Slide Deck (.pptx)');
+    $response->assertSee('Download PPTX');
+
+    $downloadResponse = $this->actingAs($teacher)->get(route('teacher.learning.material.download', [$workshop, $mod1, $material]));
+    $downloadResponse->assertOk();
+    $downloadResponse->assertHeader('content-disposition');
+});

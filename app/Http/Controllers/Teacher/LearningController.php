@@ -35,7 +35,7 @@ class LearningController extends Controller
             ->where(function ($q) use ($teacher) {
                 $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
             })
-            ->whereIn('status', ['registered', 'completed'])
+            ->whereIn('status', ['registered', 'enrolled', 'completed'])
             ->exists();
 
         if (! $isEnrolled) {

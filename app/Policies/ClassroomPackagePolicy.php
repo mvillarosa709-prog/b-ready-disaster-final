@@ -24,7 +24,7 @@ class ClassroomPackagePolicy
 
         return WorkshopTeacher::where('workshop_id', $package->workshop_id)
             ->where('teacher_id', $user->id)
-            ->whereIn('status', ['registered', 'completed'])
+            ->whereIn('status', ['registered', 'enrolled', 'completed'])
             ->exists();
     }
 

@@ -71,6 +71,14 @@ class DatabaseSeeder extends Seeder
         Storage::disk('public')->put('classroom_packages/answer_key.pdf', $pdfContent);
         Storage::disk('public')->put('classroom_packages/family_gobag.pdf', $pdfContent);
 
+        $pptxContent = "PK\x03\x04\x14\x00\x06\x00PPTX-BREADY-SIMULATION-PRESENTATION";
+        if (! Storage::disk('public')->exists('materials/chest-compression-only-cpr.pptx')) {
+            Storage::disk('public')->put('materials/chest-compression-only-cpr.pptx', $pptxContent);
+        }
+        if (! Storage::disk('public')->exists('classroom_packages/chest-compression-only-cpr.pptx')) {
+            Storage::disk('public')->put('classroom_packages/chest-compression-only-cpr.pptx', $pptxContent);
+        }
+
         // 1. Create Demo Teacher & Trainer (Required for existing automated test suite compatibility)
         $teacher = User::updateOrCreate(
             ['email' => 'teacher@example.com'],
@@ -206,6 +214,14 @@ class DatabaseSeeder extends Seeder
             'description' => 'Visual presentation outlining building structural resilience and danger zones.',
         ]);
 
+        Material::create([
+            'module_id' => $mod1->id,
+            'title' => 'Fire Drill & CPR Simulation Presentation (PPTX)',
+            'type' => 'presentation',
+            'file_path' => 'materials/chest-compression-only-cpr.pptx',
+            'description' => 'Hands-only CPR and emergency fire drill simulation presentation slide deck. Covers chest compression depth (2-2.4 inches), 100-120 bpm rate, and classroom drill procedures.',
+        ]);
+
         $mod2 = Module::create([
             'course_id' => $course1->id,
             'title' => 'Evacuation Drills, Duck-Cover-Hold & Incident Command',
@@ -238,6 +254,14 @@ class DatabaseSeeder extends Seeder
             'type' => 'presentation',
             'file_path' => 'materials/evacuation_manual.pdf',
             'description' => 'Visual presentation on organizing school incident command roles and assembly zone headcounts.',
+        ]);
+
+        Material::create([
+            'module_id' => $mod2->id,
+            'title' => 'Fire Drill Bucket Relay Simulation (PPTX Presentation)',
+            'type' => 'presentation',
+            'file_path' => 'materials/chest-compression-only-cpr.pptx',
+            'description' => 'FIRE DRILL BUCKET RELAY: A community-based emergency response exercise simulating firefighting using improvised water transfer. Promotes coordination, teamwork, and bayanihan.',
         ]);
 
         $mod3 = Module::create([
@@ -400,6 +424,16 @@ class DatabaseSeeder extends Seeder
             'original_filename' => 'Assessment_Answer_Key.pdf',
             'description' => 'Master answer key and rubric for evaluating student disaster knowledge tests.',
             'sequence' => 4,
+        ]);
+
+        ClassroomMaterial::create([
+            'classroom_package_id' => $package1->id,
+            'title' => 'Fire Drill & CPR Simulation (Teacher Presentation Slide Deck)',
+            'material_type' => 'classroom_activity',
+            'file_path' => 'classroom_packages/chest-compression-only-cpr.pptx',
+            'original_filename' => 'chest-compression-only-cpr.pptx',
+            'description' => 'Interactive PowerPoint slide deck (.pptx) for teachers to facilitate CPR simulations and fire evacuation drills.',
+            'sequence' => 5,
         ]);
 
         // 3. Course 2: Flood & Typhoon Emergency Management (Completed Workshop with Certification)
@@ -914,7 +948,7 @@ class DatabaseSeeder extends Seeder
                 'workshop_id' => $workshop1->id,
                 'teacher_id' => $primaryTeacher->id,
             ], [
-                'status' => 'enrolled',
+                'status' => 'registered',
                 'joined_at' => now()->subDays(2),
             ]);
         }

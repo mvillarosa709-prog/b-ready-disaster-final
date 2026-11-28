@@ -53,7 +53,7 @@ class WorkshopController extends Controller
         $enrolledWorkshopIds = WorkshopTeacher::where(function ($q) use ($teacher) {
             $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
         })
-            ->whereIn('status', ['registered', 'completed'])
+            ->whereIn('status', ['registered', 'enrolled', 'completed'])
             ->pluck('workshop_id')
             ->toArray();
 
@@ -154,7 +154,7 @@ class WorkshopController extends Controller
             })
             ->first();
 
-        $isEnrolled = $enrollment && in_array($enrollment->status, ['registered', 'completed']);
+        $isEnrolled = $enrollment && in_array($enrollment->status, ['registered', 'enrolled', 'completed']);
 
         // Progress breakdown
         $modules = $workshop->ordered_modules->sortBy('sequence')->values();
@@ -347,7 +347,7 @@ class WorkshopController extends Controller
             })
             ->first();
 
-        if ($existing && in_array($existing->status, ['registered', 'completed'])) {
+        if ($existing && in_array($existing->status, ['registered', 'enrolled', 'completed'])) {
             return redirect()->route('teacher.workshops.show', $workshop)
                 ->with('info', "You are already registered for {$workshop->title}.");
         }

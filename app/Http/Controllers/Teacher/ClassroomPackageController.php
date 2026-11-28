@@ -24,7 +24,7 @@ class ClassroomPackageController extends Controller
         $enrolledWorkshopIds = WorkshopTeacher::where(function ($q) use ($teacher) {
             $q->where('teacher_id', $teacher->id)->orWhere('user_id', $teacher->id);
         })
-            ->whereIn('status', ['registered', 'completed'])
+            ->whereIn('status', ['registered', 'enrolled', 'completed'])
             ->pluck('workshop_id');
 
         $certificationsByWorkshop = Certification::where(function ($q) use ($teacher) {
@@ -81,6 +81,11 @@ class ClassroomPackageController extends Controller
         }
 
         if (Storage::disk('public')->exists($material->file_path)) {
+            $ext = strtolower(pathinfo($material->file_path, PATHINFO_EXTENSION));
+            if (in_array($ext, ['pptx', 'ppt'])) {
+                return Storage::disk('public')->download($material->file_path, $material->original_filename ?: 'presentation.pptx');
+            }
+
             return response()->file(Storage::disk('public')->path($material->file_path));
         }
 

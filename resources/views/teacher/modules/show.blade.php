@@ -480,18 +480,33 @@
                                              }
                                          }">
                                         <!-- Document Header -->
+                                        @php
+                                            $isPptx = str_ends_with(strtolower($mat->file_path ?? ''), '.pptx') || str_ends_with(strtolower($mat->file_path ?? ''), '.ppt') || str_contains(strtolower($mat->title ?? ''), 'pptx');
+                                        @endphp
                                         <div class="p-4 sm:px-6 bg-slate-50/70 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-3">
                                             <div class="flex items-center gap-3">
-                                                <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 {{ $type === 'pdf' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-amber-50 text-amber-600 border border-amber-200' }}">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                                    </svg>
+                                                <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 {{ $isPptx ? 'bg-orange-50 text-orange-600 border border-orange-200' : ($type === 'pdf' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-amber-50 text-amber-600 border border-amber-200') }}">
+                                                    @if ($isPptx)
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                                                        </svg>
+                                                    @else
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                                        </svg>
+                                                    @endif
                                                 </div>
                                                 <div>
                                                     <div class="flex flex-wrap items-center gap-2">
-                                                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded">
-                                                            {{ strtoupper($type) }} Presentation Viewer
-                                                        </span>
+                                                        @if ($isPptx)
+                                                            <span class="text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-100 border border-orange-300 px-2 py-0.5 rounded">
+                                                                PowerPoint Slide Deck (.pptx)
+                                                            </span>
+                                                        @else
+                                                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded">
+                                                                {{ strtoupper($type) }} Presentation Viewer
+                                                            </span>
+                                                        @endif
                                                         <span class="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
                                                             ⚡ Mid-File Checkpoint on Page 2
                                                         </span>
@@ -511,7 +526,7 @@
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                                     </svg>
-                                                    <span>Download File</span>
+                                                    <span>Download {{ $isPptx ? 'PPTX' : 'File' }}</span>
                                                 </a>
                                             </div>
                                         </div>

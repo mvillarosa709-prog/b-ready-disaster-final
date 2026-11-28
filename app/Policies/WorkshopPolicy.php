@@ -59,7 +59,7 @@ class WorkshopPolicy
             ->where('teacher_id', $user->id)
             ->first();
 
-        if ($enrollment && in_array($enrollment->status, ['registered', 'completed'])) {
+        if ($enrollment && in_array($enrollment->status, ['registered', 'enrolled', 'completed'])) {
             return false;
         }
 
@@ -77,7 +77,7 @@ class WorkshopPolicy
 
         return WorkshopTeacher::where('workshop_id', $workshop->id)
             ->where('teacher_id', $user->id)
-            ->whereIn('status', ['registered', 'completed'])
+            ->whereIn('status', ['registered', 'enrolled', 'completed'])
             ->exists();
     }
 }

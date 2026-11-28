@@ -38,7 +38,7 @@ class AssessmentPolicy
             ->where(function ($q) use ($user) {
                 $q->where('teacher_id', $user->id)->orWhere('user_id', $user->id);
             })
-            ->whereIn('status', ['registered', 'completed'])
+            ->whereIn('status', ['registered', 'enrolled', 'completed'])
             ->exists();
     }
 
