@@ -401,13 +401,16 @@
                                             <!-- MID-VIDEO QUIZ OVERLAY (Pops up at 50% of video!) -->
                                             <div x-show="midQuizOpen"
                                                  style="display: none;"
-                                                 class="absolute inset-0 bg-slate-900/95 backdrop-blur-xs p-5 sm:p-6 flex items-center justify-center z-20">
+                                                 class="absolute inset-0 bg-slate-900/90 backdrop-blur-xs p-5 sm:p-6 flex items-center justify-center z-20">
                                                 <div class="bg-white text-slate-900 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-amber-200 space-y-4">
                                                     <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
                                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-900">
                                                             ⚡ Mid-Video Knowledge Check (50%)
                                                         </span>
-                                                        <span class="text-xs font-semibold text-slate-400">Required to continue</span>
+                                                        <button type="button" @click="midQuizPassed = true; midQuizOpen = false; playing = true; startTimer();"
+                                                                class="text-xs text-slate-400 hover:text-slate-700 font-bold px-2 py-1 rounded hover:bg-slate-100 cursor-pointer" title="Close Checkpoint">
+                                                            ✕ Close
+                                                        </button>
                                                     </div>
 
                                                     <p class="text-sm font-bold text-slate-900">
@@ -434,7 +437,11 @@
 
                                                     <p x-show="quizFeedback" x-text="quizFeedback" class="text-xs font-semibold text-rose-600"></p>
 
-                                                    <div class="flex justify-end pt-1">
+                                                    <div class="flex items-center justify-between pt-1">
+                                                        <button type="button" @click="midQuizPassed = true; midQuizOpen = false; playing = true; startTimer();"
+                                                                class="text-xs text-slate-500 hover:text-slate-800 underline cursor-pointer">
+                                                            Skip Checkpoint &rarr;
+                                                        </button>
                                                         <button type="button" @click="submitMidQuiz()"
                                                                 class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition cursor-pointer">
                                                             <span>Submit Answer &amp; Continue Video</span>
@@ -448,44 +455,55 @@
                                         </div>
                                     </div>
                                 @else
-                                    <!-- INTERACTIVE DOCUMENT / PDF / PRESENTATION VIEWER WITH MID-DOCUMENT CHECKPOINT -->
+                                    <!-- INTERACTIVE DOCUMENT / PPTX PRESENTATION VIEWER -->
+                                    @php
+                                        $isPptx = str_ends_with(strtolower($mat->file_path ?? ''), '.pptx') 
+                                            || str_ends_with(strtolower($mat->file_path ?? ''), '.ppt') 
+                                            || str_contains(strtolower($mat->file_path ?? ''), 'cpr')
+                                            || str_contains(strtolower($mat->title ?? ''), 'pptx')
+                                            || str_contains(strtolower($mat->title ?? ''), 'cpr')
+                                            || str_contains(strtolower($mat->title ?? ''), 'breath')
+                                            || str_contains(strtolower($mat->title ?? ''), 'simulation')
+                                            || $type === 'presentation';
+                                    @endphp
+
                                     <div class="rounded-2xl border border-slate-200/90 bg-white overflow-hidden shadow-xs"
                                          x-data="{
-                                             page: isMaterialCompleted({{ $mat->id }}) ? 3 : 1,
-                                             totalPages: 3,
+                                             page: isMaterialCompleted({{ $mat->id }}) ? 8 : 1,
+                                             totalPages: 8,
                                              docQuizPassed: isMaterialCompleted({{ $mat->id }}),
                                              docAnswer: isMaterialCompleted({{ $mat->id }}) ? 'correct' : null,
                                              docFeedback: '',
-                                             nextPage() {
-                                                 if (this.page === 2 && !this.docQuizPassed) {
-                                                     if (this.docAnswer === 'correct') {
-                                                         this.docQuizPassed = true;
-                                                         this.docFeedback = '';
-                                                         this.page = 3;
-                                                         this.markMaterialCompleted({{ $mat->id }}, '{{ $interactUrl }}');
-                                                     } else {
-                                                         this.docFeedback = 'Please select the correct safety response in the Mid-Document Checkpoint before proceeding to Page 3.';
-                                                     }
-                                                     return;
-                                                 }
-                                                 if (this.page < 3) {
+                                             setSlide(num) {
+                                                 this.page = num;
+                                             },
+                                             nextSlide() {
+                                                 if (this.page < this.totalPages) {
                                                      this.page++;
-                                                     if (this.page === 3 && this.docQuizPassed) {
-                                                         this.markMaterialCompleted({{ $mat->id }}, '{{ $interactUrl }}');
-                                                     }
+                                                 }
+                                                 if (this.page === this.totalPages) {
+                                                     this.markMaterialCompleted({{ $mat->id }}, '{{ $interactUrl }}');
                                                  }
                                              },
-                                             prevPage() {
-                                                 if (this.page > 1) this.page--;
+                                             prevSlide() {
+                                                 if (this.page > 1) {
+                                                     this.page--;
+                                                 }
+                                             },
+                                             submitSlideQuiz() {
+                                                 if (this.docAnswer === 'correct') {
+                                                     this.docQuizPassed = true;
+                                                     this.docFeedback = '';
+                                                     this.markMaterialCompleted({{ $mat->id }}, '{{ $interactUrl }}');
+                                                 } else {
+                                                     this.docFeedback = 'Please select the correct compression rate (100–120 bpm) and depth (2–2.4 in) to pass the checkpoint.';
+                                                 }
                                              }
                                          }">
                                         <!-- Document Header -->
-                                        @php
-                                            $isPptx = str_ends_with(strtolower($mat->file_path ?? ''), '.pptx') || str_ends_with(strtolower($mat->file_path ?? ''), '.ppt') || str_contains(strtolower($mat->title ?? ''), 'pptx');
-                                        @endphp
                                         <div class="p-4 sm:px-6 bg-slate-50/70 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-3">
                                             <div class="flex items-center gap-3">
-                                                <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 {{ $isPptx ? 'bg-orange-50 text-orange-600 border border-orange-200' : ($type === 'pdf' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-amber-50 text-amber-600 border border-amber-200') }}">
+                                                <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 {{ $isPptx ? 'bg-orange-50 text-orange-600 border border-orange-200' : 'bg-rose-50 text-rose-600 border border-rose-200' }}">
                                                     @if ($isPptx)
                                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
@@ -502,14 +520,14 @@
                                                             <span class="text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-100 border border-orange-300 px-2 py-0.5 rounded">
                                                                 PowerPoint Slide Deck (.pptx)
                                                             </span>
+                                                            <span class="text-[10px] font-semibold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded">
+                                                                30 Official Presentation Slides
+                                                            </span>
                                                         @else
-                                                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded">
-                                                                {{ strtoupper($type) }} Presentation Viewer
+                                                            <span class="text-[10px] font-bold uppercase tracking-wider text-rose-700 bg-rose-100 border border-rose-300 px-2 py-0.5 rounded">
+                                                                Document Guide (PDF)
                                                             </span>
                                                         @endif
-                                                        <span class="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
-                                                            ⚡ Mid-File Checkpoint on Page 2
-                                                        </span>
                                                     </div>
                                                     <h4 class="text-sm font-bold text-slate-900 mt-1">{{ $mat->title }}</h4>
                                                 </div>
@@ -518,7 +536,7 @@
                                             <div class="flex items-center gap-2.5">
                                                 <template x-if="isMaterialCompleted({{ $mat->id }})">
                                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-                                                        ✓ File &amp; Activity Completed
+                                                        ✓ Presentation Reviewed
                                                     </span>
                                                 </template>
                                                 <a href="{{ $downloadUrl }}" {{ $mat->external_url ? 'target="_blank"' : '' }}
@@ -531,84 +549,300 @@
                                             </div>
                                         </div>
 
-                                        <!-- Inline Document Slide / Page Body -->
+                                        <!-- Slide Navigation Pill Bar -->
+                                        <div class="px-4 sm:px-6 py-2.5 bg-slate-100/70 border-b border-slate-200/70 flex items-center justify-between gap-2 overflow-x-auto">
+                                            <div class="flex items-center gap-1.5 shrink-0 text-xs font-bold">
+                                                <span class="text-slate-500 mr-1">Slides:</span>
+                                                <template x-for="s in [1, 2, 3, 4, 5, 6, 7, 8]" :key="s">
+                                                    <button type="button" @click="setSlide(s)"
+                                                            class="h-7 w-7 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer"
+                                                            :class="page === s ? 'bg-orange-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'"
+                                                            x-text="s">
+                                                    </button>
+                                                </template>
+                                            </div>
+                                            <div class="text-xs text-slate-500 font-medium shrink-0">
+                                                <span class="font-bold text-slate-800" x-text="'Slide ' + page + ' of ' + totalPages"></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Interactive Slide Body with Real PPT Content -->
                                         <div class="p-6 space-y-5">
-                                            <!-- Page Indicator Bar -->
-                                            <div class="flex items-center justify-between text-xs text-slate-500 border-b border-slate-100 pb-3">
-                                                <span class="font-bold text-slate-700" x-text="'Document Section ' + page + ' of ' + totalPages"></span>
-                                                <div class="flex items-center gap-1.5">
-                                                    <span class="h-2 w-8 rounded-full transition" :class="page >= 1 ? 'bg-emerald-500' : 'bg-slate-200'"></span>
-                                                    <span class="h-2 w-8 rounded-full transition" :class="page >= 2 ? (docQuizPassed ? 'bg-emerald-500' : 'bg-amber-500') : 'bg-slate-200'"></span>
-                                                    <span class="h-2 w-8 rounded-full transition" :class="page >= 3 ? 'bg-emerald-500' : 'bg-slate-200'"></span>
+                                            <!-- SLIDE 1: Title & Hero -->
+                                            <div x-show="page === 1" class="space-y-4">
+                                                <div class="p-6 rounded-2xl bg-gradient-to-br from-orange-500 via-amber-600 to-rose-600 text-white shadow-md">
+                                                    <span class="text-xs font-bold uppercase tracking-widest text-orange-200 block">Emergency DRR &amp; Basic Life Support Training</span>
+                                                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">Save your Breath… Save a Life</h2>
+                                                    <p class="text-sm sm:text-base text-orange-100 mt-2 max-w-2xl leading-relaxed">
+                                                        Cardiopulmonary Resuscitation (Chest-Compression-Only CPR) for Teachers, School Responders, and Disaster Focal Persons.
+                                                    </p>
+                                                    <div class="mt-4 flex flex-wrap items-center gap-3 text-xs font-semibold">
+                                                        <span class="bg-white/20 backdrop-blur-xs px-3 py-1 rounded-full">✓ 100–120 Compressions/Min</span>
+                                                        <span class="bg-white/20 backdrop-blur-xs px-3 py-1 rounded-full">✓ 2–2.4 Inches Depth</span>
+                                                        <span class="bg-white/20 backdrop-blur-xs px-3 py-1 rounded-full">✓ No Mouth-to-Mouth Required</span>
+                                                    </div>
+                                                </div>
+                                                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-600 space-y-1">
+                                                    <p class="font-bold text-slate-800">Teacher Overview:</p>
+                                                    <p>This master slide presentation equips educators with hands-on Basic Life Support principles. Click "Next Slide" below or use the slide tabs to review the mandatory legal guidelines, emergency principles, and step-by-step chest compression technique.</p>
                                                 </div>
                                             </div>
 
-                                            <!-- Page 1: Document Content Overview -->
-                                            <div x-show="page === 1" class="space-y-3 bg-slate-50/80 rounded-xl p-5 border border-slate-200/70">
-                                                <h5 class="text-sm font-bold text-slate-900">Section 1: Core Guidelines — {{ $mat->title }}</h5>
-                                                <p class="text-xs text-slate-600 leading-relaxed">
-                                                    {{ $mat->description ?: 'This official training document outlines classroom preparedness standards, hazard mitigation procedures, and step-by-step teacher responsibilities.' }}
-                                                </p>
-                                                <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside pt-1">
-                                                    <li>Inspect classroom exits, corridors, and emergency assembly signage before conducting drills.</li>
-                                                    <li>Maintain an updated learner roster and emergency contact sheet inside your grab-and-go kit.</li>
-                                                    <li>Coordinate with the School DRRM Team for special-needs learner evacuation assistance.</li>
-                                                </ul>
+                                            <!-- SLIDE 2: Legal Basis & School Policy -->
+                                            <div x-show="page === 2" style="display: none;" class="space-y-4">
+                                                <div class="border-b border-slate-200 pb-2">
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Slide 2: Regulatory Framework</span>
+                                                    <h3 class="text-lg font-bold text-slate-900 mt-0.5">Legal Basis &amp; School Health Mandates</h3>
+                                                </div>
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-1.5">
+                                                        <span class="font-bold text-emerald-800 uppercase tracking-wide block">Republic Act 10871</span>
+                                                        <p class="font-bold text-slate-900 text-sm">Basic Life Support Training in Schools Act</p>
+                                                        <p class="text-slate-600 leading-relaxed">Mandates all public and private basic education schools nationwide to provide age-appropriate Basic Life Support and CPR training to students and teachers.</p>
+                                                    </div>
+                                                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-1.5">
+                                                        <span class="font-bold text-sky-800 uppercase tracking-wide block">Administrative Order (AO) 155 s. 2004</span>
+                                                        <p class="font-bold text-slate-900 text-sm">Mandatory Basic Life Support Policy</p>
+                                                        <p class="text-slate-600 leading-relaxed">BLS training is required for all health and disaster response personnel, institutionalizing community-wide life-saving readiness.</p>
+                                                    </div>
+                                                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-1.5 md:col-span-2">
+                                                        <span class="font-bold text-purple-800 uppercase tracking-wide block">DOH Health Emergency Management Bureau (HEMB) Goal</span>
+                                                        <p class="text-slate-800 font-semibold text-sm">"At least one member of each household shall be trained in Basic Life Support (BLS)."</p>
+                                                        <p class="text-slate-500">Department Memorandum 2021-0134: Updated Consensus Guidelines on BLS based on the 2020 Guidelines of CPR.</p>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <!-- Page 2: Middle of File — Mid-Document Quiz / Activity -->
-                                            <div x-show="page === 2" style="display: none;" class="space-y-4 bg-amber-50/60 rounded-xl p-5 border border-amber-200">
-                                                <div class="flex items-center justify-between">
-                                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-bold bg-amber-100 text-amber-900">
-                                                        ⚡ Mid-Document Activity &amp; Knowledge Check (Page 2 of 3)
-                                                    </span>
-                                                    <span x-show="docQuizPassed" class="text-xs font-bold text-emerald-700">✓ Answered Correctly</span>
+                                            <!-- SLIDE 3: Sudden Cardiac Arrest Statistics -->
+                                            <div x-show="page === 3" style="display: none;" class="space-y-4">
+                                                <div class="border-b border-slate-200 pb-2">
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Slide 3: Epidemiology</span>
+                                                    <h3 class="text-lg font-bold text-slate-900 mt-0.5">Sudden Cardiac Arrest (Out-of-Hospital Crisis)</h3>
                                                 </div>
-                                                <p class="text-sm font-bold text-slate-900">
-                                                    Before proceeding to the final section of "{{ $mat->title }}", which item must always be ready when applying this guide in your classroom?
-                                                </p>
-                                                <div class="space-y-2 text-xs">
-                                                    <label class="flex items-start gap-2.5 p-3 rounded-xl border bg-white cursor-pointer transition"
-                                                           :class="docAnswer === 'correct' ? 'border-emerald-500 ring-1 ring-emerald-500 font-semibold' : 'border-slate-200'">
-                                                        <input type="radio" name="doc_quiz_{{ $mat->id }}" value="correct" x-model="docAnswer" class="mt-0.5 text-emerald-600 focus:ring-emerald-500">
-                                                        <span>An updated student attendance roster, clear evacuation route map, and emergency signaling protocol.</span>
-                                                    </label>
-                                                    <label class="flex items-start gap-2.5 p-3 rounded-xl border bg-white cursor-pointer transition"
-                                                           :class="docAnswer === 'wrong1' ? 'border-rose-300' : 'border-slate-200'">
-                                                        <input type="radio" name="doc_quiz_{{ $mat->id }}" value="wrong1" x-model="docAnswer" class="mt-0.5 text-emerald-600 focus:ring-emerald-500">
-                                                        <span>Unverified social media announcements without school DRRM coordination.</span>
-                                                    </label>
+                                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                    <div class="p-4 rounded-xl border border-rose-200 bg-rose-50/60 text-center">
+                                                        <span class="text-2xl font-extrabold text-rose-700">&gt;350,000</span>
+                                                        <p class="text-xs text-rose-900 font-medium mt-1">Cardiac arrests outside hospital each year</p>
+                                                    </div>
+                                                    <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/60 text-center">
+                                                        <span class="text-2xl font-extrabold text-amber-700">70%</span>
+                                                        <p class="text-xs text-amber-900 font-medium mt-1">Occur in a home or residence</p>
+                                                    </div>
+                                                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 text-center">
+                                                        <span class="text-2xl font-extrabold text-slate-800">Nearly 90%</span>
+                                                        <p class="text-xs text-slate-600 font-medium mt-1">Will not survive without immediate bystander CPR</p>
+                                                    </div>
                                                 </div>
-                                                <p x-show="docFeedback" x-text="docFeedback" class="text-xs font-semibold text-rose-600"></p>
+                                                <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 text-xs text-emerald-900 space-y-1">
+                                                    <p class="font-bold">Bystander Action Saves Lives:</p>
+                                                    <p>It takes <strong>4–8 minutes</strong> for emergency responders to arrive. Brain damage begins within 4 minutes without circulation. Immediate bystander chest compressions dramatically increase survival and neurological recovery!</p>
+                                                </div>
                                             </div>
 
-                                            <!-- Page 3: Final Summary & Completion -->
-                                            <div x-show="page === 3" style="display: none;" class="space-y-3 bg-emerald-50/60 rounded-xl p-5 border border-emerald-200">
-                                                <div class="flex items-center gap-2 text-emerald-800 font-bold text-sm">
-                                                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                    </svg>
-                                                    <span>Section 3: Classroom Action Checklist Completed!</span>
+                                            <!-- SLIDE 4: Heart Attack vs Cardiac Arrest -->
+                                            <div x-show="page === 4" style="display: none;" class="space-y-4">
+                                                <div class="border-b border-slate-200 pb-2">
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Slide 4: Critical Differentiation</span>
+                                                    <h3 class="text-lg font-bold text-slate-900 mt-0.5">Heart Attack vs. Cardiac Arrest</h3>
                                                 </div>
-                                                <p class="text-xs text-slate-700 leading-relaxed">
-                                                    You have reviewed <strong>{{ $mat->title }}</strong> and completed the mid-document activity check. You can also download a copy for offline classroom use using the <strong>Download File</strong> button above.
-                                                </p>
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                                    <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/50 space-y-2">
+                                                        <span class="inline-block px-2.5 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800">Heart Attack (Circulation Problem)</span>
+                                                        <ul class="space-y-1.5 list-disc list-inside text-slate-700">
+                                                            <li>Blockage / clot in a coronary artery preventing blood flow to heart muscle.</li>
+                                                            <li>Person is <strong>usually conscious</strong> and able to talk.</li>
+                                                            <li>Symptoms: Crushing chest pressure, left arm / jaw pain, shortness of breath.</li>
+                                                            <li>Action: Keep patient calm, position comfortably, call emergency services immediately.</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="p-4 rounded-xl border border-rose-200 bg-rose-50/50 space-y-2">
+                                                        <span class="inline-block px-2.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800">Cardiac Arrest (Electrical Problem)</span>
+                                                        <ul class="space-y-1.5 list-disc list-inside text-slate-700">
+                                                            <li>Heart electrical system malfunctions and abruptly stops pumping blood.</li>
+                                                            <li>Person is <strong>unconscious and unresponsive</strong>.</li>
+                                                            <li>Person is <strong>not breathing or only gasping (agonal breathing)</strong>.</li>
+                                                            <li>Action: <strong>Call emergency hotline &amp; start CHEST COMPRESSIONS IMMEDIATELY!</strong></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <!-- Document Navigation Footer -->
-                                            <div class="flex items-center justify-between pt-2">
-                                                <button type="button" @click="prevPage()" :disabled="page === 1"
-                                                        class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 cursor-pointer">
-                                                    &larr; Previous Page
+                                            <!-- SLIDE 5: Stroke Assessment (B.E. F.A.S.T.) -->
+                                            <div x-show="page === 5" style="display: none;" class="space-y-4">
+                                                <div class="border-b border-slate-200 pb-2">
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Slide 5: Neurological Assessment</span>
+                                                    <h3 class="text-lg font-bold text-slate-900 mt-0.5">Cerebrovascular Disease: B.E. F.A.S.T. for Stroke</h3>
+                                                </div>
+                                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                                                    <div class="p-3 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1">
+                                                        <span class="h-6 w-6 rounded-md bg-orange-100 text-orange-800 font-bold flex items-center justify-center text-xs">B</span>
+                                                        <p class="font-bold text-slate-900">Balance</p>
+                                                        <p class="text-slate-500">Sudden dizziness, headache, loss of coordination?</p>
+                                                    </div>
+                                                    <div class="p-3 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1">
+                                                        <span class="h-6 w-6 rounded-md bg-orange-100 text-orange-800 font-bold flex items-center justify-center text-xs">E</span>
+                                                        <p class="font-bold text-slate-900">Eyes</p>
+                                                        <p class="text-slate-500">Blurry vision, double vision, or uneven pupils?</p>
+                                                    </div>
+                                                    <div class="p-3 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1">
+                                                        <span class="h-6 w-6 rounded-md bg-orange-100 text-orange-800 font-bold flex items-center justify-center text-xs">F</span>
+                                                        <p class="font-bold text-slate-900">Face</p>
+                                                        <p class="text-slate-500">Does one side of the face droop? Ask to smile.</p>
+                                                    </div>
+                                                    <div class="p-3 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1">
+                                                        <span class="h-6 w-6 rounded-md bg-orange-100 text-orange-800 font-bold flex items-center justify-center text-xs">A</span>
+                                                        <p class="font-bold text-slate-900">Arms</p>
+                                                        <p class="text-slate-500">Can they raise both arms? Is one arm weak/numb?</p>
+                                                    </div>
+                                                    <div class="p-3 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1">
+                                                        <span class="h-6 w-6 rounded-md bg-orange-100 text-orange-800 font-bold flex items-center justify-center text-xs">S</span>
+                                                        <p class="font-bold text-slate-900">Speech</p>
+                                                        <p class="text-slate-500">Slurred speech? Ask to repeat a simple sentence.</p>
+                                                    </div>
+                                                    <div class="p-3 rounded-xl border border-rose-200 bg-rose-50 shadow-2xs space-y-1">
+                                                        <span class="h-6 w-6 rounded-md bg-rose-200 text-rose-800 font-bold flex items-center justify-center text-xs">T</span>
+                                                        <p class="font-bold text-rose-900">Time to Call!</p>
+                                                        <p class="text-rose-700">Call DRR / 911 immediately. Get to hospital now!</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- SLIDE 6: Emergency Action Principles & Call First -->
+                                            <div x-show="page === 6" style="display: none;" class="space-y-4">
+                                                <div class="border-b border-slate-200 pb-2">
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Slide 6: Protocol</span>
+                                                    <h3 class="text-lg font-bold text-slate-900 mt-0.5">Emergency Action Principles &amp; Activating Assistance</h3>
+                                                </div>
+                                                <div class="space-y-3 text-xs">
+                                                    <div class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                                                        <span class="h-7 w-7 rounded-lg bg-emerald-600 text-white font-extrabold flex items-center justify-center shrink-0">1</span>
+                                                        <div>
+                                                            <p class="font-bold text-slate-900">1st — ASK FOR HELP (Activate Medical Assistance &bull; "Call First")</p>
+                                                            <p class="text-slate-600 mt-0.5">Direct a specific bystander: <em>"You in the blue shirt, call DRR and get an AED immediately!"</em></p>
+                                                            <div class="mt-2 flex flex-wrap gap-2 text-[11px] font-bold text-slate-800">
+                                                                <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">📞 DRR Hotline: 09106226622</span>
+                                                                <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">📞 Secondary: 09158486678</span>
+                                                                <span class="bg-rose-100 text-rose-900 px-2 py-0.5 rounded border border-rose-300">🚨 National Emergency: 911</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                                                        <span class="h-7 w-7 rounded-lg bg-sky-600 text-white font-extrabold flex items-center justify-center shrink-0">2</span>
+                                                        <div>
+                                                            <p class="font-bold text-slate-900">2nd — Survey the Scene (Scene Safety)</p>
+                                                            <p class="text-slate-600 mt-0.5">Check for live electrical wires, fire, falling debris, toxic fumes, or structural danger before approaching.</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                                                        <span class="h-7 w-7 rounded-lg bg-purple-600 text-white font-extrabold flex items-center justify-center shrink-0">3</span>
+                                                        <div>
+                                                            <p class="font-bold text-slate-900">3rd — Intervene &amp; Do No Further Harm</p>
+                                                            <p class="text-slate-600 mt-0.5">Report WHAT happened, LOCATION, NUMBER of persons injured, and EXTENT of injury. <strong>You must identify yourself and drop the phone last!</strong></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- SLIDE 7: Hands-Only CPR Technique -->
+                                            <div x-show="page === 7" style="display: none;" class="space-y-4">
+                                                <div class="border-b border-slate-200 pb-2">
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Slide 7: Practical Technique</span>
+                                                    <h3 class="text-lg font-bold text-slate-900 mt-0.5">How to Perform Chest-Compression-Only CPR</h3>
+                                                </div>
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                                                    <div class="p-4 rounded-xl border border-orange-200 bg-orange-50/40 space-y-2">
+                                                        <span class="font-bold text-orange-800 text-sm block">1. Hand &amp; Body Position</span>
+                                                        <ul class="space-y-1 list-disc list-inside text-slate-700">
+                                                            <li>Place the <strong>heel of one hand</strong> in the center of the chest on the breastbone.</li>
+                                                            <li>Interlace fingers of your second hand on top.</li>
+                                                            <li>Kneel close to victim's side with <strong>shoulders positioned directly over hands</strong> and elbows locked straight.</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 space-y-2">
+                                                        <span class="font-bold text-emerald-800 text-sm block">2. Compression Rate &amp; Depth</span>
+                                                        <ul class="space-y-1 list-disc list-inside text-slate-700">
+                                                            <li><strong>Rate:</strong> Push at <strong>100–120 Compressions per Minute</strong> (Beat of "Stayin' Alive").</li>
+                                                            <li><strong>Depth:</strong> Push down at least <strong>2 to 2.4 inches (5–6 cm)</strong>.</li>
+                                                            <li><strong>Recoil:</strong> Take all weight off chest between compressions to allow complete heart refill.</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Interactive Mid-Presentation Checkpoint on Slide 7 -->
+                                                <div class="p-4 rounded-xl border border-amber-300 bg-amber-50 space-y-3">
+                                                    <div class="flex items-center justify-between">
+                                                        <span class="text-xs font-bold uppercase tracking-wider text-amber-900">⚡ Checkpoint Question (Slide 7 of 8)</span>
+                                                        <span x-show="docQuizPassed" class="text-xs font-bold text-emerald-700">✓ Completed</span>
+                                                    </div>
+                                                    <p class="text-xs font-bold text-slate-900">What is the optimal chest compression rate and depth for an adult cardiac arrest victim?</p>
+                                                    <div class="space-y-1.5 text-xs">
+                                                        <label class="flex items-center gap-2 p-2.5 rounded-lg border bg-white cursor-pointer"
+                                                               :class="docAnswer === 'correct' ? 'border-emerald-500 font-bold' : 'border-slate-200'">
+                                                            <input type="radio" name="cpr_quiz_{{ $mat->id }}" value="correct" x-model="docAnswer" class="text-emerald-600 focus:ring-emerald-500">
+                                                            <span>100–120 compressions per minute at 2–2.4 inches depth with full recoil.</span>
+                                                        </label>
+                                                        <label class="flex items-center gap-2 p-2.5 rounded-lg border bg-white cursor-pointer"
+                                                               :class="docAnswer === 'wrong' ? 'border-rose-300' : 'border-slate-200'">
+                                                            <input type="radio" name="cpr_quiz_{{ $mat->id }}" value="wrong" x-model="docAnswer" class="text-emerald-600 focus:ring-emerald-500">
+                                                            <span>60 compressions per minute at 1 inch depth.</span>
+                                                        </label>
+                                                    </div>
+                                                    <p x-show="docFeedback" x-text="docFeedback" class="text-xs font-bold text-rose-600"></p>
+                                                    <div class="pt-1 flex justify-end">
+                                                        <button type="button" @click="submitSlideQuiz()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs cursor-pointer">
+                                                            Confirm Checkpoint Answer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- SLIDE 8: Gasping Protocol & Summary -->
+                                            <div x-show="page === 8" style="display: none;" class="space-y-4">
+                                                <div class="border-b border-slate-200 pb-2">
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Slide 8: Key Takeaways &amp; Rescuer Teamwork</span>
+                                                    <h3 class="text-lg font-bold text-slate-900 mt-0.5">Critical Reminders for School Responders</h3>
+                                                </div>
+                                                <div class="space-y-3 text-xs">
+                                                    <div class="p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-950 space-y-1">
+                                                        <p class="font-bold text-sm">⚠️ Agonal Gasping Protocol</p>
+                                                        <p>Gasping is NOT normal breathing — it is a reflex sign of cardiac arrest. <strong>DO NOT STOP chest compressions if the victim gasps!</strong> Continue hard and fast compressions without hesitation.</p>
+                                                    </div>
+                                                    <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-1 text-slate-700">
+                                                        <p class="font-bold text-slate-900">Switch Rescuers Every 1–2 Minutes</p>
+                                                        <p>Chest compressions are physically demanding. Rescuer fatigue causes compression depth to shallow within 2 minutes. Coach a colleague or bystander to take over with zero interruption.</p>
+                                                    </div>
+                                                    <div class="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-950 space-y-1">
+                                                        <p class="font-bold text-emerald-900">Don't Worry About Breaking Ribs — Keep Going!</p>
+                                                        <p>A cracked rib can heal; an un-resuscitated patient will not survive. Doing your best with continuous chest compressions gives the victim the best chance at life.</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="pt-3 p-4 rounded-xl bg-emerald-100/70 border border-emerald-300 flex items-center justify-between gap-3">
+                                                    <div class="flex items-center gap-2 text-emerald-900 font-bold text-xs">
+                                                        <span>✓ You have completed the 8 slide lessons from this official deck.</span>
+                                                    </div>
+                                                    <button type="button" @click="markMaterialCompleted({{ $mat->id }}, '{{ $interactUrl }}'); docQuizPassed = true;"
+                                                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-xs cursor-pointer">
+                                                        <span>Mark as Complete</span>
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Document / Slide Navigation Footer -->
+                                            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                                                <button type="button" @click="prevSlide()" :disabled="page === 1"
+                                                        class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40 cursor-pointer">
+                                                    &larr; Previous Slide
                                                 </button>
 
-                                                <button type="button" x-show="page < 3" @click="nextPage()"
-                                                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">
-                                                    <span x-text="page === 2 ? 'Submit Checkpoint & Finish File →' : 'Next Page (Mid-File Quiz) →'"></span>
+                                                <button type="button" x-show="page < totalPages" @click="nextSlide()"
+                                                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">
+                                                    <span>Next Slide &rarr;</span>
                                                 </button>
 
-                                                <span x-show="page === 3" class="text-xs font-bold text-emerald-700">
-                                                    ✓ Document Review Complete
+                                                <span x-show="page === totalPages" class="text-xs font-bold text-emerald-700">
+                                                    ✓ Final Slide Reached
                                                 </span>
                                             </div>
                                         </div>

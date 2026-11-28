@@ -481,6 +481,14 @@ class DatabaseSeeder extends Seeder
             'description' => 'Visual slide presentation on Tropical Cyclone Wind Signals and color-coded rainfall warnings.',
         ]);
 
+        Material::create([
+            'module_id' => $mod2_1->id,
+            'title' => 'Save Your Breath, Save a Life: Hands-Only CPR & Emergency Simulation (PPTX Presentation)',
+            'type' => 'presentation',
+            'file_path' => 'materials/chest-compression-only-cpr.pptx',
+            'description' => 'Comprehensive Basic Life Support and Chest Compression Only CPR slide presentation based on AO 155 s. 2004 and RA 10871 (BLS in Schools Act).',
+        ]);
+
         $mod2_2 = Module::create([
             'course_id' => $course2->id,
             'title' => 'Flood Evacuation Procedures & Elevated Staging Management',
