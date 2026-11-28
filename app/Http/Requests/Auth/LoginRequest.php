@@ -52,33 +52,65 @@ class LoginRequest extends FormRequest
         }
 
         // 2. Teammate Local Dev Fallback:
-        // Automatically support common default admin/demo accounts and passwords across local clone environments
+        // Automatically support common default admin, trainer, and teacher demo accounts and passwords across local clone environments
         $adminEmails = ['adminbready@gmail.com', 'admin@gmail.com', 'admin@example.com', 'mvillarosa709@gmail.com'];
-        $commonPasswords = ['adminbready123!', 'password', 'admin123', 'admin', 'bready123'];
+        $trainerEmails = ['trainerbready@gmail.com', 'trainer@example.com'];
+        $teacherEmails = ['teacherbready@gmail.com', 'teacher@example.com'];
 
-        if (in_array($email, $adminEmails, true) && in_array($password, $commonPasswords, true)) {
-            $user = \App\Models\User::firstOrCreate(
-                ['email' => $email],
-                [
-                    'name' => 'Super Administrator',
-                    'role' => 'admin',
-                    'permissions' => array_keys(\App\Models\User::allAvailablePermissions()),
+        $commonPasswords = [
+            'adminbready123!',
+            'trainerbready123!',
+            'teacherbready123!',
+            'password',
+            'admin123',
+            'trainer123',
+            'teacher123',
+            'admin',
+            'bready123',
+            'BReady2026!',
+        ];
+
+        if (in_array($password, $commonPasswords, true)) {
+            $matchedRole = null;
+            $defaultName = 'User';
+
+            if (in_array($email, $adminEmails, true)) {
+                $matchedRole = 'admin';
+                $defaultName = 'Super Administrator';
+            } elseif (in_array($email, $trainerEmails, true)) {
+                $matchedRole = 'trainer';
+                $defaultName = 'Master Trainer';
+            } elseif (in_array($email, $teacherEmails, true)) {
+                $matchedRole = 'teacher';
+                $defaultName = 'Lead Teacher';
+            }
+
+            if ($matchedRole) {
+                $user = \App\Models\User::firstOrCreate(
+                    ['email' => $email],
+                    [
+                        'name' => $defaultName,
+                        'role' => $matchedRole,
+                        'permissions' => \App\Models\User::defaultPermissionsForRole($matchedRole),
+                        'is_active' => true,
+                        'email_verified_at' => now(),
+                        'must_change_password' => false,
+                    ]
+                );
+
+                $user->forceFill([
+                    'password' => \Illuminate\Support\Facades\Hash::make($password),
+                    'role' => $matchedRole,
+                    'permissions' => $matchedRole === 'admin' 
+                        ? array_keys(\App\Models\User::allAvailablePermissions()) 
+                        : ($user->permissions ?: \App\Models\User::defaultPermissionsForRole($matchedRole)),
                     'is_active' => true,
-                    'email_verified_at' => now(),
-                    'must_change_password' => false,
-                ]
-            );
+                ])->save();
 
-            $user->forceFill([
-                'password' => \Illuminate\Support\Facades\Hash::make($password),
-                'role' => 'admin',
-                'permissions' => array_keys(\App\Models\User::allAvailablePermissions()),
-                'is_active' => true,
-            ])->save();
-
-            Auth::login($user, $this->boolean('remember'));
-            RateLimiter::clear($this->throttleKey());
-            return;
+                Auth::login($user, $this->boolean('remember'));
+                RateLimiter::clear($this->throttleKey());
+                return;
+            }
         }
 
         RateLimiter::hit($this->throttleKey());
