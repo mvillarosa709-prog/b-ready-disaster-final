@@ -93,6 +93,10 @@ class ModuleController extends Controller
 
         $module->update($validated);
 
+        if ($course->status === 'published') {
+            $course->update(['status' => 'draft']);
+        }
+
         return redirect()
             ->route('trainer.courses.show', $course->id)
             ->with('success', 'Module updated successfully.');

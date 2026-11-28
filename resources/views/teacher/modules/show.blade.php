@@ -111,6 +111,7 @@
             <!-- Full-Width Active Module Content & Training Materials -->
             <div class="w-full space-y-6"
                  x-data="{
+                     materialFilter: 'all',
                      totalMaterials: {{ $module->materials->count() }},
                      completedMaterials: {{ ($currentProgress && $currentProgress->progress >= 75) || $latestQuizAttempt ? json_encode($module->materials->pluck('id')->values()) : '[]' }},
                      moduleProgress: {{ $currentProgress ? (int) $currentProgress->progress : 25 }},
@@ -216,6 +217,62 @@
                         </div>
                     </div>
 
+                    @php
+                        $videoCount = $module->materials->where('type', 'video')->count();
+                        $pptxCount = $module->materials->filter(function($m) {
+                            $fp = strtolower($m->file_path ?? '');
+                            $ti = strtolower($m->title ?? '');
+                            return str_ends_with($fp, '.pptx') || str_ends_with($fp, '.ppt') || str_contains($fp, 'cpr') || str_contains($ti, 'pptx') || str_contains($ti, 'cpr') || str_contains($ti, 'breath');
+                        })->count();
+                        $docCount = $module->materials->count() - $videoCount - $pptxCount;
+                    @endphp
+
+                    <!-- Quick Material Switcher Tabs -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 p-2 rounded-2xl bg-slate-100/90 border border-slate-200/90">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <button type="button" @click="materialFilter = 'all'"
+                                    class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                                    :class="materialFilter === 'all' ? 'bg-white text-slate-900 shadow-xs border border-slate-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'">
+                                <span>All Materials</span>
+                                <span class="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700 font-mono">{{ $module->materials->count() }}</span>
+                            </button>
+
+                            @if ($videoCount > 0)
+                                <button type="button" @click="materialFilter = 'video'"
+                                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                                        :class="materialFilter === 'video' ? 'bg-sky-600 text-white shadow-xs' : 'text-slate-600 hover:text-sky-700 hover:bg-sky-50'">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span>Video Demonstration</span>
+                                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-mono" :class="materialFilter === 'video' ? 'bg-sky-500 text-white' : 'bg-slate-200 text-slate-700'">{{ $videoCount }}</span>
+                                </button>
+                            @endif
+
+                            @if ($pptxCount > 0)
+                                <button type="button" @click="materialFilter = 'presentation'"
+                                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                                        :class="materialFilter === 'presentation' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 hover:text-orange-700 hover:bg-orange-50'">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+                                    <span>PowerPoint Deck (.pptx)</span>
+                                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-mono" :class="materialFilter === 'presentation' ? 'bg-orange-500 text-white' : 'bg-orange-100 text-orange-800'">{{ $pptxCount }}</span>
+                                </button>
+                            @endif
+
+                            @if ($docCount > 0)
+                                <button type="button" @click="materialFilter = 'document'"
+                                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                                        :class="materialFilter === 'document' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 hover:text-rose-700 hover:bg-rose-50'">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                    <span>Documents &amp; Checklists</span>
+                                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-mono" :class="materialFilter === 'document' ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-700'">{{ $docCount }}</span>
+                                </button>
+                            @endif
+                        </div>
+
+                        <div class="text-[11px] text-slate-500 font-medium hidden md:block">
+                            Jump straight to your materials with the filter tabs above.
+                        </div>
+                    </div>
+
                     @if ($module->materials->isEmpty())
                         <div class="p-6 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
                             All necessary content for this module is provided in the lecture overview above.
@@ -225,15 +282,26 @@
                             @foreach ($module->materials as $mat)
                                 @php
                                     $type = strtolower($mat->type ?? 'pdf');
+                                    $isPptx = str_ends_with(strtolower($mat->file_path ?? ''), '.pptx') 
+                                        || str_ends_with(strtolower($mat->file_path ?? ''), '.ppt') 
+                                        || str_contains(strtolower($mat->file_path ?? ''), 'cpr')
+                                        || str_contains(strtolower($mat->title ?? ''), 'pptx')
+                                        || str_contains(strtolower($mat->title ?? ''), 'cpr')
+                                        || str_contains(strtolower($mat->title ?? ''), 'breath')
+                                        || str_contains(strtolower($mat->title ?? ''), 'simulation');
+                                    $matCategory = $type === 'video' ? 'video' : ($isPptx ? 'presentation' : 'document');
                                     $interactUrl = route('teacher.learning.material.interact', [$workshop, $module, $mat]);
                                     $downloadUrl = route('teacher.learning.material.download', [$workshop, $module, $mat]);
                                 @endphp
 
                                 @if ($type === 'video')
-                                    <!-- INTERACTIVE VIDEO PLAYER WITH MID-VIDEO QUIZ AT 50% -->
+                                    <!-- INTERACTIVE VIDEO PLAYER WITH VISUAL ANIMATION, EMBED, & MID-VIDEO QUIZ -->
                                     <div class="rounded-2xl border border-slate-200/90 bg-slate-50/40 overflow-hidden shadow-xs"
+                                         x-show="materialFilter === 'all' || materialFilter === 'video'"
                                          x-data="{
                                              playing: false,
+                                             viewMode: 'visual',
+                                             currentStage: 1,
                                              progress: isMaterialCompleted({{ $mat->id }}) ? 100 : 0,
                                              duration: 12,
                                              currentTime: isMaterialCompleted({{ $mat->id }}) ? 12 : 0,
@@ -243,6 +311,13 @@
                                              selectedAnswer: null,
                                              quizFeedback: '',
                                              timer: null,
+                                             setStage(s) {
+                                                 this.currentStage = s;
+                                                 if (s === 1) { this.currentTime = 0; this.progress = 0; }
+                                                 if (s === 2) { this.currentTime = 3.5; this.progress = 30; }
+                                                 if (s === 3) { this.currentTime = 7; this.progress = 60; }
+                                                 if (s === 4) { this.currentTime = 10.5; this.progress = 85; }
+                                             },
                                              togglePlay() {
                                                  if (this.midQuizOpen) return;
                                                  if (this.progress >= 100) {
@@ -262,6 +337,11 @@
                                                      if (!this.playing) return;
                                                      this.currentTime = Math.min(this.duration, +(this.currentTime + 0.2).toFixed(1));
                                                      this.progress = Math.round((this.currentTime / this.duration) * 100);
+
+                                                     if (this.progress < 25) this.currentStage = 1;
+                                                     else if (this.progress < 50) this.currentStage = 2;
+                                                     else if (this.progress < 75) this.currentStage = 3;
+                                                     else this.currentStage = 4;
 
                                                      // Pause in the middle of the video (50%) for Mid-Video Quiz!
                                                      if (this.progress >= 50 && !this.midQuizTriggered) {
@@ -328,6 +408,21 @@
                                                         ✓ Video &amp; Quiz Completed
                                                     </span>
                                                 </template>
+
+                                                <!-- Mode Switcher Buttons -->
+                                                <div class="flex items-center rounded-xl bg-slate-100 p-0.5 border border-slate-200 text-xs">
+                                                    <button type="button" @click="viewMode = 'visual'"
+                                                            class="px-2.5 py-1 rounded-lg font-bold transition cursor-pointer"
+                                                            :class="viewMode === 'visual' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'">
+                                                        🎬 Visual Drill Walk-Through
+                                                    </button>
+                                                    <button type="button" @click="viewMode = 'video'"
+                                                            class="px-2.5 py-1 rounded-lg font-bold transition cursor-pointer"
+                                                            :class="viewMode === 'video' ? 'bg-white text-sky-700 shadow-xs' : 'text-slate-600 hover:text-sky-700'">
+                                                        📺 DepEd Video Stream
+                                                    </button>
+                                                </div>
+
                                                 <a href="{{ $downloadUrl }}" {{ $mat->external_url ? 'target="_blank"' : '' }}
                                                    class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 px-3 py-1.5 rounded-xl border border-slate-200 transition">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -339,46 +434,142 @@
                                         </div>
 
                                         <!-- Interactive Video Stage -->
-                                        <div class="relative bg-slate-900 text-white min-h-[300px] sm:min-h-[340px] flex flex-col justify-between p-6 select-none">
+                                        <div class="relative bg-slate-950 text-white min-h-[340px] sm:min-h-[380px] flex flex-col justify-between p-6 select-none">
                                             <!-- Top Video Overlay Info -->
-                                            <div class="flex items-center justify-between text-xs text-slate-300 z-10">
-                                                <span class="inline-flex items-center gap-1.5 bg-slate-800/90 border border-slate-700 px-3 py-1 rounded-full font-semibold">
-                                                    <span class="h-2 w-2 rounded-full" :class="playing ? 'bg-red-500 animate-ping' : 'bg-emerald-400'"></span>
-                                                    <span x-text="progress < 50 ? 'Part 1: Hazard Identification & Briefing' : 'Part 2: Emergency Drill Execution & Verification'"></span>
-                                                </span>
-                                                <span class="font-mono bg-slate-800/90 px-2.5 py-1 rounded-md border border-slate-700"
-                                                      x-text="formatTime(currentTime) + ' / ' + formatTime(duration)">0:00 / 0:12</span>
+                                            <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300 z-10">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="inline-flex items-center gap-1.5 bg-slate-800/90 border border-slate-700 px-3 py-1 rounded-full font-semibold">
+                                                        <span class="h-2 w-2 rounded-full" :class="playing ? 'bg-red-500 animate-ping' : 'bg-emerald-400'"></span>
+                                                        <span x-text="'Stage ' + currentStage + ' of 4: ' + (currentStage === 1 ? 'Earthquake Warning & Alarm' : (currentStage === 2 ? 'Duck, Cover, and Hold' : (currentStage === 3 ? 'Classroom Evacuation' : 'Safe Assembly Area Triage')))"></span>
+                                                    </span>
+                                                </div>
+
+                                                <div class="flex items-center gap-2">
+                                                    <span class="font-mono bg-slate-800/90 px-2.5 py-1 rounded-md border border-slate-700 text-emerald-400 font-bold"
+                                                          x-text="formatTime(currentTime) + ' / ' + formatTime(duration)">0:00 / 0:12</span>
+                                                </div>
                                             </div>
 
-                                            <!-- Center Visual Presentation Slide Content -->
-                                            <div class="my-6 text-center max-w-xl mx-auto space-y-3 z-10">
-                                                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 mx-auto">
-                                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                                                    </svg>
+                                            <!-- CENTER VIEW: EITHER VISUAL MULTI-SCENE ANIMATION OR YOUTUBE EMBED -->
+                                            <div class="my-4 w-full max-w-2xl mx-auto z-10">
+                                                <!-- View 1: Dynamic Visual Simulation Scenes -->
+                                                <div x-show="viewMode === 'visual'" class="space-y-4">
+                                                    <!-- Scene 1: Seismic Warning (0-25%) -->
+                                                    <div x-show="currentStage === 1" class="p-6 rounded-2xl bg-gradient-to-br from-red-950 via-slate-900 to-amber-950 border border-red-500/30 text-center space-y-3 shadow-xl">
+                                                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-red-500/20 text-red-400 border border-red-500/40 mx-auto animate-pulse">
+                                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-red-400 bg-red-950/80 px-2.5 py-1 rounded-full border border-red-700/50">
+                                                            🚨 Stage 1: Seismic Alarm Triggered (Intensity VII)
+                                                        </span>
+                                                        <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">
+                                                            DUCK, COVER, AND HOLD!
+                                                        </h3>
+                                                        <p class="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+                                                            Shaking has commenced! Issue loud verbal warning: Drop to knees, seek immediate shelter beneath sturdy wooden desks, and firmly grasp desk legs. Stay clear of glass windows and overhead fixtures.
+                                                        </p>
+                                                    </div>
+
+                                                    <!-- Scene 2: Structural Inspection & Door Unlatching (25-50%) -->
+                                                    <div x-show="currentStage === 2" style="display: none;" class="p-6 rounded-2xl bg-gradient-to-br from-amber-950 via-slate-900 to-orange-950 border border-amber-500/30 text-center space-y-3 shadow-xl">
+                                                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/40 mx-auto">
+                                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
+                                                            </svg>
+                                                        </div>
+                                                        <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-amber-300 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-700/50">
+                                                            🔍 Stage 2: Exit Path Verification &amp; Door Unlatching
+                                                        </span>
+                                                        <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">
+                                                            Secure Clear Egress Before Evacuating
+                                                        </h3>
+                                                        <p class="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+                                                            Teachers must unlatch and prop classroom doors open to prevent frame jamming from structural shifting. Grab the Classroom Emergency Go-Bag, First Aid Kit, and Class Attendance Masterlist.
+                                                        </p>
+                                                    </div>
+
+                                                    <!-- Scene 3: Orderly Evacuation & Buddy Accounting (50-75%) -->
+                                                    <div x-show="currentStage === 3" style="display: none;" class="p-6 rounded-2xl bg-gradient-to-br from-sky-950 via-slate-900 to-indigo-950 border border-sky-500/30 text-center space-y-3 shadow-xl">
+                                                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-sky-500/20 text-sky-300 border border-sky-500/40 mx-auto">
+                                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-sky-300 bg-sky-950/80 px-2.5 py-1 rounded-full border border-sky-700/50">
+                                                            🚶‍♂️ Stage 3: Orderly Marching &amp; 4-NOs Rule
+                                                        </span>
+                                                        <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">
+                                                            No Running &bull; No Pushing &bull; No Talking &bull; No Turning Back
+                                                        </h3>
+                                                        <p class="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+                                                            Students cover their heads with books or backpacks while walking in 2-by-2 buddy pairs. Follow the designated green primary evacuation route down stairwells. Never use elevators.
+                                                        </p>
+                                                    </div>
+
+                                                    <!-- Scene 4: Safe Assembly Zone Staging & Headcount (75-100%) -->
+                                                    <div x-show="currentStage === 4" style="display: none;" class="p-6 rounded-2xl bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 border border-emerald-500/30 text-center space-y-3 shadow-xl">
+                                                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mx-auto">
+                                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-700/50">
+                                                            🚩 Stage 4: Open Field Assembly &amp; Headcount Report
+                                                        </span>
+                                                        <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">
+                                                            100% Learner Accountability Verified
+                                                        </h3>
+                                                        <p class="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+                                                            All classes line up inside the assigned school open quadrant outside falling hazard radius. Conduct roll call and immediately report status to the School Incident Command Post.
+                                                        </p>
+                                                    </div>
+
+                                                    <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+                                                        <button type="button" @click="setStage(1)"
+                                                                class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer"
+                                                                :class="currentStage === 1 ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'">
+                                                            1. Alarm &amp; Drop
+                                                        </button>
+                                                        <button type="button" @click="setStage(2)"
+                                                                class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer"
+                                                                :class="currentStage === 2 ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'">
+                                                            2. Door Check
+                                                        </button>
+                                                        <button type="button" @click="setStage(3)"
+                                                                class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer"
+                                                                :class="currentStage === 3 ? 'bg-sky-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'">
+                                                            3. Evacuate
+                                                        </button>
+                                                        <button type="button" @click="setStage(4)"
+                                                                class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer"
+                                                                :class="currentStage === 4 ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'">
+                                                            4. Assembly &amp; Tally
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <h5 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">
-                                                    {{ $mat->title }}
-                                                </h5>
-                                                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed"
-                                                   x-text="progress < 50
-                                                       ? ' demonstrating classroom hazard walk-throughs, exit route clearance, and pre-drill teacher preparation for {{ addslashes($module->title) }}.'
-                                                       : 'Executing standardized evacuation signals, buddy-system headcount verification, and safe assembly zone staging.'">
-                                                </p>
-                                                <div x-show="!playing && progress < 100 && !midQuizOpen" class="pt-2">
-                                                    <button type="button" @click="togglePlay()"
-                                                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold shadow-lg transition cursor-pointer">
-                                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
-                                                        </svg>
-                                                        <span x-text="progress > 0 ? 'Resume Video Presentation' : 'Play Video Presentation'"></span>
-                                                    </button>
+
+                                                <!-- View 2: Official DepEd NDRRMC Video Stream (YouTube Embed) -->
+                                                <div x-show="viewMode === 'video'" style="display: none;" class="space-y-3">
+                                                    <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border border-slate-700">
+                                                        <iframe class="w-full h-full"
+                                                                src="https://www.youtube-nocookie.com/embed/6YkK8xMh96Q?rel=0&autoplay=0"
+                                                                title="DepEd School Earthquake & Disaster Evacuation Drill Video"
+                                                                frameborder="0"
+                                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                                allowfullscreen>
+                                                        </iframe>
+                                                    </div>
+                                                    <p class="text-[11px] text-center text-slate-400">
+                                                        Official Disaster Risk Reduction and Management Drill Demonstration (DepEd / NDRRMC Guidelines).
+                                                    </p>
                                                 </div>
                                             </div>
 
                                             <!-- Bottom Video Controls & Progress Bar with 50% Quiz Marker -->
-                                            <div class="space-y-2 z-10">
-                                                <div class="relative w-full h-3 bg-slate-700 rounded-full overflow-visible">
+                                            <div class="space-y-2.5 z-10">
+                                                <div class="relative w-full h-3 bg-slate-800 rounded-full overflow-visible border border-slate-700">
                                                     <div class="h-full bg-emerald-500 rounded-full transition-all duration-150" :style="'width: ' + progress + '%'"></div>
                                                     <!-- 50% Mid-Video Quiz Checkpoint Marker -->
                                                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-slate-900 flex items-center justify-center shadow"
@@ -387,13 +578,21 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex items-center justify-between text-xs text-slate-300">
-                                                    <button type="button" @click="togglePlay()" class="inline-flex items-center gap-1.5 font-bold text-white hover:text-emerald-400 transition cursor-pointer">
-                                                        <span x-text="playing ? '⏸ Pause' : (progress >= 100 ? '↻ Replay Video' : '▶ Play')"></span>
-                                                    </button>
+                                                    <div class="flex items-center gap-3">
+                                                        <button type="button" @click="togglePlay()" class="inline-flex items-center gap-1.5 font-bold text-white hover:text-emerald-400 transition cursor-pointer">
+                                                            <span x-text="playing ? '⏸ Pause' : (progress >= 100 ? '↻ Replay Simulation' : '▶ Play Simulation')"></span>
+                                                        </button>
+                                                        <button type="button" @click="markMaterialCompleted({{ $mat->id }}, '{{ $interactUrl }}'); progress = 100; currentTime = duration;"
+                                                                class="text-[11px] text-slate-400 hover:text-white underline cursor-pointer">
+                                                            Mark Complete
+                                                        </button>
+                                                    </div>
+
                                                     <span class="text-[11px] text-amber-300 font-semibold">
                                                         <span x-show="!midQuizPassed">⚡ Pauses at 50% for Mid-Video Knowledge Check</span>
                                                         <span x-show="midQuizPassed" class="text-emerald-400">✓ Mid-Video Knowledge Check Passed</span>
                                                     </span>
+
                                                     <span class="font-mono text-[11px]" x-text="progress + '%'">0%</span>
                                                 </div>
                                             </div>
@@ -401,7 +600,7 @@
                                             <!-- MID-VIDEO QUIZ OVERLAY (Pops up at 50% of video!) -->
                                             <div x-show="midQuizOpen"
                                                  style="display: none;"
-                                                 class="absolute inset-0 bg-slate-900/90 backdrop-blur-xs p-5 sm:p-6 flex items-center justify-center z-20">
+                                                 class="absolute inset-0 bg-slate-950/90 backdrop-blur-xs p-5 sm:p-6 flex items-center justify-center z-20">
                                                 <div class="bg-white text-slate-900 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-amber-200 space-y-4">
                                                     <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
                                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-900">
@@ -463,11 +662,11 @@
                                             || str_contains(strtolower($mat->title ?? ''), 'pptx')
                                             || str_contains(strtolower($mat->title ?? ''), 'cpr')
                                             || str_contains(strtolower($mat->title ?? ''), 'breath')
-                                            || str_contains(strtolower($mat->title ?? ''), 'simulation')
-                                            || $type === 'presentation';
+                                            || str_contains(strtolower($mat->title ?? ''), 'simulation');
                                     @endphp
 
                                     <div class="rounded-2xl border border-slate-200/90 bg-white overflow-hidden shadow-xs"
+                                         x-show="materialFilter === 'all' || (materialFilter === 'presentation' && {{ $isPptx ? 'true' : 'false' }}) || (materialFilter === 'document' && {{ ! $isPptx ? 'true' : 'false' }})"
                                          x-data="{
                                              page: isMaterialCompleted({{ $mat->id }}) ? 8 : 1,
                                              totalPages: 8,
@@ -500,6 +699,29 @@
                                                  }
                                              }
                                          }">
+                                        @if ($isPptx)
+                                            <!-- Prominent PowerPoint Deck Banner -->
+                                            <div class="px-5 py-3.5 bg-gradient-to-r from-orange-600 via-amber-600 to-rose-600 text-white flex flex-wrap items-center justify-between gap-3 shadow-sm">
+                                                <div class="flex items-center gap-2.5">
+                                                    <span class="p-1.5 rounded-xl bg-white/20 backdrop-blur-xs">
+                                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+                                                    </span>
+                                                    <div>
+                                                        <span class="text-xs font-black uppercase tracking-wider block text-orange-200">⭐ Official Presentation Deck (.pptx)</span>
+                                                        <span class="text-sm sm:text-base font-extrabold text-white">"Save your Breath… Save a Life" (30-Slide CPR Deck)</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-xs font-bold bg-white/20 px-3 py-1 rounded-full text-white">30 Official Slides</span>
+                                                    <a href="{{ $downloadUrl }}"
+                                                       class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white text-orange-800 text-xs font-bold hover:bg-orange-50 shadow-sm transition">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                                        <span>Download PPTX</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @endif
+
                                         <!-- Document Header -->
                                         <div class="p-4 sm:px-6 bg-slate-50/70 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-3">
                                             <div class="flex items-center gap-3">
