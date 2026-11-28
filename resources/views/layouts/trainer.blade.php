@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'DRR Trainer Portal' }} — B-READY Disaster Preparedness</title>
+    <title>{{ $title ?? 'B-READY Trainer' }} — B-READY Disaster Preparedness</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -49,9 +49,6 @@
                     <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-900 px-6 pb-4">
                         <div class="flex h-16 shrink-0 items-center gap-3">
                             <x-application-logo class="h-12 w-16 shrink-0" />
-                            <div>
-                                <span class="block text-xs text-emerald-400 font-medium">DRR Trainer Portal</span>
-                            </div>
                         </div>
                         <nav class="flex flex-1 flex-col">
                             <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -74,11 +71,6 @@
                 <div class="flex h-20 shrink-0 items-center justify-between border-b border-slate-100">
                     <a href="{{ route('trainer.dashboard') }}" class="flex items-center gap-3">
                         <x-application-logo class="h-14 w-[4.75rem] shrink-0" />
-                        <div class="min-w-0">
-                            <span class="flex items-center gap-1.5 text-xs text-emerald-600 font-semibold uppercase tracking-wider">
-                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Trainer Portal
-                            </span>
-                        </div>
                     </a>
                 </div>
 

@@ -1,3 +1,4 @@
+
 <x-layouts.trainer>
     <x-slot name="title">Trainer Dashboard Overview</x-slot>
 
@@ -6,18 +7,18 @@
         <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                        DRR Trainer Portal
-                    </span>
                     <span class="text-xs font-medium text-slate-400">Overview &amp; Analytics</span>
                 </div>
+
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
                     Welcome back, {{ auth()->user()->name }}!
                 </h1>
+
                 <p class="text-slate-500 text-sm mt-1">
                     Manage disaster preparedness courses, module quizzes, scheduled workshops, and teacher training outcomes.
                 </p>
             </div>
+
             <div class="flex flex-wrap items-center gap-3 shrink-0">
                 <a href="{{ route('trainer.workshops.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 shadow-xs transition">
                     <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,6 +26,7 @@
                     </svg>
                     Schedule Workshop
                 </a>
+
                 <a href="{{ route('trainer.courses.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -37,8 +39,10 @@
 
     <!-- Main Dashboard Workspace -->
     <div class="w-full px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+
         <!-- Quick Stats Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
             <!-- Courses Stat -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-emerald-200 transition flex flex-col justify-between">
                 <div class="flex items-start justify-between gap-3">
@@ -126,8 +130,10 @@
 
         <!-- Two-Column Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            <!-- Left Main Column (2/3 width on desktop) -->
+
+            <!-- Left Main Column -->
             <div class="lg:col-span-2 space-y-6">
+
                 <!-- Main Courses Table Preview -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between gap-4">
@@ -272,8 +278,9 @@
                 </div>
             </div>
 
-            <!-- Right Column: Workflow Guide (1/3 width on desktop) -->
+            <!-- Right Column: Workflow Guide -->
             <div class="space-y-6">
+
                 <!-- Trainer Workflow Checklist Card -->
                 <div class="rounded-2xl bg-gradient-to-br from-emerald-50 to-slate-100 p-6 border border-emerald-200/70">
                     <div class="flex items-center gap-2 text-emerald-900 font-bold text-xs uppercase tracking-wider">
@@ -282,6 +289,7 @@
                         </svg>
                         Training Lifecycle Guide
                     </div>
+
                     <ol class="mt-3.5 space-y-2.5 text-xs text-slate-700">
                         <li class="flex items-start gap-2.5">
                             <span class="h-5 w-5 rounded-full bg-emerald-600 text-white font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">1</span>

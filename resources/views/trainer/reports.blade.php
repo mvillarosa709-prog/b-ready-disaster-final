@@ -6,9 +6,6 @@
         <div class="w-full px-4 py-7 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                        DRR Monitoring & Evaluation
-                    </span>
                     <span class="text-xs text-slate-400">Complete Training-to-Classroom Lifecycle</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
