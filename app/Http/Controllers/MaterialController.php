@@ -40,8 +40,15 @@ class MaterialController extends Controller
             'description' => ['nullable', 'string'],
             'external_url' => ['nullable', 'url'],
             'file_path' => ['nullable', 'string', 'max:255'],
+            'file' => ['nullable', 'file', 'max:51200'],
         ]);
 
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('materials', 'public');
+            $validated['file_path'] = $path;
+        }
+
+        unset($validated['file']);
         $validated['module_id'] = $module->id;
 
         Material::create($validated);
@@ -95,7 +102,15 @@ class MaterialController extends Controller
             'description' => ['nullable', 'string'],
             'external_url' => ['nullable', 'url'],
             'file_path' => ['nullable', 'string', 'max:255'],
+            'file' => ['nullable', 'file', 'max:51200'],
         ]);
+
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('materials', 'public');
+            $validated['file_path'] = $path;
+        }
+
+        unset($validated['file']);
 
         $material->update($validated);
 
