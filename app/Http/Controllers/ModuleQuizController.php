@@ -14,7 +14,7 @@ class ModuleQuizController extends Controller
 {
     public function edit(int $courseId, int $moduleId)
     {
-        $course = Course::where('trainer_id', auth()->id())->findOrFail($courseId);
+        $course = Course::forTrainer()->findOrFail($courseId);
         $module = Module::where('course_id', $course->id)->findOrFail($moduleId);
         $quiz = $module->quiz()->with('questions.choices')->firstOrFail();
 
@@ -64,7 +64,7 @@ class ModuleQuizController extends Controller
 
     public function update(Request $request, int $courseId, int $moduleId)
     {
-        $course = Course::where('trainer_id', auth()->id())->findOrFail($courseId);
+        $course = Course::forTrainer()->findOrFail($courseId);
         $module = Module::where('course_id', $course->id)->findOrFail($moduleId);
         $quiz = $module->quiz()->firstOrFail();
 
@@ -138,7 +138,7 @@ class ModuleQuizController extends Controller
 
     public function downloadTemplate(int $courseId, int $moduleId)
     {
-        Course::where('trainer_id', auth()->id())->findOrFail($courseId)
+        Course::forTrainer()->findOrFail($courseId)
             ->modules()->findOrFail($moduleId);
 
         $workbook = app(ModuleQuizSpreadsheetService::class)->createTemplate();
@@ -151,7 +151,7 @@ class ModuleQuizController extends Controller
 
     public function import(Request $request, int $courseId, int $moduleId)
     {
-        $course = Course::where('trainer_id', auth()->id())->findOrFail($courseId);
+        $course = Course::forTrainer()->findOrFail($courseId);
         $module = $course->modules()->findOrFail($moduleId);
         $quiz = $module->quiz()->firstOrFail();
 

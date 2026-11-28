@@ -58,6 +58,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the trainer IDs accessible to this user.
+     * When logging in with demo/system trainer accounts (trainerbready@gmail.com or trainer@example.com),
+     * access is shared across these accounts so courses, materials, and workshops are immediately visible and manageable.
+     */
+    public function accessibleTrainerIds(): array
+    {
+        $demoTrainerEmails = ['trainerbready@gmail.com', 'trainer@example.com'];
+        if (in_array(strtolower($this->email), $demoTrainerEmails, true)) {
+            $ids = static::whereIn('email', $demoTrainerEmails)->pluck('id')->all();
+            return ! empty($ids) ? $ids : [$this->id];
+        }
+
+        return [$this->id];
+    }
+
+    /**
      * Workshops created by this DRR Trainer.
      */
     public function createdWorkshops()

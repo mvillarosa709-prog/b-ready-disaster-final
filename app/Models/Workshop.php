@@ -41,6 +41,25 @@ class Workshop extends Model
         return $this->course()->published()->exists();
     }
 
+    public function scopeForTrainer(\Illuminate\Database\Eloquent\Builder $query, $trainerOrId = null): \Illuminate\Database\Eloquent\Builder
+    {
+        if ($trainerOrId instanceof User) {
+            return $query->whereIn('trainer_id', $trainerOrId->accessibleTrainerIds());
+        }
+
+        if (is_numeric($trainerOrId)) {
+            $user = User::find($trainerOrId);
+            return $query->whereIn('trainer_id', $user ? $user->accessibleTrainerIds() : [$trainerOrId]);
+        }
+
+        $user = auth()->user();
+        if ($user) {
+            return $query->whereIn('trainer_id', $user->accessibleTrainerIds());
+        }
+
+        return $query;
+    }
+
     public function trainer()
     {
         return $this->belongsTo(User::class, 'trainer_id');

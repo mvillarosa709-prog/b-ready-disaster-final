@@ -11,7 +11,7 @@ class MaterialController extends Controller
 {
     public function create($courseId, $moduleId)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         $module = Module::where('course_id', $course->id)
@@ -25,7 +25,7 @@ class MaterialController extends Controller
 
     public function store(Request $request, $courseId, $moduleId)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         $module = Module::where('course_id', $course->id)
@@ -63,7 +63,7 @@ class MaterialController extends Controller
 
     public function edit($courseId, $moduleId, $materialId)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         $module = Module::where('course_id', $course->id)
@@ -84,7 +84,7 @@ class MaterialController extends Controller
         $moduleId,
         $materialId
     ) {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         $module = Module::where('course_id', $course->id)
@@ -124,7 +124,7 @@ class MaterialController extends Controller
 
     public function destroy($courseId, $moduleId, $materialId)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         $module = Module::where('course_id', $course->id)

@@ -11,7 +11,7 @@ class ModuleController extends Controller
 {
     public function create($courseId)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         return view('trainer.modules.create', compact('course'));
@@ -19,7 +19,7 @@ class ModuleController extends Controller
 
     public function store(Request $request, $courseId)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         $validated = $request->validate([
@@ -60,7 +60,7 @@ class ModuleController extends Controller
 
     public function edit($courseId, $moduleId)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         $module = Module::where('course_id', $course->id)
@@ -74,7 +74,7 @@ class ModuleController extends Controller
 
     public function update(Request $request, $courseId, $moduleId)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         $module = Module::where('course_id', $course->id)
@@ -100,7 +100,7 @@ class ModuleController extends Controller
 
     public function destroy($courseId, $moduleId)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($courseId);
 
         $module = Module::where('course_id', $course->id)

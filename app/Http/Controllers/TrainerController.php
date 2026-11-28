@@ -15,29 +15,29 @@ class TrainerController extends Controller
      */
     public function dashboard()
     {
-        $trainerId = auth()->id();
+        $trainerIds = auth()->user() ? auth()->user()->accessibleTrainerIds() : [auth()->id()];
 
         // Get courses created by the logged-in trainer.
-        $courses = Course::where('trainer_id', $trainerId)
+        $courses = Course::forTrainer()
             ->with('modules')
             ->latest()
             ->get();
 
         // Get workshops created by the logged-in trainer.
-        $workshops = Workshop::where('trainer_id', $trainerId)
+        $workshops = Workshop::forTrainer()
             ->with('course')
             ->withCount('workshopTeachers')
             ->latest('start_date')
             ->take(5)
             ->get();
 
-        $workshopCount = Workshop::where('trainer_id', $trainerId)->count();
-        $publishedWorkshopCount = Workshop::where('trainer_id', $trainerId)
+        $workshopCount = Workshop::forTrainer()->count();
+        $publishedWorkshopCount = Workshop::forTrainer()
             ->where('status', 'published')
             ->count();
 
         $pendingCertificatesCount = Certification::where('status', 'pending')
-            ->whereHas('workshop', fn ($query) => $query->where('trainer_id', $trainerId))
+            ->whereHas('workshop', fn ($query) => $query->whereIn('trainer_id', $trainerIds))
             ->count();
 
         // Count total courses.
@@ -54,9 +54,9 @@ class TrainerController extends Controller
             ->count();
 
         $quizCount = Assessment::whereNotNull('module_id')
-            ->whereHas('module.course', fn ($query) => $query->where('trainer_id', $trainerId))
+            ->whereHas('module.course', fn ($query) => $query->whereIn('trainer_id', $trainerIds))
             ->count();
-        $submissionCount = AssessmentAttempt::whereHas('assessment.module.course', fn ($query) => $query->where('trainer_id', $trainerId))
+        $submissionCount = AssessmentAttempt::whereHas('assessment.module.course', fn ($query) => $query->whereIn('trainer_id', $trainerIds))
             ->count();
 
         // Count draft courses.

@@ -12,7 +12,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::where('trainer_id', auth()->id())
+        $courses = Course::forTrainer()
             ->with('modules')
             ->latest()
             ->get();
@@ -56,7 +56,7 @@ class CourseController extends Controller
      */
     public function show($id)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->with(['workshops', 'modules.materials', 'modules.quiz.questions.choices'])
             ->findOrFail($id);
 
@@ -68,7 +68,7 @@ class CourseController extends Controller
      */
     public function edit($id)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($id);
 
         return view('trainer.courses.edit', compact('course'));
@@ -79,7 +79,7 @@ class CourseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($id);
 
         $validated = $request->validate([
@@ -99,7 +99,7 @@ class CourseController extends Controller
 
     public function publish($id)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($id);
 
         if (! $course->hasReadyModuleQuizzes()) {
@@ -117,7 +117,7 @@ class CourseController extends Controller
 
     public function unpublish($id)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($id);
 
         if ($course->status !== 'published') {
@@ -138,7 +138,7 @@ class CourseController extends Controller
      */
     public function destroy($id)
     {
-        $course = Course::where('trainer_id', auth()->id())
+        $course = Course::forTrainer()
             ->findOrFail($id);
 
         $course->delete();

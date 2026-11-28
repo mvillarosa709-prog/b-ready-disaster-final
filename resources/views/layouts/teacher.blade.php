@@ -123,8 +123,6 @@
                         </svg>
                     </a>
                 </div>
-                    </a>
-                </div>
             </header>
 
             <!-- Main Content Container -->

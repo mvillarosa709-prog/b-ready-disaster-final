@@ -17,7 +17,7 @@ class WorkshopController extends Controller
 {
     public function index(): View
     {
-        $workshops = Workshop::where('trainer_id', auth()->id())
+        $workshops = Workshop::forTrainer()
             ->with('course')
             ->withCount('workshopTeachers')
             ->latest('start_date')
@@ -52,7 +52,7 @@ class WorkshopController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate($this->rules(isCreating: true));
-        $course = Course::where('trainer_id', $request->user()->id)
+        $course = Course::forTrainer($request->user())
             ->find($validated['course_id']);
 
         if (! $course) {
@@ -95,7 +95,7 @@ class WorkshopController extends Controller
     {
         $this->authorizeTrainer($workshop);
         $validated = $request->validate($this->rules(isCreating: false));
-        $course = Course::where('trainer_id', $request->user()->id)
+        $course = Course::forTrainer($request->user())
             ->find($validated['course_id']);
 
         if (! $course) {
@@ -263,7 +263,7 @@ class WorkshopController extends Controller
 
     private function availableCourses()
     {
-        return Course::where('trainer_id', auth()->id())
+        return Course::forTrainer()
             ->withCount('modules')
             ->with('modules')
             ->orderBy('title')
@@ -294,6 +294,7 @@ class WorkshopController extends Controller
 
     private function authorizeTrainer(Workshop $workshop): void
     {
-        abort_unless((int) $workshop->trainer_id === (int) auth()->id(), 404);
+        $accessibleIds = auth()->user() ? auth()->user()->accessibleTrainerIds() : [(int) auth()->id()];
+        abort_unless(in_array((int) $workshop->trainer_id, $accessibleIds, true), 404);
     }
 }

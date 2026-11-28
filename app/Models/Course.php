@@ -29,6 +29,25 @@ class Course extends Model
         return $query->where('status', 'published');
     }
 
+    public function scopeForTrainer(Builder $query, $trainerOrId = null): Builder
+    {
+        if ($trainerOrId instanceof User) {
+            return $query->whereIn('trainer_id', $trainerOrId->accessibleTrainerIds());
+        }
+
+        if (is_numeric($trainerOrId)) {
+            $user = User::find($trainerOrId);
+            return $query->whereIn('trainer_id', $user ? $user->accessibleTrainerIds() : [$trainerOrId]);
+        }
+
+        $user = auth()->user();
+        if ($user) {
+            return $query->whereIn('trainer_id', $user->accessibleTrainerIds());
+        }
+
+        return $query;
+    }
+
     /**
      * The DRR Trainer who created this course.
      */

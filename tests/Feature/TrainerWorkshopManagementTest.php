@@ -208,3 +208,18 @@ test('trainers can publish a ready draft workshop in one click and manage its cl
         'material_type' => 'teacher_guide',
     ]);
 });
+
+test('trainerbready can view and manage curricula courses and materials', function () {
+    $trainer = User::where('email', 'trainerbready@gmail.com')->firstOrFail();
+
+    $response = $this->actingAs($trainer)->get(route('trainer.courses.index'));
+    $response->assertOk();
+    $response->assertSee('School Earthquake & Fire Readiness Protocol');
+    $response->assertSee('Disaster Preparedness Courses');
+    $response->assertDontSee("You don't have any courses yet");
+
+    $course = Course::where('title', 'School Earthquake & Fire Readiness Protocol')->firstOrFail();
+    $showResponse = $this->actingAs($trainer)->get(route('trainer.courses.show', $course->id));
+    $showResponse->assertOk();
+    $showResponse->assertSee('Fire Drill Bucket Relay Simulation (PPTX Presentation)');
+});
